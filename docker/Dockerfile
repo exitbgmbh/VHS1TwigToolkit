@@ -11,9 +11,6 @@ RUN apt-get update \
         zip \
         vim \
         git \
-        unzip \
-        unixodbc-dev \
-        libxml2-dev \
         curl \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
