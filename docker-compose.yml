@@ -9,6 +9,7 @@ services:
       - '/etc/localtime:/etc/localtime:ro'
       - './:/var/www/html'
       - '/tmp:/tmp'
+    command: bash -c "composer install --ignore-platform-reqs && /usr/sbin/apache2ctl -D FOREGROUND"
     ports:
       - 8085:80
     environment:

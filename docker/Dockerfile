@@ -35,6 +35,3 @@ RUN curl --silent --output /tmp/composer.setup https://getcomposer.org/installer
 # Copy code into container.
 COPY . /var/www/html
 WORKDIR /var/www/html
-
-RUN composer install
-
