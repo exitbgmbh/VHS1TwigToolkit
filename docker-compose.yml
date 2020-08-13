@@ -1,0 +1,15 @@
+version: '3'
+services:
+  btt_dev:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    volumes:
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - './:/var/www/html'
+      - '/tmp:/tmp'
+    ports:
+      - 8085:80
+    environment:
+      PHP_XDEBUG_ENABLE: 1
