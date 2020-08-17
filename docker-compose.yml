@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   btt_dev:
     build:
@@ -9,8 +9,7 @@ services:
       - '/etc/localtime:/etc/localtime:ro'
       - './:/var/www/html'
       - '/tmp:/tmp'
+      - './docker/vhost/btt.conf:/etc/apache2/sites-available/000-default.conf'
     command: bash -c "composer install --ignore-platform-reqs && /usr/sbin/apache2ctl -D FOREGROUND"
     ports:
       - 8085:80
-    environment:
-      PHP_XDEBUG_ENABLE: 1

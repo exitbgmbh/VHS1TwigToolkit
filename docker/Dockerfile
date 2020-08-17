@@ -14,8 +14,7 @@ RUN apt-get update \
         curl \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
-        libpng-dev \
-        ksh
+        libpng-dev
 
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
@@ -28,7 +27,3 @@ RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/i
 
 RUN curl --silent --output /tmp/composer.setup https://getcomposer.org/installer \
     && php /tmp/composer.setup --install-dir=/usr/local/bin --filename=composer
-
-# Copy code into container.
-COPY . /var/www/html
-WORKDIR /var/www/html

@@ -1,0 +1,66 @@
+{
+  "url": "https://shop-domain.de",
+  "client": "",
+  "user": "",
+  "password": "",
+  "apiKey": "",
+  "mapping": {
+    "defaults": {
+      "invoice": {
+        "boxBarcode": "/var/www/html/assets/dummyBoxBarcode.jpg"
+      },
+      "system": {
+        "imagePath": "/var/www/html/src/templates/image/",
+        "templatePath": "/var/www/html/src/templates/"
+      }
+    },
+    "textModuleMapping": {
+      "defaults": {
+        "tm.aquisition.email": "",
+        "tm.ci-1.class": "",
+        "tm.ci-2.class": "",
+        "tm.ci-3.class": "",
+        "tm.company.address": "",
+        "tm.company": "",
+        "tm.company.city": "",
+        "tm.company.country": "",
+        "tm.company.domain": "",
+        "tm.company.email": "",
+        "tm.company.houseNumber": "",
+        "tm.company.name": "",
+        "tm.company.name.phone": "",
+        "tm.company.street": "",
+        "tm.company.UstId": "",
+        "tm.company.zip": "",
+        "tm.company.zipCode": "",
+        "tm.contact.email": "",
+        "tm.customerService.email": "",
+        "tm.deliverySlip": "",
+        "tm.domain": "",
+        "tm.email.head.logo": "",
+        "tm.email.purchase": "",
+        "tm.faxNumber": "",
+        "tm.footer.registerNumber": "",
+        "tm.footer.registerNumberValue": "",
+        "tm.geschaeftsfuehrer": "",
+        "tm.handelsregister": "",
+        "tm.logo.package": "",
+        "tm.logo.packet": "",
+        "tm.managingDirector": "",
+        "tm.monition.email": "",
+        "tm.of": "",
+        "tm.orderDate": "",
+        "tm.orderNumber": "",
+        "tm.page": "",
+        "tm.phoneNumber": "",
+        "tm.retoure.url": "",
+        "tm.sender": "",
+        "tm.slip.head.logo": "",
+        "tm.supplier.head.logo": "",
+        "tm.template.contact": "",
+        "tm.template.registerNumber": "",
+        "tm.withdrawal.url": ""
+      }
+    }
+  }
+}

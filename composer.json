@@ -1,6 +1,10 @@
 {
     "require": {
+        "ext-curl": "*",
+        "ext-json": "*",
         "twig/twig": "^3.0",
-        "mpdf/mpdf": "^8.0"
+        "mpdf/mpdf": "^8.0",
+        "symfony/http-foundation": "^5.1",
+        "symfony/routing": "^5.1"
     }
 }
