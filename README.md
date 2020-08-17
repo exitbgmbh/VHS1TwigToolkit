@@ -1,19 +1,45 @@
 # BlisstributeTwigToolkit
 
-## Installation
+## Installation & Konfiguration
 
-ACHTUNG: Wenn du die Templates nicht in den Templateordner kopieren, sondern nur "symlinken" möchtest, dann musst du
-den Pfad zu den Templates in den Container mounten. Ist dies nicht der Fall, einfach ab "Repo klonen" weiterlesen.
+Nach dem klonen des Repositories muss die Standard Konfiguration auf die entsprechende Blisstribute-Instanz konfiguriert werden.
+Dazu einfach die Konfiguration-Vorlage kopieren und anpassgen.
+
+    $ cp src/config/config.json.dist src/config/config.json
+
+Die Basiskonfiguration benötigt die folgenden Daten:
+- Url, Frontend-Anwendungsurl
+- Client
+- User
+- Password
+- Api Key (noch nicht unterstützt)
+
+Im Anschluss müssen die entsprechenden Templates eingebunden werden. 
+Die generelle Struktur sieht in der Regel so aus:
+
+- `src/templates/email`
+- `src/templates/image`
+- `src/templates/slip`
+
+Templates können entweder in `src/templates` kopiert, oder gelinkt werden. Wenn du die Templates "symlinken" willst, musst
+du den Pfad zu den Templates mit in den Container mounten. 
+
 Dazu einfach in der `docker-compose.yml` einen weiteren Eintrag
 unter `volumes` hinzufügen, z.B. so:
 
-    - '/path/to/other/project/templates:/path/to/other/project/templates'
+    - '/home/benutzer/workspace/template:/home/benutzer/workspace/template'
 
-Sollte der Container bereits gebaut sein, einfach noch mal bauen:
+Nun steht der Symlink-Pfad `/home/benutzer/workspace/template` im Container zur Verfuegung und es können folgende Symlinks aufgelöst werden.
 
-    $ docker-compose up -d --build
+    - 'email -> /home/benutzer/workspace/templateRepo/email'
+    - 'slip -> /home/benutzer/workspace/templateRepo/slip'
+    - 'image -> /home/benutzer/workspace/templateRepo/image'
 
-Repo klonen und dann im Root-Verzeichnis folgenden Befehl ausführen:
+Sollte ein Projekt von dieser Struktur abweichen, können die Pfade in folgender
+Datei angepasst werden: `src/service/TwigService.php`
+
+
+Im Anschluss den Container starten (der erste Start führt die Erstellung des Containers durch, dass kann einige Zeit dauern.)
 
     $ docker-compose up -d
 
@@ -46,31 +72,7 @@ Die folgenden Query-Parameter sind erforderlich:
 Die folgenden Query-Parameter sind optional:
 
 - `advertisingMediumCode`
-
-## Konfiguration
-
-    $ cp src/config/config.json.dist src/config/config.json
-
-Die Datei öffnen und die Basiskonfiguration vornehmen:
-
-- Url, Frontend-Anwendungsurl
-- Client
-- User
-- Password
-- Api Key (noch nicht unterstützt)
-
-Templates können entweder in `src/templates` kopiert, oder gelinkt werden. Wenn du die Templates "symlinken" willst, musst
-du den Pfad zu den Templates mit in den Container mounten. Siehe dazu weiter oben "Konfiguration".
-
-Die generelle Struktur sieht in der Regel so aus:
-
-- `src/templates/email`
-- `src/templates/image`
-- `src/templates/slip`
-
-Sollte ein Projekt von dieser Struktur abweichen, können die Pfade in folgender
-Datei angepasst werden: `src/service/TwigService.php`
-
+    
 ## Context überschreiben
 
 Es ist möglich in der Konfigurationsdatei `src/config/config.json` sämtliche Werte des Kontextes zu überschreiben.
