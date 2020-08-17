@@ -23,9 +23,25 @@ Nach der Installation kann die Anwendung folgendermaßen erreicht werden:
 
 Die folgenden Query-Parameter sind erforderlich:
 
-- `type`, z.B. `invoice`
+- `type`
+    - `invoice`, Rechnung
+    - `delivery`, Lieferschein
+    - `return`, Retourenschein
+    - `offer`, Angebot
+    - `orderConfirmation`, Auftragsbestätigung
+    - `pickBox`, Pick-Box Label
+    - `picklist`, Pick-Liste
+    - `posReport`, Kassenabschluss
+    - `productLabel`, Produkt Label
+    - `stockInventory`, Inventurbericht
+    - `stockRelocation`, Lagernachfüllauftrag
+    - `supplierOrder`, Lieferantenbestellung
+    - `supplyNote`, Lieferantenbegleitdokument
+    - `trayLabel`, Lager-Fach Label
+    - `userCard`, Benutzer Login-Card 
+
 - `template`, der Name des Templates, z.B. `foo.html.twig`
-- `identifiers`, eine Rechnungsnummer
+- `identifiers`, Identifikation abhängig vom verwendeten Typen (Rechnungsnummer bei Typ 'invoice', Picklistennummer bei Typ 'picklist' etc.)
 
 Die folgenden Query-Parameter sind optional:
 
@@ -37,7 +53,7 @@ Die folgenden Query-Parameter sind optional:
 
 Die Datei öffnen und die Basiskonfiguration vornehmen:
 
-- Url
+- Url, Frontend-Anwendungsurl
 - Client
 - User
 - Password
@@ -63,10 +79,10 @@ nachgebaut werden, um die gewünschten Werte zu überschreiben.
 Also z.B. den Bildpfad des Box-Barcodes: `mapping -> defaults -> invoice -> boxBarcode`.  
 Ein vollständiges Beispiel befindet sich in der `src/config/config.json.dist` Datei.
 
-## Übersetzungsbausteine
+## Textbausteine
 
-Die Bausteine können ähnlich überschrieben werden, wie die Werte des Kontextes. Dazu einfach die gewünschten Bausteine
-samt Übersetzung (Key/Value) in folgenden Knoten der `src/config/config.json.dist` einfügen: `mapping -> textModuleMapping -> defaults`.
+Die Textbausteine können ähnlich überschrieben werden, wie die Werte des Kontextes. Dazu einfach die gewünschten Textbausteine
+samt Übersetzung (Key/Value) in folgenden Knoten der `src/config/config.json` einfügen: `mapping -> textModuleMapping -> defaults`.
 Möchte man Übersetzungen pro Werbemittel anlegen, kann ein weiterer Knoten, auf derselben Ebene, wie die `defaults` hinzugefügt werden.
 Also beispielsweise: `mapping -> textModuleMapping -> ABC`. Diese Werte pro Werbemittelcode können dann, sofern vorhanden in den Defaults,
 Werte überschreiben. D.h. man kann in den Defaults Standardwerte eintragen und diese dann individuell für jedes Werbemittel einzeln, oder alle überschreiben.
