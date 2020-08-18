@@ -1,3 +1,4 @@
-composer.lock
 vendor/
 src/Config/config.json
+src/Templates/*
+!src/Templates/.gitkeep
