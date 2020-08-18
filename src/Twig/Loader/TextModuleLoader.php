@@ -1,25 +1,21 @@
 <?php
 
+namespace App\Twig\Loader;
+
 use Twig\Loader\LoaderInterface as TwigLoaderInterface;
 use Twig\Source as TwigSource;
 
 class TextModuleLoader implements TwigLoaderInterface
 {
-    /** @var ConfigService */
-    private $_configService;
-
     /** @var array */
     private $mapping = [];
 
     /**
-     * @param string $advertisingMediumCode
-     * @throws Exception
+     * @param array $mapping
      */
-    public function __construct(string $advertisingMediumCode)
+    public function __construct(array $mapping)
     {
-        $this->_configService = new ConfigService();
-
-        $this->mapping = $this->_configService->getTranslatedTextModules($advertisingMediumCode);
+        $this->mapping = $mapping;
     }
 
     /**

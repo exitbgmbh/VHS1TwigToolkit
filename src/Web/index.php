@@ -9,7 +9,8 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 
 $request = Request::createFromGlobals();
-$routes = require_once __DIR__ . '/../config/routes.php';
+$container = require_once __DIR__ . '/../Config/container.php';
+$routes = require_once __DIR__ . '/../Config/routes.php';
 
 $context = new RequestContext();
 $context->fromRequest($request);

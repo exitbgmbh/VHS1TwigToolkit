@@ -1,13 +1,20 @@
 <?php
 
+namespace App\Service;
+
+use Exception;
+
 class ConfigService
 {
     /** @var JsonService */
     private $_jsonService;
 
-    public function __construct()
+    /**
+     * @param JsonService $jsonService
+     */
+    public function __construct(JsonService $jsonService)
     {
-        $this->_jsonService = new JsonService();
+        $this->_jsonService = $jsonService;
     }
 
     /**
@@ -16,7 +23,7 @@ class ConfigService
      */
     public function getConfig(): array
     {
-        $configPath = __DIR__ . '/../config/config.json';
+        $configPath = __DIR__ . '/../Config/config.json';
         if (!file_exists($configPath)) {
             throw new Exception(sprintf('config "%s" does not exist', $configPath));
         }

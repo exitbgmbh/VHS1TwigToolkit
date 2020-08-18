@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Service;
+
 use Mpdf\Mpdf;
 use Mpdf\MpdfException;
 

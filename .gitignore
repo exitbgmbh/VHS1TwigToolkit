@@ -1,3 +1,3 @@
 composer.lock
 vendor/
-src/config/config.json
+src/Config/config.json

@@ -10,8 +10,8 @@
         "boxBarcode": "/var/www/html/assets/dummyBoxBarcode.jpg"
       },
       "system": {
-        "imagePath": "/var/www/html/src/templates/image/",
-        "templatePath": "/var/www/html/src/templates/"
+        "imagePath": "/var/www/html/src/Templates/image/",
+        "templatePath": "/var/www/html/src/Templates/"
       }
     },
     "textModuleMapping": {

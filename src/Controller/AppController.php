@@ -1,15 +1,16 @@
 <?php
 
+namespace App\Controller;
+
+use App\Service\ConfigService;
+use App\Service\HttpService;
+use App\Service\JsonService;
+use App\Service\MapperService;
+use App\Service\PdfService;
+use App\Service\TwigService;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-require_once __DIR__ . '/../service/ConfigService.php';
-require_once __DIR__ . '/../service/HttpService.php';
-require_once __DIR__ . '/../service/JsonService.php';
-require_once __DIR__ . '/../service/MapperService.php';
-require_once __DIR__ . '/../service/PdfService.php';
-require_once __DIR__ . '/../service/TwigService.php';
-require_once __DIR__ . '/../twig/loader/TextModuleLoader.php';
 
 class AppController
 {
@@ -31,14 +32,28 @@ class AppController
     /** @var TwigService */
     private $_twigService;
 
-    public function __construct()
-    {
-        $this->_configService = new ConfigService();
-        $this->_httpService = new HttpService();
-        $this->_jsonService = new JsonService();
-        $this->_mapperService = new MapperService();
-        $this->_pdfService = new PdfService();
-        $this->_twigService = new TwigService();
+    /**
+     * @param ConfigService $configService
+     * @param HttpService $httpService
+     * @param JsonService $jsonService
+     * @param MapperService $mapperService
+     * @param PdfService $pdfService
+     * @param TwigService $twigService
+     */
+    public function __construct(
+        ConfigService $configService,
+        HttpService $httpService,
+        JsonService $jsonService,
+        MapperService $mapperService,
+        PdfService $pdfService,
+        TwigService $twigService
+    ) {
+        $this->_configService = $configService;
+        $this->_httpService = $httpService;
+        $this->_jsonService = $jsonService;
+        $this->_mapperService = $mapperService;
+        $this->_pdfService = $pdfService;
+        $this->_twigService = $twigService;
     }
 
     /**
