@@ -8,7 +8,7 @@ Dazu einfach die Konfiguration-Vorlage kopieren und anpassen.
     $ cp src/Config/config.json.dist src/Config/config.json
 
 Die Basiskonfiguration benötigt die folgenden Daten:
-- Url, Frontend-Anwendungs-Url
+- Url, Rest-API-Anwendungs-Url
 - Client
 - Api Key
 

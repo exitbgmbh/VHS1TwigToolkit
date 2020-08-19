@@ -60,6 +60,7 @@ class ContextService
             $contextEndpointUrl = $this->_configService->getContextEndpointUrl($type, $identifiers);
             $context = $this->_httpService->getContext($contextEndpointUrl, $jwt);
             $context = $this->_jsonService->parseJson($context);
+            $context = $context['response'];
 
             $this->_cacheService->set($contextCacheKey, $context);
         }

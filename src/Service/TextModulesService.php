@@ -55,6 +55,13 @@ class TextModulesService
             $textModules = $this->_jsonService->parseJson($textModules);
             $textModules = $textModules['response'];
 
+            $transformedTextModules = [];
+            foreach ($textModules as $textModule) {
+                $transformedTextModules[$textModule['key']] = $textModule['value'];
+            }
+
+            $textModules = $transformedTextModules;
+
             $this->_cacheService->set($textModulesCacheKey, $textModules);
         }
 

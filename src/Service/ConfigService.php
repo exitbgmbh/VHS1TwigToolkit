@@ -91,7 +91,7 @@ class ConfigService
     public function getContextEndpointUrl(string $type, string $identifiers): string
     {
         return sprintf(
-            '%s/v1/document/readTemplateContext?identifiers=%s&type=%s',
+            '%s/v1/document/readTemplateContext/%s?type=%s',
             $this->getRestEndpoint(),
             $identifiers,
             $type
@@ -106,7 +106,7 @@ class ConfigService
     public function getTemplateTextModulesEndpointUrl(string $advertisingMediumCode): string
     {
         return sprintf(
-            '%s/v1/document/searchTemplateTextModules?identification=foo&advertisingMediumCode=%s',
+            '%s/v1/document/searchTemplateTextModules/%s',
             $this->getRestEndpoint(),
             $advertisingMediumCode
         );
