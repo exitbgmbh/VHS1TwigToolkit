@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Twig\Loader\TextModuleLoader;
-use Exception;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError as TwigLoaderError;
 use Twig\Error\RuntimeError as TwigRuntimeError;
@@ -27,9 +26,8 @@ class TwigService
     /**
      * @param string $templateName
      * @param array $context
-     * @param string $advertisingMediumCode
+     * @param array $mapping
      * @return string
-     * @throws Exception
      * @throws TwigLoaderError
      * @throws TwigRuntimeError
      * @throws TwigSyntaxError
@@ -37,14 +35,14 @@ class TwigService
     public function renderTemplate(
         string $templateName,
         array $context,
-        string $advertisingMediumCode = ''
+        array $mapping
     ): string {
         $loader = new TwigFilesystemLoader([
             __DIR__ . '/../Templates/email',
             __DIR__ . '/../Templates/slip',
         ]);
 
-        $tmLoader = new TextModuleLoader($this->_configService->getTranslatedTextModules($advertisingMediumCode));
+        $tmLoader = new TextModuleLoader($mapping);
 
         $chainLoader = new TwigChainLoader([
             $loader,

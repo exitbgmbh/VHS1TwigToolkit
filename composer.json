@@ -6,7 +6,8 @@
         "mpdf/mpdf": "^8.0",
         "symfony/http-foundation": "^5.1",
         "symfony/routing": "^5.1",
-        "symfony/dependency-injection": "^5.1"
+        "symfony/dependency-injection": "^5.1",
+        "symfony/cache": "^5.1"
     },
     "autoload": {
         "psr-4": {

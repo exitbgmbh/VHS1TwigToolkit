@@ -32,6 +32,42 @@ class ConfigService
     }
 
     /**
+     * @return string
+     * @throws Exception
+     */
+    public function getAuthenticationUrl(): string
+    {
+        return sprintf('%s/v1/login/authenticate', $this->getRestEndpoint());
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getRestEndpoint(): string
+    {
+        return $this->_getByKey('url', '');
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getClient(): string
+    {
+        return $this->_getByKey('client', '');
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getApiKey(): string
+    {
+        return $this->_getByKey('apiKey', '');
+    }
+
+    /**
      * @return array
      * @throws Exception
      */
@@ -52,18 +88,27 @@ class ConfigService
      * @return string
      * @throws Exception
      */
-    public function getContextUrl(string $type, string $identifiers): string
+    public function getContextEndpointUrl(string $type, string $identifiers): string
     {
-        $config = $this->getConfig();
-
         return sprintf(
-            '%s/pdf-document.php?type=%s&identifiers=%s&client=%s&user=%s&password=%s&showContext=true',
-            $config['url'],
-            $type,
+            '%s/v1/document/readTemplateContext?identifiers=%s&type=%s',
+            $this->getRestEndpoint(),
             $identifiers,
-            $config['client'],
-            $config['user'],
-            $config['password']
+            $type
+        );
+    }
+
+    /**
+     * @param string $advertisingMediumCode
+     * @return string
+     * @throws Exception
+     */
+    public function getTemplateTextModulesEndpointUrl(string $advertisingMediumCode): string
+    {
+        return sprintf(
+            '%s/v1/document/searchTemplateTextModules?identification=foo&advertisingMediumCode=%s',
+            $this->getRestEndpoint(),
+            $advertisingMediumCode
         );
     }
 
@@ -105,5 +150,21 @@ class ConfigService
         }
 
         return true;
+    }
+
+    /**
+     * @param string $key
+     * @param $default
+     * @return mixed
+     * @throws Exception
+     */
+    private function _getByKey(string $key, $default)
+    {
+        $config = $this->getConfig();
+        if (!array_key_exists($key, $config)) {
+            throw new Exception(sprintf('"%s" in config not configured', $key));
+        }
+
+        return $config[$key] ?? $default;
     }
 }

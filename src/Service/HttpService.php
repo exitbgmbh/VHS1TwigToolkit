@@ -8,29 +8,102 @@ class HttpService
 {
     /**
      * @param string $url
+     * @param array $postFields
+     * @return bool|string
+     * @throws Exception
+     */
+    public function authenticate(string $url, array $postFields)
+    {
+        return $this->post($url, $postFields);
+    }
+
+    /**
+     * @param string $url
+     * @param string $jwt
      * @return string
      * @throws Exception
      */
-    public function get(string $url): string
+    public function getContext(string $url, string $jwt): string
+    {
+        return $this->get($url, $jwt);
+    }
+
+    /**
+     * @param string $url
+     * @param string $jwt
+     * @return string
+     * @throws Exception
+     */
+    public function getTemplateTextModules(string $url, string $jwt): string
+    {
+        return $this->get($url, $jwt);
+    }
+
+    /**
+     * @param string $url
+     * @param string $jwt
+     * @return string
+     * @throws Exception
+     */
+    public function get(string $url, string $jwt = ''): string
+    {
+        $options = [
+            CURLOPT_RETURNTRANSFER => true,
+        ];
+
+        if (!empty($jwt)) {
+            $options[CURLOPT_HTTPHEADER] = [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $jwt,
+            ];
+        }
+
+        return $this->_request($url, $options);
+    }
+
+    /**
+     * @param string $url
+     * @param array $postFields
+     * @return bool|mixed|string
+     * @throws Exception
+     */
+    public function post(string $url, array $postFields)
+    {
+        $options = [
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POSTFIELDS => $postFields,
+        ];
+
+        return $this->_request($url, $options);
+    }
+
+    /**
+     * @param string $url
+     * @param array $options
+     * @return mixed|bool|string
+     * @throws Exception
+     */
+    private function _request(string $url, array $options)
     {
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt_array($ch, $options);
 
-        $context = curl_exec($ch);
+        $response = curl_exec($ch);
 
         $success = true;
         $errorMessage = '';
-        if (false === $context) {
+        if (false === $response) {
             $success = false;
             $errorMessage = curl_error($ch);
         }
-
-        curl_close($ch);
 
         if (!$success) {
             throw new Exception(sprintf('request failed: "%s"', $errorMessage));
         }
 
-        return $context;
+        curl_close($ch);
+
+        return $response;
     }
 }

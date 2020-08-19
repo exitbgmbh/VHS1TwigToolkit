@@ -1,8 +1,6 @@
 {
-  "url": "https://blisstribute-domain.de",
+  "url": "https://rest-blisstribute-domain.de",
   "client": "",
-  "user": "",
-  "password": "",
   "apiKey": "",
   "mapping": {
     "defaults": {
