@@ -34,9 +34,57 @@ class HttpService
      * @return string
      * @throws Exception
      */
+    public function getEmailContext(string $url, string $jwt): string
+    {
+        return $this->get($url, $jwt);
+    }
+
+    /**
+     * @param string $url
+     * @param string $jwt
+     * @return string
+     * @throws Exception
+     */
     public function getTemplateTextModules(string $url, string $jwt): string
     {
         return $this->get($url, $jwt);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPdfTypes(): array
+    {
+        return [
+            'invoice' => 'Rechnung',
+            'delivery' => 'Lieferschein',
+            'return' => 'Retourenschein',
+            'offer' => 'Angebot',
+            'orderConfirmation' => 'Auftragsbestätigung',
+            'pickBox' => 'Pick-Box Label',
+            'picklist' => 'Pick-Liste',
+            'posReport' => 'Kassenabschluss',
+            'productLabel' => 'Produkt Label',
+            'stockInventory' => 'Inventurbericht',
+            'stockRelocation' => 'Lagernachfüllauftrag',
+            'supplierOrder' => 'Lieferantenbestellung',
+            'supplyNote' => 'Lieferantenbegleitdokument',
+            'trayLabel' => 'Lager-Fach Label',
+            'userCard' => 'Benutzer Login-Card',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getEmailTypes(): array
+    {
+        return [
+            'order-income' => 'Bestellbestätigung',
+            'return-processed' => 'Retoure verarbeitet',
+            'return-received' => 'Retoure erhalten',
+            'order-shipped' => 'Bestellung verschickt',
+        ];
     }
 
     /**

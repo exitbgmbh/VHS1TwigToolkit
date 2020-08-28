@@ -10,6 +10,7 @@ services:
       - './:/var/www/html'
       - '/tmp:/tmp'
       - './docker/vhost/btt.conf:/etc/apache2/sites-available/000-default.conf'
+      - '/home/micha/www/fleurop:/home/micha/www/fleurop'
     command: bash -c "composer install --ignore-platform-reqs && /usr/sbin/apache2ctl -D FOREGROUND"
     ports:
       - 8085:80

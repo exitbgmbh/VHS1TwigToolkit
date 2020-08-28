@@ -88,12 +88,28 @@ class ConfigService
      * @return string
      * @throws Exception
      */
-    public function getContextEndpointUrl(string $type, string $identifiers): string
+    public function getDocumentContextEndpointUrl(string $type, string $identifiers): string
     {
         return sprintf(
             '%s/v1/document/readTemplateContext/%s?type=%s',
             $this->getRestEndpoint(),
             $identifiers,
+            $type
+        );
+    }
+
+    /**
+     * @param string $type
+     * @param string $identifier
+     * @return string
+     * @throws Exception
+     */
+    public function getEmailContextEndpointUrl(string $type, string $identifier): string
+    {
+        return sprintf(
+            '%s/v1/email/readContext/%s?type=%s',
+            $this->getRestEndpoint(),
+            $identifier,
             $type
         );
     }

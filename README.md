@@ -53,7 +53,7 @@ Im Anschluss den Container starten (der erste Start führt die Erstellung des Co
 
 Nach der Installation kann die Anwendung folgendermaßen erreicht werden:
 
-    http://localhost:8085/{type}/{template}/{identifiers}/{advertisingMediumCode}
+    http://localhost:8085/pdf/{type}/{template}/{identifiers}/{advertisingMediumCode}
 
 Die folgenden Query-Parameter sind erforderlich:
 

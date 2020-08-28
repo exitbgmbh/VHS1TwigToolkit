@@ -9,7 +9,10 @@ use Psr\Cache\InvalidArgumentException;
 class CacheService
 {
     /** @var string */
-    private const CONTEXT_CACHE_KEY = 'context';
+    private const CONTEXT_MAIL_CACHE_KEY = 'context-mail';
+
+    /** @var string */
+    private const CONTEXT_PDF_CACHE_KEY = 'context-pdf';
 
     /** @var string */
     private const JWT_CACHE_KEY = 'jwt';
@@ -87,7 +90,7 @@ class CacheService
      */
     public function getContextCacheKey(string $type, string $identifiers): string
     {
-        return sprintf('%s-%s-%s', self::CONTEXT_CACHE_KEY, $type, $identifiers);
+        return sprintf('%s-%s-%s', self::CONTEXT_PDF_CACHE_KEY, $type, $identifiers);
     }
 
     /**
@@ -101,6 +104,16 @@ class CacheService
         }
 
         return sprintf('%s-%s', self::TEXT_MODULES_CACHE_KEY, $advertisingMediumCode);
+    }
+
+    /**
+     * @param string $type
+     * @param string $identifier
+     * @return string
+     */
+    public function getEmailContextCacheKey(string $type, string $identifier): string
+    {
+        return sprintf('%s-%s-%s', self::CONTEXT_MAIL_CACHE_KEY, $type, $identifier);
     }
 
     /**
