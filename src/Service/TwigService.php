@@ -7,7 +7,6 @@ use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError as TwigLoaderError;
 use Twig\Error\RuntimeError as TwigRuntimeError;
 use Twig\Error\SyntaxError as TwigSyntaxError;
-use Twig\Loader\ArrayLoader;
 use Twig\Loader\ChainLoader as TwigChainLoader;
 use Twig\Loader\FilesystemLoader as TwigFilesystemLoader;
 
@@ -39,6 +38,7 @@ class TwigService
         array $mapping
     ): string {
         $loader = new TwigFilesystemLoader([
+            __DIR__ . '/../Templates',
             __DIR__ . '/../Templates/email',
             __DIR__ . '/../Templates/slip',
         ]);
@@ -54,17 +54,5 @@ class TwigService
         $templateWrapper = $twig->load($templateName);
 
         return $templateWrapper->render($context);
-    }
-
-    public function render(array $context)
-    {
-        $loader = new TwigFilesystemLoader([
-            __DIR__ . '/../Templates',
-        ]);
-
-        $twig = new TwigEnvironment($loader);
-        $template = $twig->load('index.html.twig');
-
-        return $template->render($context);
     }
 }

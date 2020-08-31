@@ -37,9 +37,6 @@ class AppController
     /** @var TwigService */
     private $_twigService;
 
-    /** @var ValidatorService */
-    private $_validatorService;
-
     /**
      * @param ContextService $contextService
      * @param FrontendFactory $frontendFactory
@@ -47,7 +44,6 @@ class AppController
      * @param SecurityService $securityService
      * @param TextModulesService $textModulesService
      * @param TwigService $twigService
-     * @param ValidatorService $validatorService
      */
     public function __construct(
         ContextService $contextService,
@@ -55,8 +51,7 @@ class AppController
         PdfService $pdfService,
         SecurityService $securityService,
         TextModulesService $textModulesService,
-        TwigService $twigService,
-        ValidatorService $validatorService
+        TwigService $twigService
     ) {
         $this->_contextService = $contextService;
         $this->_frontendFactory = $frontendFactory;
@@ -64,28 +59,35 @@ class AppController
         $this->_securityService = $securityService;
         $this->_textModulesService = $textModulesService;
         $this->_twigService = $twigService;
-        $this->_validatorService = $validatorService;
     }
 
     /**
      * @param Request $request
      * @return Response
+     * @throws InvalidArgumentException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function index(Request $request): Response
     {
         $viewModel = $this->_frontendFactory->create($request);
 
-        $context = $this->_twigService->render([
-            'errors' => implode(',', $viewModel->getErrors()),
-            'kinds' => $viewModel->getKinds(),
-            'type' => $viewModel->getType(),
-            'types' => $viewModel->getTypes(),
-            'iframeSrc' => $viewModel->getIFrameSrc(),
-            'template' => $viewModel->getTemplate(),
-            'identifiers' => $viewModel->getIdentifiers(),
-            'advertisingMediumCode' => $viewModel->getAdvertisingMediumCode(),
-            'forceReload' => $viewModel->forceReload(),
-        ]);
+        $context = $this->_twigService->renderTemplate(
+            'index.html.twig',
+            [
+                'errors' => implode(',', $viewModel->getErrors()),
+                'kinds' => $viewModel->getKinds(),
+                'type' => $viewModel->getType(),
+                'types' => json_encode($viewModel->getTypes()),
+                'iframeSrc' => $viewModel->getIFrameSrc(),
+                'template' => $viewModel->getTemplate(),
+                'identifiers' => $viewModel->getIdentifiers(),
+                'advertisingMediumCode' => $viewModel->getAdvertisingMediumCode(),
+                'forceReload' => $viewModel->forceReload(),
+             ],
+            []
+        );
 
         return new Response($context);
     }
@@ -101,27 +103,7 @@ class AppController
      */
     public function generate(Request $request): Response
     {
-        $kind = $request->attributes->get('kind');
-        if ($kind === 'email') {
-            return $this->_generateEmail($request, $kind);
-        }
-
-        return $this->_generatePdf($request, $kind);
-    }
-
-    /**
-     * @param Request $request
-     * @param string $kind
-     * @return Response
-     * @throws InvalidArgumentException
-     * @throws LoaderError
-     * @throws MpdfException
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    private function _generatePdf(Request $request, string $kind)
-    {
-        $renderedTemplate = $this->_renderTemplate($request, $kind);
+        $renderedTemplate = $this->_renderTemplate($request);
         $pdf = $this->_pdfService->renderPdf($renderedTemplate);
 
         return new Response(
@@ -135,30 +117,13 @@ class AppController
 
     /**
      * @param Request $request
-     * @param string $kind
-     * @return Response
-     * @throws InvalidArgumentException
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    private function _generateEmail(Request $request, string $kind)
-    {
-        $renderedTemplate = $this->_renderTemplate($request, $kind);
-
-        return new Response($renderedTemplate);
-    }
-
-    /**
-     * @param Request $request
-     * @param string $kind
      * @return string
      * @throws InvalidArgumentException
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    private function _renderTemplate(Request $request, string $kind)
+    private function _renderTemplate(Request $request)
     {
         $type = $request->attributes->get('type');
         $templateName = $request->attributes->get('template');
@@ -167,12 +132,7 @@ class AppController
         $forceReload = $request->get('forceReload', false) === 'true';
 
         $jwt = $this->_securityService->getJwt();
-
-        if ($kind === 'email') {
-            $context = $this->_contextService->getEmailContext($type, $identifiers, $jwt, $forceReload);
-        } else {
-            $context = $this->_contextService->getContext($type, $identifiers, $jwt, $forceReload);
-        }
+        $context = $this->_contextService->getContext($type, $identifiers, $jwt, $forceReload);
 
         $textModulesMapping = $this->_textModulesService->getTextModules($advertisingMediumCode, $jwt, $forceReload);
 

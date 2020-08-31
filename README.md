@@ -4,7 +4,7 @@
 
 Kompatibel mit Blisstribute ab Version `2020.1929`.
 
-## Installation & Konfiguration
+## Installation, Konfiguration & Verwenund
 
 Nach dem klonen des Repositories muss die Standard Konfiguration auf die entsprechende Blisstribute-Instanz konfiguriert werden.
 Dazu einfach die Konfiguration-Vorlage kopieren und anpassen.
@@ -53,33 +53,26 @@ Im Anschluss den Container starten (der erste Start führt die Erstellung des Co
 
 Nach der Installation kann die Anwendung folgendermaßen erreicht werden:
 
-    http://localhost:8085/pdf/{type}/{template}/{identifiers}/{advertisingMediumCode}
+    http://localhost:8085
 
-Die folgenden Query-Parameter sind erforderlich:
+Oben auf der Seite sehen wir nun eine Toolbar. Über diese können wir bequem die Informationen angeben, die die Anwendung benötigt.
+Art (Im Moment nur Dokument, keine E-Mails), den Typen, das Template und den Identifier. Dies sind sind Pflichtfelder.
+Zusätzlich können wir noch ein Werbemittel angeben und steuern, ob die Daten aus dem lokalen Cache geladen, oder aktualisiert werden sollen.
 
-- `type`
-    - `invoice`, Rechnung
-    - `delivery`, Lieferschein
-    - `return`, Retourenschein
-    - `offer`, Angebot
-    - `orderConfirmation`, Auftragsbestätigung
-    - `pickBox`, Pick-Box Label
-    - `picklist`, Pick-Liste
-    - `posReport`, Kassenabschluss
-    - `productLabel`, Produkt Label
-    - `stockInventory`, Inventurbericht
-    - `stockRelocation`, Lagernachfüllauftrag
-    - `supplierOrder`, Lieferantenbestellung
-    - `supplyNote`, Lieferantenbegleitdokument
-    - `trayLabel`, Lager-Fach Label
-    - `userCard`, Benutzer Login-Card 
-- `template`, der Name des Templates, z.B. `foo.html.twig`
-- `identifiers`, Identifikation abhängig vom verwendeten Typen (Rechnungsnummer bei Typ 'invoice', Picklistennummer bei Typ 'picklist' etc.)
+Nach Absenden des Formulars, wird ein iFrame erzeugt welches folgende Route aufruft:
 
-Die folgenden Query-Parameter sind optional:
+    http://localhost:8085/{kind}/{type}/{template}/{identifiers}/{advertisingMediumCode}?forceReload={bool}
 
-- `advertisingMediumCode`
-    
+Ein Beispiel für eine (gecachte) Rechnung würde so aussehen:
+
+    http://localhost:8085/email/invoice/default_invoice.html/{Rechnungsnummer}
+
+Wenn wir also möchten, können wir auch direkt die URL aus dem iFrame aufrufen.  
+Je nach ausgewähltem Typen, sind die Identifier unterschiedlich. Rechnungsnummer bei Typ 'invoice', Picklistennummer bei Typ 'picklist' etc.
+
+Hat das angeprochene System eine höhere Buildnummer als `1930`, werden sich die Typen über eine API des VHS geholt. In allen anderen Fällen,
+werden auf statisch hinterlegte Werte zurückgegriffen. 
+
 ## Context überschreiben
 
 Es ist möglich in der Konfigurationsdatei `src/Config/config.json` sämtliche Werte des Kontextes zu überschreiben.

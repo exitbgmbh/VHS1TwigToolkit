@@ -12,6 +12,7 @@ use App\Service\PdfService;
 use App\Service\SecurityService;
 use App\Service\TextModulesService;
 use App\Service\TwigService;
+use App\Service\TypesService;
 use App\Service\ValidatorService;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -45,6 +46,7 @@ $containerBuilder->register('context_service', ContextService::class)
 $containerBuilder->register('frontend_factory', FrontendFactory::class)
     ->setArguments([
         new Reference('http_service'),
+        new Reference('types_service'),
         new Reference('validator_service'),
     ]);
 
@@ -57,6 +59,15 @@ $containerBuilder->register('security_service', SecurityService::class)
         new Reference('config_service'),
         new Reference('http_service'),
         new Reference('json_service'),
+    ]);
+
+$containerBuilder->register('types_service', TypesService::class)
+    ->setArguments([
+        new Reference('cache_service'),
+        new Reference('config_service'),
+        new Reference('http_service'),
+        new Reference('json_service'),
+        new Reference('security_service'),
     ]);
 
 $containerBuilder->register('text_modules_service', TextModulesService::class)
@@ -75,8 +86,7 @@ $containerBuilder->register('app_controller', AppController::class)
         new Reference('pdf_service'),
         new Reference('security_service'),
         new Reference('text_modules_service'),
-        new Reference('twig_service'),
-        new Reference('validator_service'),
+        new Reference('twig_service')
     ]);
 
 $containerBuilder->compile();

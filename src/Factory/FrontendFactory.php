@@ -3,42 +3,47 @@
 namespace App\Factory;
 
 use App\Service\HttpService;
+use App\Service\TypesService;
 use App\Service\ValidatorService;
 use App\ViewModel\IndexViewModel;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 
 class FrontendFactory
 {
-    #public const KIND_SLIP = 1;
-
-    #public const KIND_EMAIL = 2;
-
     /** @var HttpService */
     private $_httpService;
+
+    /** @var TypesService */
+    private $_typesService;
 
     /** @var ValidatorService */
     private $_validationService;
 
     /**
-     * @param HttpService $_httpService
+     * @param HttpService $httpService
+     * @param TypesService $typesService
      * @param ValidatorService $validatorService
      */
-    public function __construct(HttpService $_httpService, ValidatorService $validatorService)
+    public function __construct(HttpService $httpService, TypesService $typesService, ValidatorService $validatorService)
     {
-        $this->_httpService = $_httpService;
+        $this->_httpService = $httpService;
+        $this->_typesService = $typesService;
         $this->_validationService = $validatorService;
     }
 
     /**
      * @param Request $request
      * @return IndexViewModel
+     * @throws InvalidArgumentException
      */
     public function create(Request $request): IndexViewModel
     {
         $advertisingMediumCode = $request->request->get('advertisingMediumCode', '');
         $forceReload = $request->request->get('forceReload', false) === 'on';
-        $kinds = $this->_getKinds();
-        $types = $this->_httpService->getEmailTypes(); # TODO switch by kind
+        $types = $this->_typesService->getTypes($forceReload);
+        $kinds = $types->getKinds();
+        $types = $types->getTypes();
         $kind = $request->request->get('kind', '');
         $type = $request->request->get('type', '');
         $template = $request->request->get('template', '');
@@ -72,17 +77,6 @@ class FrontendFactory
             $type,
             $types
         );
-    }
-
-    /**
-     * @return string[]
-     */
-    private function _getKinds(): array
-    {
-        return [
-            'email' => 'E-Mail',
-            'pdf' => 'PDF',
-        ];
     }
 
     /**

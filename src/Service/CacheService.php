@@ -18,7 +18,13 @@ class CacheService
     private const JWT_CACHE_KEY = 'jwt';
 
     /** @var string */
-    private const TEXT_MODULES_CACHE_KEY = 'text_modules';
+    private const TEXT_MODULES_CACHE_KEY = 'text-modules';
+
+    /** @var string */
+    private const TYPES_CACHE_KEY = 'types';
+
+    /** @var string */
+    private const VHS_BUILD_NUMBER_CACHE_KEY = 'vhs-build-number';
 
     /** @var FilesystemAdapter */
     private $_cacheAdapter;
@@ -122,5 +128,36 @@ class CacheService
     public function getJwtCacheKey(): string
     {
         return self::JWT_CACHE_KEY;
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    public function getVhsBuildNumberCacheKey(string $url): string
+    {
+        return sprintf('%s-%s', self::VHS_BUILD_NUMBER_CACHE_KEY, $this->_removeReservedCharacters($url));
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    public function getTypesCacheKey(string $url): string
+    {
+        return sprintf(
+            '%s-%s',
+            $this->_removeReservedCharacters($url),
+            self::TYPES_CACHE_KEY
+        );
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    private function _removeReservedCharacters(string $key): string
+    {
+        return str_replace([ '"', '{', '}', '/', '\\', '@', ':' ], '', $key);
     }
 }

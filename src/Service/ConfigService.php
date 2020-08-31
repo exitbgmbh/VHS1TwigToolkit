@@ -122,9 +122,33 @@ class ConfigService
     public function getTemplateTextModulesEndpointUrl(string $advertisingMediumCode): string
     {
         return sprintf(
-            '%s/v1/document/searchTemplateTextModules/%s',
+            '%s/v1/masterData/searchTemplateTextModules/%s',
             $this->getRestEndpoint(),
             $advertisingMediumCode
+        );
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getVhsReleaseVersionEndpointUrl(): string
+    {
+        return sprintf(
+            '%s/v1/system/readReleaseVersion',
+            $this->getRestEndpoint()
+        );
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getTypesEndpointUrl(): string
+    {
+        return sprintf(
+            '%s/v1/masterData/searchTemplateCategories',
+            $this->getRestEndpoint()
         );
     }
 
