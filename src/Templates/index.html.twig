@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlisstributeTwigToolkit</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 10px;
+        }
+        iframe {
+            margin: 10px auto;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h2>BlisstributeTwigToolkit</h2>
+    <div style="border: 1px solid #000; padding: 10px;">
+        <form id="settingsForm" action="" method="post">
+            <label for="kind">Art:* </label>
+            <select id="kind" name="kind" required>
+                {% for value, display in kinds %}
+                    <option value="{{ value }}" {% if value is same as(kind) %} selected="selected" {% endif %}>{{ display }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="type">Typ:* </label>
+            <select id="type" name="type" required>
+                {% for kind, templateTypes in types %}
+                    {% for templateType in templateTypes %}
+                        <option value="{{ templateType.renderer }}" {% if templateType.renderer is same as(type) %} selected="selected" {% endif %}>{{ templateType.name }}</option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
+
+            <label for="template">Template:* </label>
+            <input type="text" id="template" name="template" required {% if template is defined and template is not null %} value="{{ template }}" {% endif %} />
+
+            <label for="identifiers">Identifiers:* </label>
+            <input type="text" id="identifiers" name="identifiers" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} />
+
+            <label for="advertisingMediumCode">Werbemittelcode: </label>
+            <input type="text" id="advertisingMediumCode" name="advertisingMediumCode" {% if advertisingMediumCode is defined and advertisingMediumCode is not null %} value="{{ advertisingMediumCode }}" {% endif %} />
+
+            <label for="forceReload">Neuladen erzwingen?
+                <input type="checkbox" id="forceReload" name="forceReload" {% if forceReload is defined and forceReload is same as(true) %} checked="checked" {% endif %} />
+            </label>
+
+            <input type="submit" name="submit" value="Erzeugen" />
+        </form>
+    </div>
+
+    {% if errors is defined and erros is not empty %}
+        {{ errors }}
+    {% endif %}
+
+    {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and erros is empty %}
+        <iframe src="{{ iframeSrc }}">
+        </iframe>
+    {% endif %}
+
+    <script>
+        function showTypes() {
+            const kindElement = document.getElementById('kind');
+            let typesElement = document.getElementById('type');
+            typesElement.length = 0;
+
+            types[kindElement.value].forEach(function(item, index) {
+                let option = document.createElement('option');
+                option.value = item.renderer;
+                option.innerHTML = item.name;
+
+                console.log(type);
+
+                if (type === item.renderer) {
+                    console.log(item);
+                    console.log('ggggg');
+                    option.selected = true;
+                }
+
+                typesElement.appendChild(option);
+            });
+        };
+
+        const types = {{ types|raw }};
+        const type = '{{ type }}';
+
+        document.getElementById('kind').addEventListener('change', showTypes);
+
+        (function() {
+            showTypes();
+        })();
+    </script>
+</body>
+</html>
