@@ -40,7 +40,7 @@ class FrontendFactory
     public function create(Request $request): IndexViewModel
     {
         $advertisingMediumCode = $request->request->get('advertisingMediumCode', '');
-        $forceReload = $request->request->get('forceReload', false) === 'on';
+        $forceReload = $request->request->get('forceReload', false) === 'true';
         $types = $this->_typesService->getTypes($forceReload);
         $kinds = $types->getKinds();
         $types = $types->getTypes();

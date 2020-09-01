@@ -72,7 +72,6 @@ class AppController
     public function index(Request $request): Response
     {
         $viewModel = $this->_frontendFactory->create($request);
-
         $context = $this->_twigService->renderTemplate(
             'index.html.twig',
             [
@@ -129,7 +128,7 @@ class AppController
         $templateName = $request->attributes->get('template');
         $identifiers = $request->attributes->get('identifiers');
         $advertisingMediumCode = $request->attributes->get('advertisingMediumCode');
-        $forceReload = $request->get('forceReload', false) === 'true';
+        $forceReload = $request->request->get('forceReload', false) === 'true';
 
         $jwt = $this->_securityService->getJwt();
         $context = $this->_contextService->getContext($type, $identifiers, $jwt, $forceReload);

@@ -61,6 +61,9 @@ class SecurityService
 
         $response = $this->_jsonService->parseJson($response);
         $jwt = $response['response']['jwt'];
+        if (empty($jwt)) {
+            throw new Exception('authentication failed. check credentials');
+        }
 
         $this->_cacheService->set($jwtCacheKey, $jwt, 28800);
 

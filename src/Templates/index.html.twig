@@ -2,68 +2,152 @@
 <html lang="de">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
     <title>BlisstributeTwigToolkit</title>
     <style>
         html, body {
-            height: 100%;
-            margin: 10px;
+            overflow:hidden;
+        }
+        .container-fluid {
+            padding: 10px 16px;
+            margin-top: 56px;
+            background-color: #323639 !important
         }
         iframe {
-            margin: 10px auto;
-            height: 100%;
+            height: calc(100vh - 107px);
+
+            border: 0;
             width: 100%;
         }
+        .bg-dark {
+            background-color: #323639 !important
+        }
+        .form-control::-webkit-input-placeholder { color: #c8c8c8; }  /* WebKit, Blink, Edge */
+        .form-control:-moz-placeholder { color: #c8c8c8; }  /* Mozilla Firefox 4 to 18 */
+        .form-control::-moz-placeholder { color: #c8c8c8; }  /* Mozilla Firefox 19+ */
+        .form-control:-ms-input-placeholder { color: #c8c8c8; }  /* Internet Explorer 10-11 */
+        .form-control::-ms-input-placeholder { color: #c8c8c8; }  /* Microsoft Edge */
     </style>
 </head>
 <body>
-    <h2>BlisstributeTwigToolkit</h2>
-    <div style="border: 1px solid #000; padding: 10px;">
-        <form id="settingsForm" action="" method="post">
-            <label for="kind">Art:* </label>
-            <select id="kind" name="kind" required>
-                {% for value, display in kinds %}
-                    <option value="{{ value }}" {% if value is same as(kind) %} selected="selected" {% endif %}>{{ display }}</option>
-                {% endfor %}
-            </select>
+<header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">BlisstributeTwigToolkit</a>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">v0.1</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">&copy;2020 exitB GmbH</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<!-- Begin page content -->
+<div class="container-fluid">
+    <form id="settingsForm" action="" method="post">
+        <input type="hidden" id="hidden-reload" name="forceReload" value="1234" />
+        <div class="row">
+            <div class="col-2">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="kind">Art</label>
+                    </div>
+                    <select class="custom-select d-block w-10" id="kind" name="kind" required>
+                        {% for value, display in kinds %}
+                            <option value="{{ value }}" {% if value is same as(kind) %} selected="selected" {% endif %}>{{ display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
 
-            <label for="type">Typ:* </label>
-            <select id="type" name="type" required>
-                {% for kind, templateTypes in types %}
-                    {% for templateType in templateTypes %}
-                        <option value="{{ templateType.renderer }}" {% if templateType.renderer is same as(type) %} selected="selected" {% endif %}>{{ templateType.name }}</option>
-                    {% endfor %}
-                {% endfor %}
-            </select>
+            <div class="col-2">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="type">Typ</label>
+                    </div>
+                    <select class="custom-select d-block w-10" id="type" name="type" required>
+                        {% for kind, templateTypes in types %}
+                            {% for templateType in templateTypes %}
+                                <option value="{{ templateType.renderer }}" {% if templateType.renderer is same as(type) %} selected="selected" {% endif %}>{{ templateType.name }}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
 
-            <label for="template">Template:* </label>
-            <input type="text" id="template" name="template" required {% if template is defined and template is not null %} value="{{ template }}" {% endif %} />
+            <div class="col-2">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="ig-template-label">Template</span>
+                    </div>
+                    <input placeholder="default_invoice.html" type="text" class="form-control" id="template" name="template" aria-label="templates" aria-describedby="ig-template-label" required {% if template is defined and template is not null %} value="{{ template }}" {% endif %} />
+                </div>
+            </div>
 
-            <label for="identifiers">Identifiers:* </label>
-            <input type="text" id="identifiers" name="identifiers" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} />
+            <div class="col-2">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="ig-identifiers-label">Identifikation</span>
+                    </div>
+                    <input type="text" placeholder="EXB202012323" class="form-control" id="identifiers" name="identifiers" aria-label="identifiers" aria-describedby="ig-identifiers-label" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} />
+                </div>
+            </div>
 
-            <label for="advertisingMediumCode">Werbemittelcode: </label>
-            <input type="text" id="advertisingMediumCode" name="advertisingMediumCode" {% if advertisingMediumCode is defined and advertisingMediumCode is not null %} value="{{ advertisingMediumCode }}" {% endif %} />
+            <div class="col-2">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="ig-advertising-medium-label">Werbemittel</span>
+                    </div>
+                    <input type="text" placeholder="EXB" class="form-control" id="advertisingMediumCode" name="advertisingMediumCode" aria-label="advertising-medium" aria-describedby="ig-advertising-medium-label" {% if advertisingMediumCode is defined and advertisingMediumCode is not null %} value="{{ advertisingMediumCode }}" {% endif %} />
+                </div>
+            </div>
 
-            <label for="forceReload">Neuladen erzwingen?
-                <input type="checkbox" id="forceReload" name="forceReload" {% if forceReload is defined and forceReload is same as(true) %} checked="checked" {% endif %} />
-            </label>
+            <div class="col-2">
+                <div class="row">
+                    <div class="col-md-7">
+                        <button class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
+                    </div>
+                    <div class="col-md-5">
+                        <button class="btn btn-light btn-sm btn-block" type="button" onclick="submitForm(true)">Cache leeren</button>
+                    </div>
+                </div>
 
-            <input type="submit" name="submit" value="Erzeugen" />
-        </form>
-    </div>
+            </div>
 
-    {% if errors is defined and erros is not empty %}
-        {{ errors }}
-    {% endif %}
+        </div>
+    </form>
+</div>
 
-    {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and erros is empty %}
+    {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and errors is empty %}
         <iframe src="{{ iframeSrc }}">
         </iframe>
     {% endif %}
+    {% if errors is defined and errors is not empty %}
+        <div class="container">
+            {{ errors }}
+        </div>
+    {% endif %}
 
     <script>
-        function showTypes() {
+        const submitForm = (forceReload = false) => {
+            const form = document.getElementById('settingsForm');
+            document.getElementById('hidden-reload').value = forceReload;
+
+            if (form.checkValidity()) {
+                form.submit();
+            } else {
+                form.reportValidity();
+            }
+        }
+
+        const showTypes = () => {
             const kindElement = document.getElementById('kind');
             let typesElement = document.getElementById('type');
             typesElement.length = 0;
@@ -83,7 +167,7 @@
 
                 typesElement.appendChild(option);
             });
-        };
+        }
 
         const types = {{ types|raw }};
         const type = '{{ type }}';
