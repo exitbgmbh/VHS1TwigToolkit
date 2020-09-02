@@ -9,13 +9,22 @@ use Psr\Cache\InvalidArgumentException;
 class CacheService
 {
     /** @var string */
-    private const CONTEXT_CACHE_KEY = 'context';
+    private const CONTEXT_MAIL_CACHE_KEY = 'context-mail';
+
+    /** @var string */
+    private const CONTEXT_PDF_CACHE_KEY = 'context-pdf';
 
     /** @var string */
     private const JWT_CACHE_KEY = 'jwt';
 
     /** @var string */
-    private const TEXT_MODULES_CACHE_KEY = 'text_modules';
+    private const TEXT_MODULES_CACHE_KEY = 'text-modules';
+
+    /** @var string */
+    private const TYPES_CACHE_KEY = 'types';
+
+    /** @var string */
+    private const VHS_BUILD_NUMBER_CACHE_KEY = 'vhs-build-number';
 
     /** @var FilesystemAdapter */
     private $_cacheAdapter;
@@ -87,7 +96,7 @@ class CacheService
      */
     public function getContextCacheKey(string $type, string $identifiers): string
     {
-        return sprintf('%s-%s-%s', self::CONTEXT_CACHE_KEY, $type, $identifiers);
+        return sprintf('%s-%s-%s', self::CONTEXT_PDF_CACHE_KEY, $type, $identifiers);
     }
 
     /**
@@ -104,10 +113,51 @@ class CacheService
     }
 
     /**
+     * @param string $type
+     * @param string $identifier
+     * @return string
+     */
+    public function getEmailContextCacheKey(string $type, string $identifier): string
+    {
+        return sprintf('%s-%s-%s', self::CONTEXT_MAIL_CACHE_KEY, $type, $identifier);
+    }
+
+    /**
      * @return string
      */
     public function getJwtCacheKey(): string
     {
         return self::JWT_CACHE_KEY;
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    public function getVhsBuildNumberCacheKey(string $url): string
+    {
+        return sprintf('%s-%s', self::VHS_BUILD_NUMBER_CACHE_KEY, $this->_removeReservedCharacters($url));
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    public function getTypesCacheKey(string $url): string
+    {
+        return sprintf(
+            '%s-%s',
+            $this->_removeReservedCharacters($url),
+            self::TYPES_CACHE_KEY
+        );
+    }
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    private function _removeReservedCharacters(string $key): string
+    {
+        return str_replace([ '"', '{', '}', '/', '\\', '@', ':' ], '', $key);
     }
 }

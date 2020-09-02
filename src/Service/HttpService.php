@@ -34,7 +34,29 @@ class HttpService
      * @return string
      * @throws Exception
      */
+    public function getEmailContext(string $url, string $jwt): string
+    {
+        return $this->get($url, $jwt);
+    }
+
+    /**
+     * @param string $url
+     * @param string $jwt
+     * @return string
+     * @throws Exception
+     */
     public function getTemplateTextModules(string $url, string $jwt): string
+    {
+        return $this->get($url, $jwt);
+    }
+
+    /**
+     * @param string $url
+     * @param string $jwt
+     * @return string
+     * @throws Exception
+     */
+    public function getTypes(string $url, string $jwt): string
     {
         return $this->get($url, $jwt);
     }
