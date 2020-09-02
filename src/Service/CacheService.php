@@ -73,6 +73,9 @@ class CacheService
     {
         try {
             $item = $this->get($key);
+            if (empty($item)) {
+                return false;
+            }
         } catch (InvalidArgumentException $exception) {
             return false;
         }

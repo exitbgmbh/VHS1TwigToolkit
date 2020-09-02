@@ -128,7 +128,7 @@ class AppController
         $templateName = $request->attributes->get('template');
         $identifiers = $request->attributes->get('identifiers');
         $advertisingMediumCode = $request->attributes->get('advertisingMediumCode');
-        $forceReload = $request->request->get('forceReload', false) === 'true';
+        $forceReload = $request->get('forceReload', false) === 'true';
 
         $jwt = $this->_securityService->getJwt();
         $context = $this->_contextService->getContext($type, $identifiers, $jwt, $forceReload);
