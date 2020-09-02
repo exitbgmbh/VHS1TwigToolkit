@@ -19,7 +19,7 @@ class TypesService
     public const TEMPLATE_TYPE_SNIPPET = 3;
 
     /** @var int */
-    public const VHS_MIN_BUILD_TO_SUPPORT_TYPES_API = 1930;
+    public const VHS_MAX_BUILD_UNSUPPORTED_TYPES_API = 1930;
 
     /** @var CacheService */
     private $_cacheService;
@@ -73,7 +73,7 @@ class TypesService
         }
 
         $buildNumber = $this->_getBuildVersion($forceReload);
-        if ($buildNumber < self::VHS_MIN_BUILD_TO_SUPPORT_TYPES_API) {
+        if ($buildNumber <= self::VHS_MAX_BUILD_UNSUPPORTED_TYPES_API) {
             return new TypesModel(
                 [
                     'pdf' => 'PDF',
@@ -199,7 +199,7 @@ class TypesService
         $response = $this->_jsonService->parseJson($response);
 
         if ($response['httpCode'] !== Response::HTTP_OK) {
-            $buildNumber = self::VHS_MIN_BUILD_TO_SUPPORT_TYPES_API - 1;
+            $buildNumber = self::VHS_MAX_BUILD_UNSUPPORTED_TYPES_API;
         } else {
             $buildNumber = (int)$response['response']['build'];
         }
