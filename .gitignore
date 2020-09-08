@@ -2,4 +2,5 @@ vendor/
 src/Config/config.json
 src/Templates/*
 !src/Templates/.gitkeep
+!src/Templates/index.html.twig
 docker-compose.yml

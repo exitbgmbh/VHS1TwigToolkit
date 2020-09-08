@@ -38,6 +38,7 @@ class TwigService
         array $mapping
     ): string {
         $loader = new TwigFilesystemLoader([
+            __DIR__ . '/../Templates',
             __DIR__ . '/../Templates/email',
             __DIR__ . '/../Templates/slip',
         ]);
