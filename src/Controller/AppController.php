@@ -8,7 +8,6 @@ use App\Service\PdfService;
 use App\Service\SecurityService;
 use App\Service\TextModulesService;
 use App\Service\TwigService;
-use App\Service\ValidatorService;
 use Mpdf\MpdfException;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
