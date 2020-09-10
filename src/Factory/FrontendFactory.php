@@ -59,7 +59,7 @@ class FrontendFactory
         $template = $request->request->get('template', '');
         $identifiers = $request->request->get('identifiers', '');
         $language = $request->request->get('language', '');
-        $languages = $this->_languageService->getLanguages($forceReload, $advertisingMediumCode, $template);
+        $languages = $this->_languageService->getLanguages($forceReload);
 
         $realType = $type;
         if (false !== ($pos = strpos($type, '###'))) {

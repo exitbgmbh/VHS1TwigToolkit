@@ -173,33 +173,15 @@ class ConfigService
     }
 
     /**
-     * @param string $advertisingMediumCode
-     * @param string $template
      * @return string
      * @throws Exception
      */
-    public function getLanguagesEndpointUrl(string $advertisingMediumCode, string $template): string
+    public function getLanguagesEndpointUrl(): string
     {
-        $url = sprintf(
-            '%s/v1/masterData/searchTemplateTextModuleLanguages',
+        return sprintf(
+            '%s/v1/masterData/searchLanguages',
             $this->getRestEndpoint()
         );
-
-        $query = [];
-        if (!empty($advertisingMediumCode)) {
-            $query['advertisingMediumCode'] = $advertisingMediumCode;
-        }
-
-        if (!empty($template)) {
-            # we don't want this yet
-            #$query['template'] = $template;
-        }
-
-        if (!empty($query)) {
-            $url .= '?' . http_build_query($query);
-        }
-
-        return $url;
     }
 
     /**

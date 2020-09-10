@@ -51,13 +51,11 @@ class LanguageService
 
     /**
      * @param bool $forceReload
-     * @param string $advertisingMediumCode
-     * @param string $template
      * @return array
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function getLanguages(bool $forceReload, string $advertisingMediumCode = '', string $template = ''): array
+    public function getLanguages(bool $forceReload): array
     {
         $languagesCacheKey = $this->_cacheService->getLanguagesCacheKey();
         if ($this->_cacheService->has($languagesCacheKey) && !$forceReload) {
@@ -69,7 +67,7 @@ class LanguageService
             return [];
         }
 
-        $languagesEndpointUrl = $this->_configService->getLanguagesEndpointUrl($advertisingMediumCode, $template);
+        $languagesEndpointUrl = $this->_configService->getLanguagesEndpointUrl();
         $languages = $this->_httpService->getLanguages($languagesEndpointUrl, $this->_securityService->getJwt());
         $languages = $this->_jsonService->parseJson($languages);
         $languages = $languages['response'];
