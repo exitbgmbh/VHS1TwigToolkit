@@ -109,7 +109,26 @@
                 </div>
             </div>
 
-            <div class="col-2">
+            {% if languages is defined and languages is not empty %}
+                <div class="col-2">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="language">Sprache</label>
+                        </div>
+                        <select class="custom-select d-block w-10" id="language" name="language">
+                            <option value="">Bitte wählen</option>
+                            {% for language in languages %}
+                                <option value="{{ language.isoCode }}" {% if selectedLanguage is same as(language.isoCode) %} selected="selected" {% endif %}>{{ language.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="row mt-3 justify-content-center">
+            <div class="col-2 col">
                 <div class="row">
                     <div class="col-md-7">
                         <button class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
@@ -118,9 +137,7 @@
                         <button class="btn btn-light btn-sm btn-block" type="button" onclick="submitForm(true)">Cache leeren</button>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </form>
 </div>

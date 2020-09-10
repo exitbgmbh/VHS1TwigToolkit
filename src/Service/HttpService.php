@@ -67,6 +67,17 @@ class HttpService
      * @return string
      * @throws Exception
      */
+    public function getLanguages(string $url, string $jwt): string
+    {
+        return $this->get($url, $jwt);
+    }
+
+    /**
+     * @param string $url
+     * @param string $jwt
+     * @return string
+     * @throws Exception
+     */
     public function get(string $url, string $jwt = ''): string
     {
         $options = [

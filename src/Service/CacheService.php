@@ -18,6 +18,9 @@ class CacheService
     private const JWT_CACHE_KEY = 'jwt';
 
     /** @var string */
+    private const LANGUAGES_CACHE_KEY = 'languages';
+
+    /** @var string */
     private const TEXT_MODULES_CACHE_KEY = 'text-modules';
 
     /** @var string */
@@ -104,15 +107,20 @@ class CacheService
 
     /**
      * @param string $advertisingMediumCode
+     * @param string $language
      * @return string
      */
-    public function getTextModulesCacheKey(string $advertisingMediumCode): string
+    public function getTextModulesCacheKey(string $advertisingMediumCode, string $language): string
     {
         if (empty($advertisingMediumCode)) {
             $advertisingMediumCode = 'default';
         }
 
-        return sprintf('%s-%s', self::TEXT_MODULES_CACHE_KEY, $advertisingMediumCode);
+        if (empty($language)) {
+            $language = 'default';
+        }
+
+        return sprintf('%s-%s-%s', self::TEXT_MODULES_CACHE_KEY, $advertisingMediumCode, $language);
     }
 
     /**
@@ -153,6 +161,14 @@ class CacheService
             $this->_removeReservedCharacters($url),
             self::TYPES_CACHE_KEY
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguagesCacheKey(): string
+    {
+        return self::LANGUAGES_CACHE_KEY;
     }
 
     /**

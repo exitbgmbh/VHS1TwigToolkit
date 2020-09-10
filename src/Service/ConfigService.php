@@ -115,17 +115,37 @@ class ConfigService
     }
 
     /**
-     * @param string $advertisingMediumCode
+     * @param string $templateName
+     * @param string|null $advertisingMediumCode
+     * @param string|null $language
      * @return string
      * @throws Exception
      */
-    public function getTemplateTextModulesEndpointUrl(string $advertisingMediumCode): string
-    {
-        return sprintf(
+    public function getTemplateTextModulesEndpointUrl(
+        string $templateName,
+        string $advertisingMediumCode = null,
+        string $language = null
+    ): string {
+        $url = sprintf(
             '%s/v1/masterData/searchTemplateTextModules/%s',
             $this->getRestEndpoint(),
-            $advertisingMediumCode
+            $templateName
         );
+
+        $query = [];
+        if (!empty($advertisingMediumCode)) {
+            $query['advertisingMediumCode'] = $advertisingMediumCode;
+        }
+
+        if (!empty($language)) {
+            $query['language'] = $language;
+        }
+
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
+        }
+
+        return $url;
     }
 
     /**
@@ -150,6 +170,36 @@ class ConfigService
             '%s/v1/masterData/searchTemplateCategories',
             $this->getRestEndpoint()
         );
+    }
+
+    /**
+     * @param string $advertisingMediumCode
+     * @param string $template
+     * @return string
+     * @throws Exception
+     */
+    public function getLanguagesEndpointUrl(string $advertisingMediumCode, string $template): string
+    {
+        $url = sprintf(
+            '%s/v1/masterData/searchTemplateTextModuleLanguages',
+            $this->getRestEndpoint()
+        );
+
+        $query = [];
+        if (!empty($advertisingMediumCode)) {
+            $query['advertisingMediumCode'] = $advertisingMediumCode;
+        }
+
+        if (!empty($template)) {
+            # we don't want this yet
+            #$query['template'] = $template;
+        }
+
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
+        }
+
+        return $url;
     }
 
     /**

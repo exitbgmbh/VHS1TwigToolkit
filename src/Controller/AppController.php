@@ -76,6 +76,8 @@ class AppController
             [
                 'errors' => implode(',', $viewModel->getErrors()),
                 'kinds' => $viewModel->getKinds(),
+                'selectedLanguage' => $viewModel->getLanguage(),
+                'languages' => $viewModel->getLanguages(),
                 'type' => $viewModel->getType(),
                 'types' => json_encode($viewModel->getTypes()),
                 'iframeSrc' => $viewModel->getIFrameSrc(),
@@ -127,12 +129,19 @@ class AppController
         $templateName = $request->attributes->get('template');
         $identifiers = $request->attributes->get('identifiers');
         $advertisingMediumCode = $request->attributes->get('advertisingMediumCode');
+        $language = $request->get('language', '');
         $forceReload = $request->get('forceReload', false) === 'true';
 
         $jwt = $this->_securityService->getJwt();
         $context = $this->_contextService->getContext($type, $identifiers, $jwt, $forceReload);
 
-        $textModulesMapping = $this->_textModulesService->getTextModules($advertisingMediumCode, $jwt, $forceReload);
+        $textModulesMapping = $this->_textModulesService->getTextModules(
+            $templateName,
+            $advertisingMediumCode,
+            $language,
+            $jwt,
+            $forceReload
+        );
 
         return $this->_twigService->renderTemplate($templateName, $context, $textModulesMapping);
     }

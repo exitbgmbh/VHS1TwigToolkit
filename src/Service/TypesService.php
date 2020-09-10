@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Model\TypesModel;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
-use Symfony\Component\HttpFoundation\Response;
 
 class TypesService
 {
@@ -17,9 +16,6 @@ class TypesService
 
     /** @var int */
     public const TEMPLATE_TYPE_SNIPPET = 3;
-
-    /** @var int */
-    public const VHS_MAX_BUILD_UNSUPPORTED_TYPES_API = 1930;
 
     /** @var CacheService */
     private $_cacheService;
@@ -36,25 +32,31 @@ class TypesService
     /** @var SecurityService */
     private $_securityService;
 
+    /** @var VhsBuildService */
+    private $_vhsBuildService;
+
     /**
-     * @param CacheService $_cacheService
-     * @param ConfigService $_configService
-     * @param HttpService $_httpService
-     * @param JsonService $_jsonService
-     * @param SecurityService $_securityService
+     * @param CacheService $cacheService
+     * @param ConfigService $configService
+     * @param HttpService $httpService
+     * @param JsonService $jsonService
+     * @param SecurityService $securityService
+     * @param VhsBuildService $vhsBuildService
      */
     public function __construct(
-        CacheService $_cacheService,
-        ConfigService $_configService,
-        HttpService $_httpService,
-        JsonService $_jsonService,
-        SecurityService $_securityService
+        CacheService $cacheService,
+        ConfigService $configService,
+        HttpService $httpService,
+        JsonService $jsonService,
+        SecurityService $securityService,
+        VhsBuildService $vhsBuildService
     ) {
-        $this->_cacheService = $_cacheService;
-        $this->_configService = $_configService;
-        $this->_httpService = $_httpService;
-        $this->_jsonService = $_jsonService;
-        $this->_securityService = $_securityService;
+        $this->_cacheService = $cacheService;
+        $this->_configService = $configService;
+        $this->_httpService = $httpService;
+        $this->_jsonService = $jsonService;
+        $this->_securityService = $securityService;
+        $this->_vhsBuildService = $vhsBuildService;
     }
 
     /**
@@ -72,8 +74,8 @@ class TypesService
             $types = $this->_cacheService->get($typesCacheKey)->get();
         }
 
-        $buildNumber = $this->_getBuildVersion($forceReload);
-        if ($buildNumber <= self::VHS_MAX_BUILD_UNSUPPORTED_TYPES_API) {
+        $buildNumber = $this->_vhsBuildService->getBuildVersion($forceReload);
+        if ($buildNumber <= VhsBuildService::VHS_MAX_BUILD_UNSUPPORTED_TYPES_API) {
             return new TypesModel(
                 [
                     'pdf' => 'PDF',
@@ -117,9 +119,15 @@ class TypesService
                     continue;
                 }
 
+                $renderer = $templateType['renderer'];
+                $name = $templateType['name'];
+                if (in_array($renderer, array_column($availableTypes, 'renderer'))) {
+                    $renderer .= '###' . $name;
+                }
+
                 $availableTypes[] = [
-                    'name' => $templateType['name'],
-                    'renderer' => $templateType['renderer'],
+                    'name' => $name,
+                    'renderer' => $renderer,
                 ];
             }
 
@@ -180,36 +188,6 @@ class TypesService
     }
 
     /**
-     * @param bool $forceReload
-     * @return int
-     * @throws InvalidArgumentException
-     * @throws Exception
-     */
-    private function _getBuildVersion(bool $forceReload): int
-    {
-        $url = $this->_configService->getRestEndpoint();
-        $vhsBuildNumberCacheKey = $this->_cacheService->getVhsBuildNumberCacheKey($url);
-        if ($this->_cacheService->has($vhsBuildNumberCacheKey) && !$forceReload) {
-            return $this->_cacheService->get($vhsBuildNumberCacheKey)->get();
-        }
-
-        $releaseInfosEndpointUrl = $this->_configService->getVhsReleaseVersionEndpointUrl();
-        $jwt = $this->_securityService->getJwt();
-        $response = $this->_httpService->get($releaseInfosEndpointUrl, $jwt);
-        $response = $this->_jsonService->parseJson($response);
-
-        if ($response['httpCode'] !== Response::HTTP_OK) {
-            $buildNumber = self::VHS_MAX_BUILD_UNSUPPORTED_TYPES_API;
-        } else {
-            $buildNumber = (int)$response['response']['build'];
-        }
-
-        $this->_cacheService->set($vhsBuildNumberCacheKey, $buildNumber);
-
-        return $buildNumber;
-    }
-
-    /**
      * @return string[]
      */
     private function _getStaticPdfTypes(): array
@@ -218,11 +196,11 @@ class TypesService
             'pdf' => [
                 [
                     'name' => 'Rechnung',
-                    'renderer' => 'Invoice',
+                    'renderer' => 'Invoice###Rechnung',
                 ],
                 [
                     'name' => 'Rechnung (Email-Anhang)',
-                    'renderer' => 'Invoice',
+                    'renderer' => 'Invoice#InvoiceEmail###Rechnung (Email-Anhang)',
                 ],
                 [
                     'name' => 'Lieferschein',

@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Service\HttpService;
+use App\Service\LanguageService;
 use App\Service\TypesService;
 use App\Service\ValidatorService;
 use App\ViewModel\IndexViewModel;
@@ -14,6 +15,9 @@ class FrontendFactory
     /** @var HttpService */
     private $_httpService;
 
+    /** @var LanguageService */
+    private $_languageService;
+
     /** @var TypesService */
     private $_typesService;
 
@@ -22,12 +26,18 @@ class FrontendFactory
 
     /**
      * @param HttpService $httpService
+     * @param LanguageService $languageService
      * @param TypesService $typesService
      * @param ValidatorService $validatorService
      */
-    public function __construct(HttpService $httpService, TypesService $typesService, ValidatorService $validatorService)
-    {
+    public function __construct(
+        HttpService $httpService,
+        LanguageService $languageService,
+        TypesService $typesService,
+        ValidatorService $validatorService
+    ) {
         $this->_httpService = $httpService;
+        $this->_languageService = $languageService;
         $this->_typesService = $typesService;
         $this->_validationService = $validatorService;
     }
@@ -48,6 +58,13 @@ class FrontendFactory
         $type = $request->request->get('type', '');
         $template = $request->request->get('template', '');
         $identifiers = $request->request->get('identifiers', '');
+        $language = $request->request->get('language', '');
+        $languages = $this->_languageService->getLanguages($forceReload, $advertisingMediumCode, $template);
+
+        $realType = $type;
+        if (false !== ($pos = strpos($type, '###'))) {
+            $realType = substr($type, 0, $pos);
+        };
 
         $iFrameSrc = '';
         $errors = [];
@@ -56,11 +73,12 @@ class FrontendFactory
             if (empty($errors)) {
                 $iFrameSrc = $this->_generateIframeUrl(
                     $kind,
-                    $type,
+                    $realType,
                     $template,
                     $identifiers,
                     $advertisingMediumCode,
-                    $forceReload
+                    $forceReload,
+                    $language
                 );
             }
         }
@@ -70,9 +88,11 @@ class FrontendFactory
             $errors,
             $forceReload,
             $identifiers,
+            $iFrameSrc,
             $kind,
             $kinds,
-            $iFrameSrc,
+            $language,
+            $languages,
             $template,
             $type,
             $types
@@ -86,6 +106,7 @@ class FrontendFactory
      * @param string $identifiers
      * @param string $advertisingMediumCode
      * @param bool $forceReload
+     * @param string $language
      * @return string
      */
     private function _generateIframeUrl(
@@ -94,7 +115,8 @@ class FrontendFactory
         string $template,
         string $identifiers,
         string $advertisingMediumCode,
-        bool $forceReload
+        bool $forceReload,
+        string $language
     ): string {
         $url = sprintf(
             '/%s/%s/%s/%s',
@@ -108,8 +130,17 @@ class FrontendFactory
             $url .= '/' . $advertisingMediumCode;
         }
 
+        $query = [];
         if ($forceReload) {
-            $url .= '?forceReload=true';
+            $query['forceReload'] = 'true';
+        }
+
+        if (!empty($language)) {
+            $query['language'] = $language;
+        }
+
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
         }
 
         return $url;
