@@ -2,7 +2,7 @@
 
 namespace App\ViewModel;
 
-class IndexViewModel
+class RequestViewModel
 {
     /** @var string */
     private $advertisingMediumCode;

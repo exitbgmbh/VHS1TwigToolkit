@@ -65,13 +65,16 @@ Nach Absenden des Formulars, wird ein iFrame erzeugt welches folgende Route aufr
 
 Ein Beispiel für eine (gecachte) Rechnung würde so aussehen:
 
-    http://localhost:8085/email/invoice/default_invoice.html/{Rechnungsnummer}
+    http://localhost:8085/pdf/invoice/default_invoice.html/{Rechnungsnummer}
 
 Wenn wir also möchten, können wir auch direkt die URL aus dem iFrame aufrufen.  
 Je nach ausgewähltem Typen, sind die Identifier unterschiedlich. Rechnungsnummer bei Typ 'invoice', Picklistennummer bei Typ 'picklist' etc.
 
 Hat das angeprochene System eine höhere Buildnummer als `1930`, werden sich die Typen über eine API des VHS geholt. In allen anderen Fällen,
 werden auf statisch hinterlegte Werte zurückgegriffen. 
+Hat das angesprochene System eine höhere Buildnummer als `1931`, werden sich zusätzlich noch die verfügbaren Sprachen des System geholt und
+in einem Dropdown auf der Seite angezeigt. Mit der zusätzlichen Sprachauswahl, können so die Templates mit verschiedenen Sprachen getestet werden.
+Denn bei einer angegebenen Sprache werden die Textbausteine, sofern vorganend, übermittelt.
 
 ## Context überschreiben
 
@@ -100,18 +103,22 @@ Folgende Daten werden lokal auf dem Filesystem gespeichert:
 - JWT
 - der Kontext
 - die Textbausteine
+- VHS Buildnummer
+- Typen
+- Sprachen
 
 Der `JWT` wird, da er für 8 Stunden gültig ist, für 8 Stunden auf der Platte gespeichert. Wird der `JWT` aus dem Cache
 gelöscht, dann wird sich automatisch ein neuer geholt.
 
 Der Kontext eines jeden Typs + Identifier wird ebenso auf der Festplatte gespeichert. Hier muss man aufpassen: Einmal im Cache,
-kann der Kontext nur aktualisiert werden, wenn man an die URL folgenden Parameter hängt: `domain.tld/path?forceReload=true`.
+kann der Kontext nur aktualisiert werden, wenn man den `Cache leeren` Button benutzt. Dann wird der Cache geleert und die Seite frisch
+geladen. Alternativ kann man auch den Cache manuell aus dem Dateisystem löschen: `rm -rf /tmp/smyfony-cache`.
 
 Ähnlich verhält es sich mit den Textbausteinen. Diese werden pro Werbemittelcode, oder eben die Defaults, auf der Platte gespeichert.
-Auch hier können wir diese nur aktualisieren, wenn wir den Reload forcen: `domain.tld/path?forceReload=true`.
+Auch hier können wir diese nur aktualisieren, wenn wir den Reload forcen und den `Cache leeren` Button nutzen.
 Der Cache gilt natürlich nicht für die Textbausteine aus der `src/Config/config.json`, diese werden immer "über" den Cache geschrieben.
 
-Der Parameter gilt `forceReload=true` gilt immer sowohl für den Kontext, als auch die Textbausteine, also die Aktualisierung des einen
-oder anderen ist also nicht möglich. Es wird dann immer alles aktualisiert.
+Der Button `Cache leeren` gilt immer für alle Sachen die auf dem Dateisystem gecacht werden, also die Aktualisierung des einen
+oder anderen ist somit nicht möglich. Es wird dann immer alles aktualisiert. (Es sei denn man löscht manuell z.B. nur den `jwt cache` aus dem Dateisystem).
 
 Standardmäßig wird der Cache in `/tmp/symfony-cache` geschrieben.

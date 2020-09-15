@@ -58,10 +58,10 @@ class TextModulesService
         if ($this->_cacheService->has($textModulesCacheKey) && !$forceReload) {
             $textModules = $this->_cacheService->get($textModulesCacheKey)->get();
         } else {
-            $textModulesEndpointUrl = $this->_configService->getTemplateTextModulesEndpointUrl($template, $advertisingMediumCode, $language);
+            $textModulesEndpointUrl = $this->_configService->getTemplateTextModulesEndpointUrl($advertisingMediumCode, $template, $language);
             $textModules = $this->_httpService->getTemplateTextModules($textModulesEndpointUrl, $jwt);
             $textModules = $this->_jsonService->parseJson($textModules);
-            $textModules = $textModules['response'];
+            $textModules = $textModules['response']['textModules'];
 
             $transformedTextModules = [];
             foreach ($textModules as $textModule) {

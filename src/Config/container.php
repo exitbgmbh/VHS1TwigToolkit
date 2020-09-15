@@ -1,7 +1,8 @@
 <?php
 
 use App\Controller\AppController;
-use App\Factory\FrontendFactory;
+use App\Factory\TemplateFactory;
+use App\Factory\ViewModelFactory;
 use App\Service\CacheService;
 use App\Service\ConfigService;
 use App\Service\ContextService;
@@ -45,12 +46,19 @@ $containerBuilder->register('context_service', ContextService::class)
         new Reference('mapper_service'),
     ]);
 
-$containerBuilder->register('frontend_factory', FrontendFactory::class)
+$containerBuilder->register('view_model_factory', ViewModelFactory::class)
     ->setArguments([
-        new Reference('http_service'),
         new Reference('language_service'),
         new Reference('types_service'),
         new Reference('validator_service'),
+    ]);
+
+$containerBuilder->register('template_factory', TemplateFactory::class)
+    ->setArguments([
+        new Reference('context_service'),
+        new Reference('security_service'),
+        new Reference('text_modules_service'),
+        new Reference('view_model_factory'),
     ]);
 
 $containerBuilder->register('twig_service', TwigService::class)
@@ -104,12 +112,9 @@ $containerBuilder->register('text_modules_service', TextModulesService::class)
 $containerBuilder->register('app_controller', AppController::class)
     ->setPublic(true)
     ->setArguments([
-        new Reference('context_service'),
-        new Reference('frontend_factory'),
         new Reference('pdf_service'),
-        new Reference('security_service'),
-        new Reference('text_modules_service'),
-        new Reference('twig_service')
+        new Reference('template_factory'),
+        new Reference('twig_service'),
     ]);
 
 $containerBuilder->compile();

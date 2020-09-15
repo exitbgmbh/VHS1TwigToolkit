@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Factory\FrontendFactory;
-use App\Service\ContextService;
+use App\Factory\TemplateFactory;
 use App\Service\PdfService;
-use App\Service\SecurityService;
-use App\Service\TextModulesService;
 use App\Service\TwigService;
+use App\Service\TypesService;
 use Mpdf\MpdfException;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,45 +16,27 @@ use Twig\Error\SyntaxError;
 
 class AppController
 {
-    /** @var ContextService */
-    private $_contextService;
-
-    /** @var FrontendFactory */
-    private $_frontendFactory;
-
     /** @var PdfService */
     private $_pdfService;
 
-    /** @var SecurityService */
-    private $_securityService;
-
-    /** @var TextModulesService */
-    private $_textModulesService;
+    /** @var TemplateFactory */
+    private $_templateFactory;
 
     /** @var TwigService */
     private $_twigService;
 
     /**
-     * @param ContextService $contextService
-     * @param FrontendFactory $frontendFactory
      * @param PdfService $pdfService
-     * @param SecurityService $securityService
-     * @param TextModulesService $textModulesService
+     * @param TemplateFactory $frontendFactory
      * @param TwigService $twigService
      */
     public function __construct(
-        ContextService $contextService,
-        FrontendFactory $frontendFactory,
         PdfService $pdfService,
-        SecurityService $securityService,
-        TextModulesService $textModulesService,
+        TemplateFactory $frontendFactory,
         TwigService $twigService
     ) {
-        $this->_contextService = $contextService;
-        $this->_frontendFactory = $frontendFactory;
         $this->_pdfService = $pdfService;
-        $this->_securityService = $securityService;
-        $this->_textModulesService = $textModulesService;
+        $this->_templateFactory = $frontendFactory;
         $this->_twigService = $twigService;
     }
 
@@ -70,26 +50,14 @@ class AppController
      */
     public function index(Request $request): Response
     {
-        $viewModel = $this->_frontendFactory->create($request);
-        $context = $this->_twigService->renderTemplate(
-            'index.html.twig',
-            [
-                'errors' => implode(',', $viewModel->getErrors()),
-                'kinds' => $viewModel->getKinds(),
-                'selectedLanguage' => $viewModel->getLanguage(),
-                'languages' => $viewModel->getLanguages(),
-                'type' => $viewModel->getType(),
-                'types' => json_encode($viewModel->getTypes()),
-                'iframeSrc' => $viewModel->getIFrameSrc(),
-                'template' => $viewModel->getTemplate(),
-                'identifiers' => $viewModel->getIdentifiers(),
-                'advertisingMediumCode' => $viewModel->getAdvertisingMediumCode(),
-                'forceReload' => $viewModel->forceReload(),
-             ],
-            []
+        $viewModel = $this->_templateFactory->create($request);
+        $response = $this->_twigService->renderTemplate(
+            $viewModel->getTemplateName(),
+            $viewModel->getContext(),
+            $viewModel->getMapping()
         );
 
-        return new Response($context);
+        return new Response($response);
     }
 
     /**
@@ -103,46 +71,25 @@ class AppController
      */
     public function generate(Request $request): Response
     {
-        $renderedTemplate = $this->_renderTemplate($request);
-        $pdf = $this->_pdfService->renderPdf($renderedTemplate);
-
-        return new Response(
-            $pdf,
-            Response::HTTP_OK,
-            [
-                'Content-Type' => 'application/pdf'
-            ]
-        );
-    }
-
-    /**
-     * @param Request $request
-     * @return string
-     * @throws InvalidArgumentException
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    private function _renderTemplate(Request $request)
-    {
-        $type = $request->attributes->get('type');
-        $templateName = $request->attributes->get('template');
-        $identifiers = $request->attributes->get('identifiers');
-        $advertisingMediumCode = $request->attributes->get('advertisingMediumCode');
-        $language = $request->get('language', '');
-        $forceReload = $request->get('forceReload', false) === 'true';
-
-        $jwt = $this->_securityService->getJwt();
-        $context = $this->_contextService->getContext($type, $identifiers, $jwt, $forceReload);
-
-        $textModulesMapping = $this->_textModulesService->getTextModules(
-            $templateName,
-            $advertisingMediumCode,
-            $language,
-            $jwt,
-            $forceReload
+        $viewModel = $this->_templateFactory->createContent($request);
+        $response = $this->_twigService->renderTemplate(
+            $viewModel->getTemplateName(),
+            $viewModel->getContext(),
+            $viewModel->getMapping()
         );
 
-        return $this->_twigService->renderTemplate($templateName, $context, $textModulesMapping);
+        if ($request->attributes->get('kind') === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
+            $pdf = $this->_pdfService->renderPdf($response);
+
+            return new Response(
+                $pdf,
+                Response::HTTP_OK,
+                [
+                    'Content-Type' => 'application/pdf',
+                ]
+            );
+        }
+
+        return new Response($response);
     }
 }

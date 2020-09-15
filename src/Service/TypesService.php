@@ -11,11 +11,20 @@ class TypesService
     /** @var int */
     public const TEMPLATE_TYPE_DOCUMENT = 1;
 
+    /** @var string */
+    public const TEMPLATE_TYPE_DOCUMENT_NAME = 'pdf';
+
     /** @var int */
     public const TEMPLATE_TYPE_EMAIL = 2;
 
+    /** @var string */
+    public const TEMPLATE_TYPE_EMAIL_NAME = 'email';
+
     /** @var int */
     public const TEMPLATE_TYPE_SNIPPET = 3;
+
+    /** @var string */
+    public const TEMPLATE_TYPE_SNIPPET_NAME = 'snippet';
 
     /** @var CacheService */
     private $_cacheService;
@@ -78,7 +87,7 @@ class TypesService
         if ($buildNumber <= VhsBuildService::VHS_MAX_BUILD_UNSUPPORTED_TYPES_API) {
             return new TypesModel(
                 [
-                    'pdf' => 'PDF',
+                    self::TEMPLATE_TYPE_DOCUMENT_NAME => 'PDF',
                 ],
                 $this->_getStaticPdfTypes(),
             );
@@ -149,16 +158,16 @@ class TypesService
         $keys = array_keys($availableTypes);
         $availableKinds = [];
         foreach ($keys as $availableType) {
-            if ($availableType === 'pdf') {
-                $availableKinds['pdf'] = 'PDF';
+            if ($availableType === self::TEMPLATE_TYPE_DOCUMENT_NAME) {
+                $availableKinds[self::TEMPLATE_TYPE_DOCUMENT_NAME] = 'PDF';
             }
 
-            if ($availableType === 'email') {
-                $availableKinds['email'] = 'E-Mail';
+            if ($availableType === self::TEMPLATE_TYPE_EMAIL_NAME) {
+                $availableKinds[self::TEMPLATE_TYPE_EMAIL_NAME] = 'E-Mail';
             }
 
-            if ($availableType === 'snippet') {
-                $availableKinds['snippet'] = 'Snippet';
+            if ($availableType === self::TEMPLATE_TYPE_SNIPPET_NAME) {
+                $availableKinds[self::TEMPLATE_TYPE_SNIPPET_NAME] = 'Snippet';
             }
         }
 
@@ -173,15 +182,15 @@ class TypesService
     private function _getTextForTemplateCategory(int $templateCategory): string
     {
         if (self::TEMPLATE_TYPE_DOCUMENT === $templateCategory) {
-            return 'pdf';
+            return self::TEMPLATE_TYPE_DOCUMENT_NAME;
         }
 
         if (self::TEMPLATE_TYPE_EMAIL === $templateCategory) {
-            return 'email';
+            return self::TEMPLATE_TYPE_EMAIL_NAME;
         }
 
         if (self::TEMPLATE_TYPE_SNIPPET === $templateCategory) {
-            return 'snippet';
+            return self::TEMPLATE_TYPE_SNIPPET_NAME;
         }
 
         throw new Exception(sprintf('unknown template category "%s"', $templateCategory));
@@ -193,7 +202,7 @@ class TypesService
     private function _getStaticPdfTypes(): array
     {
         return [
-            'pdf' => [
+            self::TEMPLATE_TYPE_DOCUMENT_NAME => [
                 [
                     'name' => 'Rechnung',
                     'renderer' => 'Invoice###Rechnung',

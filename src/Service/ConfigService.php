@@ -83,15 +83,21 @@ class ConfigService
     }
 
     /**
+     * @param string $kind
      * @param string $type
      * @param string $identifiers
      * @return string
      * @throws Exception
      */
-    public function getDocumentContextEndpointUrl(string $type, string $identifiers): string
+    public function getContextEndpointUrl(string $kind, string $type, string $identifiers): string
     {
+        $endpoint = '%s/v1/document/readTemplateContext/%s?type=%s';
+        if ($kind === TypesService::TEMPLATE_TYPE_EMAIL_NAME) {
+            $endpoint = '%s/v1/email/readContext/%s?type=%s';
+        }
+
         return sprintf(
-            '%s/v1/document/readTemplateContext/%s?type=%s',
+            $endpoint,
             $this->getRestEndpoint(),
             $identifiers,
             $type
@@ -99,42 +105,26 @@ class ConfigService
     }
 
     /**
-     * @param string $type
-     * @param string $identifier
-     * @return string
-     * @throws Exception
-     */
-    public function getEmailContextEndpointUrl(string $type, string $identifier): string
-    {
-        return sprintf(
-            '%s/v1/email/readContext/%s?type=%s',
-            $this->getRestEndpoint(),
-            $identifier,
-            $type
-        );
-    }
-
-    /**
-     * @param string $templateName
-     * @param string|null $advertisingMediumCode
+     * @param string $advertisingMediumCode
+     * @param string|null $templateName
      * @param string|null $language
      * @return string
      * @throws Exception
      */
     public function getTemplateTextModulesEndpointUrl(
-        string $templateName,
-        string $advertisingMediumCode = null,
+        string $advertisingMediumCode,
+        string $templateName = null,
         string $language = null
     ): string {
         $url = sprintf(
             '%s/v1/masterData/searchTemplateTextModules/%s',
             $this->getRestEndpoint(),
-            $templateName
+            $advertisingMediumCode
         );
 
         $query = [];
-        if (!empty($advertisingMediumCode)) {
-            $query['advertisingMediumCode'] = $advertisingMediumCode;
+        if (!empty($templateName)) {
+            $query['template'] = $templateName;
         }
 
         if (!empty($language)) {
