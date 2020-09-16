@@ -21,18 +21,18 @@ class ViewModelFactory
     private $_validatorService;
 
     /**
-     * @param LanguageService $_languageService
-     * @param TypesService $_typesService
-     * @param ValidatorService $_validatorService
+     * @param LanguageService $languageService
+     * @param TypesService $typesService
+     * @param ValidatorService $validatorService
      */
     public function __construct(
-        LanguageService $_languageService,
-        TypesService $_typesService,
-        ValidatorService $_validatorService
+        LanguageService $languageService,
+        TypesService $typesService,
+        ValidatorService $validatorService
     ) {
-        $this->_languageService = $_languageService;
-        $this->_typesService = $_typesService;
-        $this->_validatorService = $_validatorService;
+        $this->_languageService = $languageService;
+        $this->_typesService = $typesService;
+        $this->_validatorService = $validatorService;
     }
 
     /**
@@ -53,11 +53,7 @@ class ViewModelFactory
         $identifiers = $request->get('identifiers', '');
         $language = $request->get('language', '');
         $languages = $this->_languageService->getLanguages($forceReload);
-
-        $realType = $type;
-        if (false !== ($pos = strpos($type, '###'))) {
-            $realType = substr($type, 0, $pos);
-        };
+        $realType = $this->_typesService->getRealType($type);
 
         $iFrameSrc = '';
         $errors = [];

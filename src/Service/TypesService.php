@@ -8,6 +8,9 @@ use Psr\Cache\InvalidArgumentException;
 
 class TypesService
 {
+    /** @var string */
+    public const TYPE_SEPARATOR = '###';
+
     /** @var int */
     public const TEMPLATE_TYPE_DOCUMENT = 1;
 
@@ -114,6 +117,20 @@ class TypesService
     }
 
     /**
+     * @param string $type
+     * @return string
+     */
+    public function getRealType(string $type): string
+    {
+        $realType = $type;
+        if (false !== ($pos = strpos($type, self::TYPE_SEPARATOR))) {
+            $realType = substr($type, 0, $pos);
+        };
+
+        return $realType;
+    }
+
+    /**
      * @param array $types
      * @return array
      * @throws Exception
@@ -131,7 +148,7 @@ class TypesService
                 $renderer = $templateType['renderer'];
                 $name = $templateType['name'];
                 if (in_array($renderer, array_column($availableTypes, 'renderer'))) {
-                    $renderer .= '###' . $name;
+                    $renderer .= self::TYPE_SEPARATOR . $name;
                 }
 
                 $availableTypes[] = [
@@ -209,7 +226,7 @@ class TypesService
                 ],
                 [
                     'name' => 'Rechnung (Email-Anhang)',
-                    'renderer' => 'Invoice#InvoiceEmail###Rechnung (Email-Anhang)',
+                    'renderer' => 'Invoice###Rechnung (Email-Anhang)',
                 ],
                 [
                     'name' => 'Lieferschein',

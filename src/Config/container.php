@@ -1,5 +1,6 @@
 <?php
 
+use App\Controller\ApiController;
 use App\Controller\AppController;
 use App\Factory\TemplateFactory;
 use App\Factory\ViewModelFactory;
@@ -115,6 +116,13 @@ $containerBuilder->register('app_controller', AppController::class)
         new Reference('pdf_service'),
         new Reference('template_factory'),
         new Reference('twig_service'),
+    ]);
+
+$containerBuilder->register('api_controller', ApiController::class)
+    ->setPublic(true)
+    ->setArguments([
+        new Reference('cache_service'),
+        new Reference('types_service'),
     ]);
 
 $containerBuilder->compile();

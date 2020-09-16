@@ -3,9 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
+        <link rel="stylesheet" href="/assets/third-party/bootstrap/bootstrap.min.css">
+        <link rel="stylesheet" href="/assets/third-party/json-editor/jsoneditor.css">
         <title>BlisstributeTwigToolkit</title>
         <style>
             iframe {
@@ -36,6 +35,20 @@
             }
             .menu {
                 min-width: 400px;
+            }
+            .modal-content {
+                max-height: 95vh;
+                height: 95vh;
+            }
+            .modal-body {
+                overflow-y: auto;
+            }
+            .jsoneditor {
+                border: thin solid #17a2b8;
+            }
+            .jsoneditor-menu {
+                background-color: #17a2b8;
+                border-color: #17a2b8;
             }
         </style>
     </head>
@@ -89,7 +102,7 @@
                                     <div class="input-group-prepend">
                                         <label class="input-group-text" for="template">Template</label>
                                     </div>
-                                    <input placeholder="default_invoice.html" type="text" class="form-control" id="template" name="template" aria-label="templates" aria-describedby="ig-template-label" required {% if template is defined and template is not null %} value="{{ template }}" {% endif %} />
+                                    <input placeholder="default_invoice.html" type="text" class="form-control" id="template" name="template" aria-label="templates" aria-describedby="ig-template-label" required {% if template is defined and template is not null %} value="{{ template }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
                                 </div>
                             </li>
 
@@ -98,7 +111,7 @@
                                     <div class="input-group-prepend">
                                         <label class="input-group-text" for="identifiers">Identifikation</label>
                                     </div>
-                                    <input type="text" placeholder="EXB202012323" class="form-control" id="identifiers" name="identifiers" aria-label="identifiers" aria-describedby="ig-identifiers-label" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} />
+                                    <input type="text" placeholder="EXB202012323" class="form-control" id="identifiers" name="identifiers" aria-label="identifiers" aria-describedby="ig-identifiers-label" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
                                 </div>
                             </li>
 
@@ -107,7 +120,7 @@
                                     <div class="input-group-prepend">
                                         <label class="input-group-text" for="advertisingMediumCode">Werbemittel</label>
                                     </div>
-                                    <input type="text" placeholder="EXB" class="form-control" id="advertisingMediumCode" name="advertisingMediumCode" aria-label="advertising-medium" aria-describedby="ig-advertising-medium-label" {% if advertisingMediumCode is defined and advertisingMediumCode is not null %} value="{{ advertisingMediumCode }}" {% endif %} />
+                                    <input type="text" placeholder="EXB" class="form-control" id="advertisingMediumCode" name="advertisingMediumCode" aria-label="advertising-medium" aria-describedby="ig-advertising-medium-label" {% if advertisingMediumCode is defined and advertisingMediumCode is not null %} value="{{ advertisingMediumCode }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
                                 </div>
                             </li>
 
@@ -135,12 +148,21 @@
                                 <button class="btn btn-light btn-sm btn-block" type="button" onclick="submitForm(true)">Cache leeren</button>
                             </li>
 
+                            <li class="nav-item mt-3">
+                                <button id="showContextButton" class="btn btn-secondary btn-sm btn-block" type="button" onClick="showContext(getQueryParams())" disabled>Kontext anzeigen</button>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <button id="showTextModulesButton" class="btn btn-secondary btn-sm btn-block" type="button" onClick="showTextModules(getQueryParams())" disabled>Textbausteine anzeigen</button>
+                            </li>
+
                         </ul>
+
                     </form>
                 </div>
                 <div class="col min-vh-100 pl-0 pr-0">
                     {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and errors is empty %}
-                        <iframe src="{{ iframeSrc }}">
+                        <iframe src="{{ iframeSrc }}" onload="loadCachingData(getQueryParams())">
                         </iframe>
                     {% endif %}
                     {% if errors is defined and errors is not empty %}
@@ -152,7 +174,184 @@
             </div>
         </div>
 
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="contextModal">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Kontext (Datenquelle: <strong>Cache</strong>, ggf. Cache leeren um aktuelle Daten zu sehen)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="contextModalBody" class="modal-body">
+                        <div id="jsonContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="contextTextModules">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Textbausteine (Datenquelle: <strong>Cache</strong>, ggf. Cache leeren um aktuelle Daten zu sehen)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="textModulesModalBody" class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/assets/third-party/json-editor/jsoneditor.min.js"></script>
+        <script src="/assets/third-party/jQuery/jquery-3.5.1.slim.min.js"></script>
+        <script src="/assets/third-party/bootstrap/bootstrap.bundle.min.js"></script>
+
         <script>
+
+            const loadCachingData = function (queryParams) {
+                hasContext(queryParams);
+                hasTextModules(queryParams);
+            };
+
+            const getQueryParams = function () {
+                return new URLSearchParams({
+                    kind: document.getElementById('kind').options[document.getElementById('kind').selectedIndex].value,
+                    type: document.getElementById('type').options[document.getElementById('type').selectedIndex].value,
+                    identifiers: document.getElementById('identifiers').value,
+                    advertisingMediumCode: document.getElementById('advertisingMediumCode').value
+                });
+            };
+
+            const request = (url, queryParams, callback) => {
+                let xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = callback;
+                xhr.open('GET', url + '?' + queryParams.toString());
+                xhr.send();
+            };
+
+            const hasContext = (queryParams) => {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let contextButton = document.getElementById('showContextButton');
+
+                    let response = JSON.parse(this.responseText);
+                    if (!response.hasContext) {
+                        contextButton.disabled = true;
+
+                        return;
+                    }
+
+                    contextButton.disabled = false;
+                };
+
+                request('/api/v1/cache/hasContext', queryParams, callback);
+            };
+
+            const showContext = (queryParams) => {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let contextModal = new bootstrap.Modal(document.getElementById('contextModal'));
+                    contextModal.show();
+
+                    let jsonContainer = document.getElementById('jsonContainer');
+                    jsonContainer.innerHTML = '';
+
+                    let context = JSON.parse(this.responseText);
+                    if (Array.isArray(context) && !context.length) {
+                        jsonContainer.innerHTML = 'Kein Kontext verfügbar!';
+
+                        return;
+                    }
+
+                    let editor = new JSONEditor(jsonContainer, { mode: 'view' }, context);
+                };
+
+                request('/api/v1/cache/getContext', queryParams, callback);
+            };
+
+            const hasTextModules = function (queryParams) {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let textModulesButton = document.getElementById('showTextModulesButton');
+
+                    let response = JSON.parse(this.responseText);
+                    if (!response.hasTextModules) {
+                        textModulesButton.disabled = true;
+
+                        return;
+                    }
+
+                    textModulesButton.disabled = false;
+                };
+
+                request('/api/v1/cache/hasTextModules', queryParams, callback);
+            };
+
+            const showTextModules = function (queryParams) {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let textModulesModal = new bootstrap.Modal(document.getElementById('contextTextModules'));
+                    textModulesModal.show();
+
+                    let textModules = JSON.parse(this.responseText);
+                    let textModulesContainer = document.getElementById('textModulesModalBody');
+
+                    if (Array.isArray(textModules) && !textModules.length) {
+                        textModulesContainer.innerHTML = 'Keine Textbausteine verfügbar!';
+
+                        return;
+                    }
+
+                    let html = '<table class="table">'
+                        +           '<thead class="thead-dark">'
+                        +               '<tr>'
+                        +                   '<th>#</th>'
+                        +                   '<th>Schlüssel</th>'
+                        +                   '<th>Wert</th>'
+                        +               '</tr>'
+                        +           '</thead>'
+                        +           '<tbody>'
+
+                    let index = 1;
+                    for (let property in textModules) {
+                        if (!textModules.hasOwnProperty(property)) {
+                            continue;
+                        }
+
+                        html += '<tr>'
+                            +       '<td>' + index + '</td>'
+                            +       '<td>' + property + '</td>'
+                            +       '<td>' + textModules[property] + '</td>'
+                            +   '</tr>';
+
+                        index++;
+                    }
+
+                    html +=         '</tbody>'
+                        +   '</table>';
+
+                    textModulesContainer.innerHTML = html;
+                };
+
+                request('/api/v1/cache/getTextModules', queryParams, callback);
+            };
+
             const submitForm = (forceReload = false) => {
                 const form = document.getElementById('settingsForm');
                 document.getElementById('hidden-reload').value = forceReload;
@@ -162,7 +361,7 @@
                 } else {
                     form.reportValidity();
                 }
-            }
+            };
 
             const showTypes = () => {
                 const kindElement = document.getElementById('kind');
@@ -180,7 +379,7 @@
 
                     typesElement.appendChild(option);
                 });
-            }
+            };
 
             const types = {{ types|raw }};
             const type = '{{ type }}';
