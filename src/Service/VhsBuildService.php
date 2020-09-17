@@ -60,12 +60,12 @@ class VhsBuildService
     {
         $url = $this->_configService->getRestEndpoint();
         $vhsBuildNumberCacheKey = $this->_cacheService->getVhsBuildNumberCacheKey($url);
-        if ($this->_cacheService->has($vhsBuildNumberCacheKey) && !$forceReload) {
+        if (!$forceReload && $this->_cacheService->has($vhsBuildNumberCacheKey)) {
             return $this->_cacheService->get($vhsBuildNumberCacheKey)->get();
         }
 
         $releaseInfosEndpointUrl = $this->_configService->getVhsReleaseVersionEndpointUrl();
-        $jwt = $this->_securityService->getJwt();
+        $jwt = $this->_securityService->getJwt($forceReload);
         $response = $this->_httpService->get($releaseInfosEndpointUrl, $jwt);
         $response = $this->_jsonService->parseJson($response);
 

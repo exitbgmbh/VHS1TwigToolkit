@@ -58,17 +58,19 @@ class LanguageService
     public function getLanguages(bool $forceReload): array
     {
         $languagesCacheKey = $this->_cacheService->getLanguagesCacheKey();
-        if ($this->_cacheService->has($languagesCacheKey) && !$forceReload) {
+        if (!$forceReload && $this->_cacheService->has($languagesCacheKey)) {
             return $this->_cacheService->get($languagesCacheKey)->get();
         }
 
         $buildNumber = $this->_vhsBuildService->getBuildVersion($forceReload);
         if ($buildNumber <= VhsBuildService::VHS_MAX_BUILD_UNSUPPORTED_LANGUAGES_API) {
+            $this->_cacheService->delete($languagesCacheKey);
+
             return [];
         }
 
         $languagesEndpointUrl = $this->_configService->getLanguagesEndpointUrl();
-        $languages = $this->_httpService->getLanguages($languagesEndpointUrl, $this->_securityService->getJwt());
+        $languages = $this->_httpService->getLanguages($languagesEndpointUrl, $this->_securityService->getJwt($forceReload));
         $languages = $this->_jsonService->parseJson($languages);
         $languages = $languages['response'];
 

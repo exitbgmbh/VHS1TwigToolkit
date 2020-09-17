@@ -141,7 +141,7 @@
                             {% endif %}
 
                             <li class="nav-item mt-3">
-                                <button class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
+                                <button id="createButton" class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
                             </li>
 
                             <li class="nav-item mt-3">
@@ -385,6 +385,19 @@
             const type = '{{ type }}';
 
             document.getElementById('kind').addEventListener('change', showTypes);
+
+            const submitOnEnter = function (event) {
+                event.preventDefault();
+                if (event.keyCode !== 13) {
+                    return;
+                }
+
+                document.getElementById('createButton').click();
+            };
+
+            document.getElementById('template').addEventListener('keyup', submitOnEnter);
+            document.getElementById('identifiers').addEventListener('keyup', submitOnEnter);
+            document.getElementById('advertisingMediumCode').addEventListener('keyup', submitOnEnter);
 
             (function() {
                 showTypes();

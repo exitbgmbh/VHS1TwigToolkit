@@ -79,7 +79,7 @@ class TemplateFactory
     public function createContent(Request $request): TemplateViewModel
     {
         $requestViewModel = $this->_viewModelFactory->createRequestViewModel($request);
-        $jwt = $this->_securityService->getJwt();
+        $jwt = $this->_securityService->getJwt($requestViewModel->forceReload());
 
         $context = $this->_contextService->getContext(
             $requestViewModel->getKind(),

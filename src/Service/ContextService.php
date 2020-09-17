@@ -55,7 +55,7 @@ class ContextService
     public function getContext(string $kind, string $type, string $identifiers, string $jwt, bool $forceReload): array
     {
         $contextCacheKey = $this->_cacheService->getContextCacheKey($kind, $type, $identifiers);
-        if ($this->_cacheService->has($contextCacheKey) && !$forceReload) {
+        if (!$forceReload && $this->_cacheService->has($contextCacheKey)) {
             $context = $this->_cacheService->get($contextCacheKey)->get();
         } else {
             $contextEndpointUrl = $this->_configService->getContextEndpointUrl($kind, $type, $identifiers);

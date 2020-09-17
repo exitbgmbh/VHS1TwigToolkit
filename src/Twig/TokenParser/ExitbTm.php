@@ -2,8 +2,11 @@
 
 namespace App\Twig\TokenParser;
 
+use Twig\Error\SyntaxError;
+use Twig\Node\Node;
 use Twig\Token;
 use App\Twig\Node\ExitbTm as ExitBTmNode;
+use Twig\TokenParser\AbstractTokenParser;
 
 /**
  * Tms a template.
@@ -14,17 +17,26 @@ use App\Twig\Node\ExitbTm as ExitBTmNode;
  *   {% tm 'footer.html' %}
  * </pre>
  */
-class ExitbTm extends \Twig\TokenParser\AbstractTokenParser
+class ExitbTm extends AbstractTokenParser
 {
+    /**
+     * @param Token $token
+     * @return ExitBTmNode|Node
+     * @throws SyntaxError
+     */
     public function parse(Token $token)
     {
         $expr = $this->parser->getExpressionParser()->parseExpression();
 
         list($variables, $only, $ignoreMissing, $default) = $this->parseArguments();
 
-        return new ExitbTmNode($expr, $variables, $default, $only, $ignoreMissing, $token->getLine(), $this->getTag());
+        return new ExitbTmNode($expr, $token->getLine(), $variables, $default, $only, $ignoreMissing, $this->getTag());
     }
 
+    /**
+     * @return array
+     * @throws SyntaxError
+     */
     protected function parseArguments()
     {
         $stream = $this->parser->getStream();
@@ -41,6 +53,7 @@ class ExitbTm extends \Twig\TokenParser\AbstractTokenParser
             $variables = $this->parser->getExpressionParser()->parseExpression();
         }
 
+        $default = null;
         if ($stream->nextIf(/* Twig_Token::NAME_TYPE */ 5, 'default')) {
             $default = $this->parser->getExpressionParser()->parseExpression();
         }
@@ -52,9 +65,17 @@ class ExitbTm extends \Twig\TokenParser\AbstractTokenParser
 
         $stream->expect(/* Twig_Token::BLOCK_END_TYPE */ 3);
 
-        return array($variables, $only, $ignoreMissing, $default);
+        return [
+            $variables,
+            $only,
+            $ignoreMissing,
+            $default
+        ];
     }
 
+    /**
+     * @return string
+     */
     public function getTag()
     {
         return 'exitbTm';

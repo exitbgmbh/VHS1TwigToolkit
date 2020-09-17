@@ -82,7 +82,7 @@ class TypesService
         $typesCacheKey = $this->_cacheService->getTypesCacheKey($this->_configService->getRestEndpoint());
         $types = [];
         $typesAreInCache = $this->_cacheService->has($typesCacheKey);
-        if ($typesAreInCache && !$forceReload) {
+        if (!$forceReload && $typesAreInCache) {
             $types = $this->_cacheService->get($typesCacheKey)->get();
         }
 
@@ -98,7 +98,7 @@ class TypesService
 
         if ($forceReload || !$typesAreInCache) {
             $typesEndpointUrl = $this->_configService->getTypesEndpointUrl();
-            $response = $this->_httpService->getTypes($typesEndpointUrl, $this->_securityService->getJwt());
+            $response = $this->_httpService->getTypes($typesEndpointUrl, $this->_securityService->getJwt($forceReload));
             $response = $this->_jsonService->parseJson($response);
             $response = $response['response'];
 
