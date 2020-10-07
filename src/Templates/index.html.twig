@@ -1,178 +1,407 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
-    <title>BlisstributeTwigToolkit</title>
-    <style>
-        html, body {
-            overflow:hidden;
-        }
-        .container-fluid {
-            padding: 10px 16px;
-            margin-top: 56px;
-            background-color: #323639 !important
-        }
-        iframe {
-            height: calc(100vh - 107px);
-
-            border: 0;
-            width: 100%;
-        }
-        .bg-dark {
-            background-color: #323639 !important
-        }
-        .form-control::-webkit-input-placeholder { color: #c8c8c8; }  /* WebKit, Blink, Edge */
-        .form-control:-moz-placeholder { color: #c8c8c8; }  /* Mozilla Firefox 4 to 18 */
-        .form-control::-moz-placeholder { color: #c8c8c8; }  /* Mozilla Firefox 19+ */
-        .form-control:-ms-input-placeholder { color: #c8c8c8; }  /* Internet Explorer 10-11 */
-        .form-control::-ms-input-placeholder { color: #c8c8c8; }  /* Microsoft Edge */
-    </style>
-</head>
-<body>
-<header>
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">BlisstributeTwigToolkit</a>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">v0.1</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">&copy;2020 exitB GmbH</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</header>
-<!-- Begin page content -->
-<div class="container-fluid">
-    <form id="settingsForm" action="" method="post">
-        <input type="hidden" id="hidden-reload" name="forceReload" value="1234" />
-        <div class="row">
-            <div class="col-2">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="kind">Art</label>
-                    </div>
-                    <select class="custom-select d-block w-10" id="kind" name="kind" required>
-                        {% for value, display in kinds %}
-                            <option value="{{ value }}" {% if value is same as(kind) %} selected="selected" {% endif %}>{{ display }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="type">Typ</label>
-                    </div>
-                    <select class="custom-select d-block w-10" id="type" name="type" required>
-                        {% for kind, templateTypes in types %}
-                            {% for templateType in templateTypes %}
-                                <option value="{{ templateType.renderer }}" {% if templateType.renderer is same as(type) %} selected="selected" {% endif %}>{{ templateType.name }}</option>
-                            {% endfor %}
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="ig-template-label">Template</span>
-                    </div>
-                    <input placeholder="default_invoice.html" type="text" class="form-control" id="template" name="template" aria-label="templates" aria-describedby="ig-template-label" required {% if template is defined and template is not null %} value="{{ template }}" {% endif %} />
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="ig-identifiers-label">Identifikation</span>
-                    </div>
-                    <input type="text" placeholder="EXB202012323" class="form-control" id="identifiers" name="identifiers" aria-label="identifiers" aria-describedby="ig-identifiers-label" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} />
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="ig-advertising-medium-label">Werbemittel</span>
-                    </div>
-                    <input type="text" placeholder="EXB" class="form-control" id="advertisingMediumCode" name="advertisingMediumCode" aria-label="advertising-medium" aria-describedby="ig-advertising-medium-label" {% if advertisingMediumCode is defined and advertisingMediumCode is not null %} value="{{ advertisingMediumCode }}" {% endif %} />
-                </div>
-            </div>
-
-            <div class="col-2">
-                <div class="row">
-                    <div class="col-md-7">
-                        <button class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
-                    </div>
-                    <div class="col-md-5">
-                        <button class="btn btn-light btn-sm btn-block" type="button" onclick="submitForm(true)">Cache leeren</button>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-    </form>
-</div>
-
-    {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and errors is empty %}
-        <iframe src="{{ iframeSrc }}">
-        </iframe>
-    {% endif %}
-    {% if errors is defined and errors is not empty %}
-        <div class="container">
-            {{ errors }}
-        </div>
-    {% endif %}
-
-    <script>
-        const submitForm = (forceReload = false) => {
-            const form = document.getElementById('settingsForm');
-            document.getElementById('hidden-reload').value = forceReload;
-
-            if (form.checkValidity()) {
-                form.submit();
-            } else {
-                form.reportValidity();
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="/assets/third-party/bootstrap/bootstrap.min.css">
+        <link rel="stylesheet" href="/assets/third-party/json-editor/jsoneditor.css">
+        <title>BlisstributeTwigToolkit</title>
+        <style>
+            iframe {
+                height: 100%;
+                border: 0;
+                width: 100%;
             }
-        }
+            .bg-dark {
+                background-color: #323639 !important
+            }
+            .input-group>.input-group-prepend>.input-group-text {
+                min-width: 116px;
+            }
+            .form-control::-webkit-input-placeholder { color: #c8c8c8; }  /* WebKit, Blink, Edge */
+            .form-control:-moz-placeholder { color: #c8c8c8; }  /* Mozilla Firefox 4 to 18 */
+            .form-control::-moz-placeholder { color: #c8c8c8; }  /* Mozilla Firefox 19+ */
+            .form-control:-ms-input-placeholder { color: #c8c8c8; }  /* Internet Explorer 10-11 */
+            .form-control::-ms-input-placeholder { color: #c8c8c8; }  /* Microsoft Edge */
+            ul:first-child {
+                color: #fff;
+            }
+            #settingsForm > ul > li:nth-child(1) > a {
+                line-height: 2;
+                font-size: xx-large;
+            }
+            #settingsForm > ul > li > a {
+                color: #fff;
+            }
+            .menu {
+                min-width: 400px;
+            }
+            .modal-content {
+                max-height: 95vh;
+                height: 95vh;
+            }
+            .modal-body {
+                overflow-y: auto;
+            }
+            .jsoneditor {
+                border: thin solid #17a2b8;
+            }
+            .jsoneditor-menu {
+                background-color: #17a2b8;
+                border-color: #17a2b8;
+            }
+        </style>
+    </head>
+    <body>
 
-        const showTypes = () => {
-            const kindElement = document.getElementById('kind');
-            let typesElement = document.getElementById('type');
-            typesElement.length = 0;
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-2 min-vh-100 bg-dark pt-3 menu">
+                    <form id="settingsForm" action="" method="post">
+                        <input type="hidden" id="hidden-reload" name="forceReload" value="" />
+                        <ul class="nav flex-column flex-nowrap overflow-hidden">
 
-            types[kindElement.value].forEach(function(item, index) {
-                let option = document.createElement('option');
-                option.value = item.renderer;
-                option.innerHTML = item.name;
+                            <li class="nav-item">
+                                <a class="navbar-link" href="/">BlisstributeTwigToolkit</a>
+                            </li>
 
-                if (type === item.renderer) {
-                    option.selected = true;
+                            <li class="nav-item">
+                                <a class="navbar-link" target="_blank" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">v0.1 &copy;{{ year }} exitB GmbH</a>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="kind">Art</label>
+                                    </div>
+                                    <select class="custom-select d-block w-10" id="kind" name="kind" required>
+                                        {% for value, display in kinds %}
+                                            <option value="{{ value }}" {% if value is same as(kind) %} selected="selected" {% endif %}>{{ display }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="type">Typ</label>
+                                    </div>
+                                    <select class="custom-select d-block w-10" id="type" name="type" required>
+                                        {% for kind, templateTypes in types %}
+                                            {% for templateType in templateTypes %}
+                                                <option value="{{ templateType.renderer }}" {% if templateType.renderer is same as(type) %} selected="selected" {% endif %}>{{ templateType.name }}</option>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="template">Template</label>
+                                    </div>
+                                    <input placeholder="default_invoice.html" type="text" class="form-control" id="template" name="template" aria-label="templates" aria-describedby="ig-template-label" required {% if template is defined and template is not null %} value="{{ template }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
+                                </div>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="identifiers">Identifikation</label>
+                                    </div>
+                                    <input type="text" placeholder="EXB202012323" class="form-control" id="identifiers" name="identifiers" aria-label="identifiers" aria-describedby="ig-identifiers-label" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
+                                </div>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="advertisingMediumCode">Werbemittel</label>
+                                    </div>
+                                    <input type="text" placeholder="EXB" class="form-control" id="advertisingMediumCode" name="advertisingMediumCode" aria-label="advertising-medium" aria-describedby="ig-advertising-medium-label" {% if advertisingMediumCode is defined and advertisingMediumCode is not null %} value="{{ advertisingMediumCode }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
+                                </div>
+                            </li>
+
+                            {% if languages is defined and languages is not empty %}
+                                <li class="nav-item mt-3">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="language">Sprache</label>
+                                        </div>
+                                        <select class="custom-select d-block w-10" id="language" name="language">
+                                            <option value="">Bitte wählen</option>
+                                            {% for language in languages %}
+                                                <option value="{{ language.isoCode }}" {% if selectedLanguage is same as(language.isoCode) %} selected="selected" {% endif %}>{{ language.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            <li class="nav-item mt-3">
+                                <button id="createButton" class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <button class="btn btn-light btn-sm btn-block" type="button" onclick="submitForm(true)">Cache leeren</button>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <button id="showContextButton" class="btn btn-secondary btn-sm btn-block" type="button" onClick="showContext(getQueryParams())" disabled>Kontext anzeigen</button>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <button id="showTextModulesButton" class="btn btn-secondary btn-sm btn-block" type="button" onClick="showTextModules(getQueryParams())" disabled>Textbausteine anzeigen</button>
+                            </li>
+
+                        </ul>
+
+                    </form>
+                </div>
+                <div class="col min-vh-100 pl-0 pr-0">
+                    {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and errors is empty %}
+                        <iframe src="{{ iframeSrc }}" onload="loadCachingData(getQueryParams())">
+                        </iframe>
+                    {% endif %}
+                    {% if errors is defined and errors is not empty %}
+                        <div class="container">
+                            {{ errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="contextModal">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Kontext (Datenquelle: <strong>Cache</strong>, ggf. Cache leeren um aktuelle Daten zu sehen)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="contextModalBody" class="modal-body">
+                        <div id="jsonContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="contextTextModules">
+            <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Textbausteine (Datenquelle: <strong>Cache</strong>, ggf. Cache leeren um aktuelle Daten zu sehen)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="textModulesModalBody" class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/assets/third-party/json-editor/jsoneditor.min.js"></script>
+        <script src="/assets/third-party/jQuery/jquery-3.5.1.slim.min.js"></script>
+        <script src="/assets/third-party/bootstrap/bootstrap.bundle.min.js"></script>
+
+        <script>
+
+            const loadCachingData = function (queryParams) {
+                hasContext(queryParams);
+                hasTextModules(queryParams);
+            };
+
+            const getQueryParams = function () {
+                return new URLSearchParams({
+                    kind: document.getElementById('kind').options[document.getElementById('kind').selectedIndex].value,
+                    type: document.getElementById('type').options[document.getElementById('type').selectedIndex].value,
+                    identifiers: document.getElementById('identifiers').value,
+                    advertisingMediumCode: document.getElementById('advertisingMediumCode').value
+                });
+            };
+
+            const request = (url, queryParams, callback) => {
+                let xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = callback;
+                xhr.open('GET', url + '?' + queryParams.toString());
+                xhr.send();
+            };
+
+            const hasContext = (queryParams) => {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let contextButton = document.getElementById('showContextButton');
+
+                    let response = JSON.parse(this.responseText);
+                    if (!response.hasContext) {
+                        contextButton.disabled = true;
+
+                        return;
+                    }
+
+                    contextButton.disabled = false;
+                };
+
+                request('/api/v1/cache/hasContext', queryParams, callback);
+            };
+
+            const showContext = (queryParams) => {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let contextModal = new bootstrap.Modal(document.getElementById('contextModal'));
+                    contextModal.show();
+
+                    let jsonContainer = document.getElementById('jsonContainer');
+                    jsonContainer.innerHTML = '';
+
+                    let context = JSON.parse(this.responseText);
+                    if (Array.isArray(context) && !context.length) {
+                        jsonContainer.innerHTML = 'Kein Kontext verfügbar!';
+
+                        return;
+                    }
+
+                    let editor = new JSONEditor(jsonContainer, { mode: 'view' }, context);
+                };
+
+                request('/api/v1/cache/getContext', queryParams, callback);
+            };
+
+            const hasTextModules = function (queryParams) {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let textModulesButton = document.getElementById('showTextModulesButton');
+
+                    let response = JSON.parse(this.responseText);
+                    if (!response.hasTextModules) {
+                        textModulesButton.disabled = true;
+
+                        return;
+                    }
+
+                    textModulesButton.disabled = false;
+                };
+
+                request('/api/v1/cache/hasTextModules', queryParams, callback);
+            };
+
+            const showTextModules = function (queryParams) {
+                let callback = function () {
+                    if (this.readyState !== 4) {
+                        return;
+                    }
+
+                    let textModulesModal = new bootstrap.Modal(document.getElementById('contextTextModules'));
+                    textModulesModal.show();
+
+                    let textModules = JSON.parse(this.responseText);
+                    let textModulesContainer = document.getElementById('textModulesModalBody');
+
+                    if (Array.isArray(textModules) && !textModules.length) {
+                        textModulesContainer.innerHTML = 'Keine Textbausteine verfügbar!';
+
+                        return;
+                    }
+
+                    let html = '<table class="table">'
+                        +           '<thead class="thead-dark">'
+                        +               '<tr>'
+                        +                   '<th>#</th>'
+                        +                   '<th>Schlüssel</th>'
+                        +                   '<th>Wert</th>'
+                        +               '</tr>'
+                        +           '</thead>'
+                        +           '<tbody>'
+
+                    let index = 1;
+                    for (let property in textModules) {
+                        if (!textModules.hasOwnProperty(property)) {
+                            continue;
+                        }
+
+                        html += '<tr>'
+                            +       '<td>' + index + '</td>'
+                            +       '<td>' + property + '</td>'
+                            +       '<td>' + textModules[property] + '</td>'
+                            +   '</tr>';
+
+                        index++;
+                    }
+
+                    html +=         '</tbody>'
+                        +   '</table>';
+
+                    textModulesContainer.innerHTML = html;
+                };
+
+                request('/api/v1/cache/getTextModules', queryParams, callback);
+            };
+
+            const submitForm = (forceReload = false) => {
+                const form = document.getElementById('settingsForm');
+                document.getElementById('hidden-reload').value = forceReload;
+
+                if (form.checkValidity()) {
+                    form.submit();
+                } else {
+                    form.reportValidity();
+                }
+            };
+
+            const showTypes = () => {
+                const kindElement = document.getElementById('kind');
+                let typesElement = document.getElementById('type');
+                typesElement.length = 0;
+
+                types[kindElement.value].forEach(function(item, index) {
+                    let option = document.createElement('option');
+                    option.value = item.renderer;
+                    option.innerHTML = item.name;
+
+                    if (type === item.renderer) {
+                        option.selected = true;
+                    }
+
+                    typesElement.appendChild(option);
+                });
+            };
+
+            const types = {{ types|raw }};
+            const type = '{{ type }}';
+
+            document.getElementById('kind').addEventListener('change', showTypes);
+
+            const submitOnEnter = function (event) {
+                event.preventDefault();
+                if (event.keyCode !== 13) {
+                    return;
                 }
 
-                typesElement.appendChild(option);
-            });
-        }
+                document.getElementById('createButton').click();
+            };
 
-        const types = {{ types|raw }};
-        const type = '{{ type }}';
+            document.getElementById('template').addEventListener('keyup', submitOnEnter);
+            document.getElementById('identifiers').addEventListener('keyup', submitOnEnter);
+            document.getElementById('advertisingMediumCode').addEventListener('keyup', submitOnEnter);
 
-        document.getElementById('kind').addEventListener('change', showTypes);
-
-        (function() {
-            showTypes();
-        })();
-    </script>
-</body>
+            (function() {
+                showTypes();
+            })();
+        </script>
+    </body>
 </html>

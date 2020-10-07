@@ -9,13 +9,10 @@ use Psr\Cache\InvalidArgumentException;
 class CacheService
 {
     /** @var string */
-    private const CONTEXT_MAIL_CACHE_KEY = 'context-mail';
-
-    /** @var string */
-    private const CONTEXT_PDF_CACHE_KEY = 'context-pdf';
-
-    /** @var string */
     private const JWT_CACHE_KEY = 'jwt';
+
+    /** @var string */
+    private const LANGUAGES_CACHE_KEY = 'languages';
 
     /** @var string */
     private const TEXT_MODULES_CACHE_KEY = 'text-modules';
@@ -93,36 +90,32 @@ class CacheService
     }
 
     /**
+     * @param string $kind
      * @param string $type
      * @param string $identifiers
      * @return string
      */
-    public function getContextCacheKey(string $type, string $identifiers): string
+    public function getContextCacheKey(string $kind, string $type, string $identifiers): string
     {
-        return sprintf('%s-%s-%s', self::CONTEXT_PDF_CACHE_KEY, $type, $identifiers);
+        return sprintf('%s-%s-%s', $kind, $type, $identifiers);
     }
 
     /**
      * @param string $advertisingMediumCode
+     * @param string $language
      * @return string
      */
-    public function getTextModulesCacheKey(string $advertisingMediumCode): string
+    public function getTextModulesCacheKey(string $advertisingMediumCode, string $language): string
     {
         if (empty($advertisingMediumCode)) {
             $advertisingMediumCode = 'default';
         }
 
-        return sprintf('%s-%s', self::TEXT_MODULES_CACHE_KEY, $advertisingMediumCode);
-    }
+        if (empty($language)) {
+            $language = 'default';
+        }
 
-    /**
-     * @param string $type
-     * @param string $identifier
-     * @return string
-     */
-    public function getEmailContextCacheKey(string $type, string $identifier): string
-    {
-        return sprintf('%s-%s-%s', self::CONTEXT_MAIL_CACHE_KEY, $type, $identifier);
+        return sprintf('%s-%s-%s', self::TEXT_MODULES_CACHE_KEY, $advertisingMediumCode, $language);
     }
 
     /**
@@ -153,6 +146,14 @@ class CacheService
             $this->_removeReservedCharacters($url),
             self::TYPES_CACHE_KEY
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguagesCacheKey(): string
+    {
+        return self::LANGUAGES_CACHE_KEY;
     }
 
     /**

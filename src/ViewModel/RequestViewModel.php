@@ -2,7 +2,7 @@
 
 namespace App\ViewModel;
 
-class IndexViewModel
+class RequestViewModel
 {
     /** @var string */
     private $advertisingMediumCode;
@@ -17,13 +17,19 @@ class IndexViewModel
     private $identifiers;
 
     /** @var string */
+    private $iFrameSrc;
+
+    /** @var string */
     private $kind;
 
     /** @var array */
     private $kinds;
 
     /** @var string */
-    private $iFrameSrc;
+    private $language;
+
+    /** @var array */
+    private $languages;
 
     /** @var string */
     private $template;
@@ -39,9 +45,11 @@ class IndexViewModel
      * @param array $errors
      * @param bool $forceReload
      * @param string $identifiers
+     * @param string $iFrameSrc
      * @param string $kind
      * @param array $kinds
-     * @param string $iFrameSrc
+     * @param string $language
+     * @param array $languages
      * @param string $template
      * @param string $type
      * @param array $types
@@ -51,9 +59,11 @@ class IndexViewModel
         array $errors,
         bool $forceReload,
         string $identifiers,
+        string $iFrameSrc,
         string $kind,
         array $kinds,
-        string $iFrameSrc,
+        string $language,
+        array $languages,
         string $template,
         string $type,
         array $types
@@ -62,9 +72,11 @@ class IndexViewModel
         $this->errors = $errors;
         $this->forceReload = $forceReload;
         $this->identifiers = $identifiers;
+        $this->iFrameSrc = $iFrameSrc;
         $this->kind = $kind;
         $this->kinds = $kinds;
-        $this->iFrameSrc = $iFrameSrc;
+        $this->language = $language;
+        $this->languages = $languages;
         $this->template = $template;
         $this->type = $type;
         $this->types = $types;
@@ -105,6 +117,14 @@ class IndexViewModel
     /**
      * @return string
      */
+    public function getIFrameSrc(): string
+    {
+        return $this->iFrameSrc;
+    }
+
+    /**
+     * @return string
+     */
     public function getKind(): string
     {
         return $this->kind;
@@ -121,9 +141,17 @@ class IndexViewModel
     /**
      * @return string
      */
-    public function getIFrameSrc(): string
+    public function getLanguage(): string
     {
-        return $this->iFrameSrc;
+        return $this->language;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLanguages(): array
+    {
+        return $this->languages;
     }
 
     /**

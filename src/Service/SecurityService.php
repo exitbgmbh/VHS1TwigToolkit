@@ -38,14 +38,15 @@ class SecurityService
     }
 
     /**
+     * @param bool $forceReload
      * @return string
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function getJwt(): string
+    public function getJwt(bool $forceReload): string
     {
         $jwtCacheKey = $this->_cacheService->getJwtCacheKey();
-        if ($this->_cacheService->has($jwtCacheKey)) {
+        if (!$forceReload && $this->_cacheService->has($jwtCacheKey)) {
             return $this->_cacheService->get($jwtCacheKey)->get();
         }
 

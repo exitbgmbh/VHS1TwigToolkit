@@ -2,77 +2,86 @@
 
 namespace App\Factory;
 
-use App\Service\HttpService;
+use App\Service\LanguageService;
 use App\Service\TypesService;
 use App\Service\ValidatorService;
-use App\ViewModel\IndexViewModel;
+use App\ViewModel\RequestViewModel;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 
-class FrontendFactory
+class ViewModelFactory
 {
-    /** @var HttpService */
-    private $_httpService;
+    /** @var LanguageService */
+    private $_languageService;
 
     /** @var TypesService */
     private $_typesService;
 
     /** @var ValidatorService */
-    private $_validationService;
+    private $_validatorService;
 
     /**
-     * @param HttpService $httpService
+     * @param LanguageService $languageService
      * @param TypesService $typesService
      * @param ValidatorService $validatorService
      */
-    public function __construct(HttpService $httpService, TypesService $typesService, ValidatorService $validatorService)
-    {
-        $this->_httpService = $httpService;
+    public function __construct(
+        LanguageService $languageService,
+        TypesService $typesService,
+        ValidatorService $validatorService
+    ) {
+        $this->_languageService = $languageService;
         $this->_typesService = $typesService;
-        $this->_validationService = $validatorService;
+        $this->_validatorService = $validatorService;
     }
 
     /**
      * @param Request $request
-     * @return IndexViewModel
+     * @return RequestViewModel
      * @throws InvalidArgumentException
      */
-    public function create(Request $request): IndexViewModel
+    public function createRequestViewModel(Request $request): RequestViewModel
     {
-        $advertisingMediumCode = $request->request->get('advertisingMediumCode', '');
-        $forceReload = $request->request->get('forceReload', false) === 'true';
+        $advertisingMediumCode = $request->get('advertisingMediumCode', '');
+        $forceReload = $request->get('forceReload', false) === 'true';
         $types = $this->_typesService->getTypes($forceReload);
         $kinds = $types->getKinds();
         $types = $types->getTypes();
-        $kind = $request->request->get('kind', '');
-        $type = $request->request->get('type', '');
-        $template = $request->request->get('template', '');
-        $identifiers = $request->request->get('identifiers', '');
+        $kind = $request->get('kind', '');
+        $type = $request->get('type', '');
+        $template = $request->get('template', '');
+        $identifiers = $request->get('identifiers', '');
+        $language = $request->get('language', '');
+        $languages = $this->_languageService->getLanguages($forceReload);
+        $realType = $this->_typesService->getRealType($type);
 
         $iFrameSrc = '';
         $errors = [];
         if ($request->isMethod('POST')) {
-            $errors = $this->_validationService->validateGenerationRequest($request->request->all());
+            $errors = $this->_validatorService->validateGenerationRequest($request->request->all());
             if (empty($errors)) {
                 $iFrameSrc = $this->_generateIframeUrl(
                     $kind,
-                    $type,
+                    $realType,
                     $template,
                     $identifiers,
                     $advertisingMediumCode,
-                    $forceReload
+                    $forceReload,
+                    $language
                 );
             }
         }
 
-        return new IndexViewModel(
+        return new RequestViewModel(
             $advertisingMediumCode,
             $errors,
             $forceReload,
             $identifiers,
+            $iFrameSrc,
             $kind,
             $kinds,
-            $iFrameSrc,
+            $language,
+            $languages,
             $template,
             $type,
             $types
@@ -86,6 +95,7 @@ class FrontendFactory
      * @param string $identifiers
      * @param string $advertisingMediumCode
      * @param bool $forceReload
+     * @param string $language
      * @return string
      */
     private function _generateIframeUrl(
@@ -94,7 +104,8 @@ class FrontendFactory
         string $template,
         string $identifiers,
         string $advertisingMediumCode,
-        bool $forceReload
+        bool $forceReload,
+        string $language
     ): string {
         $url = sprintf(
             '/%s/%s/%s/%s',
@@ -108,8 +119,17 @@ class FrontendFactory
             $url .= '/' . $advertisingMediumCode;
         }
 
+        $query = [];
         if ($forceReload) {
-            $url .= '?forceReload=true';
+            $query['forceReload'] = 'true';
+        }
+
+        if (!empty($language)) {
+            $query['language'] = $language;
+        }
+
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
         }
 
         return $url;

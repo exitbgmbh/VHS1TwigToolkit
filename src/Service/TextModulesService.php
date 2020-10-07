@@ -38,22 +38,35 @@ class TextModulesService
     }
 
     /**
+     * @param string $template
      * @param string $advertisingMediumCode
+     * @param string $language
      * @param string $jwt
      * @param bool $forceReload
      * @return array
-     * @throws Exception|InvalidArgumentException
+     * @throws Exception
+     * @throws InvalidArgumentException
      */
-    public function getTextModules(string $advertisingMediumCode, string $jwt, bool $forceReload): array
-    {
-        $textModulesCacheKey = $this->_cacheService->getTextModulesCacheKey($advertisingMediumCode);
-        if ($this->_cacheService->has($textModulesCacheKey) && !$forceReload) {
+    public function getTextModules(
+        string $template,
+        string $advertisingMediumCode,
+        string $language,
+        string $jwt,
+        bool $forceReload
+    ): array {
+        $textModulesCacheKey = $this->_cacheService->getTextModulesCacheKey($advertisingMediumCode, $language);
+        if (!!$forceReload && $this->_cacheService->has($textModulesCacheKey)) {
             $textModules = $this->_cacheService->get($textModulesCacheKey)->get();
         } else {
-            $textModulesEndpointUrl = $this->_configService->getTemplateTextModulesEndpointUrl($advertisingMediumCode);
+            $textModulesEndpointUrl = $this->_configService->getTemplateTextModulesEndpointUrl($advertisingMediumCode, $template, $language);
             $textModules = $this->_httpService->getTemplateTextModules($textModulesEndpointUrl, $jwt);
             $textModules = $this->_jsonService->parseJson($textModules);
-            $textModules = $textModules['response'];
+
+            if (isset($textModules['response']['textModules'])) {
+                $textModules = $textModules['response']['textModules'];
+            } else {
+                $textModules = $textModules['response'];
+            }
 
             $transformedTextModules = [];
             foreach ($textModules as $textModule) {

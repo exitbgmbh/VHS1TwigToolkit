@@ -32,7 +32,7 @@ class TextModuleLoader implements TwigLoaderInterface
             return new TwigSource($this->mapping[$name], $name);
         }
 
-        return new TwigSource($name, $name);
+        return new TwigSource('<span style="background-color: red;">' . $name . '</span>', $name);
     }
 
     /**
