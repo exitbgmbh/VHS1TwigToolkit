@@ -55,7 +55,7 @@ class TextModulesService
         bool $forceReload
     ): array {
         $textModulesCacheKey = $this->_cacheService->getTextModulesCacheKey($advertisingMediumCode, $language);
-        if (!!$forceReload && $this->_cacheService->has($textModulesCacheKey)) {
+        if (!$forceReload && $this->_cacheService->has($textModulesCacheKey)) {
             $textModules = $this->_cacheService->get($textModulesCacheKey)->get();
         } else {
             $textModulesEndpointUrl = $this->_configService->getTemplateTextModulesEndpointUrl($advertisingMediumCode, $template, $language);
