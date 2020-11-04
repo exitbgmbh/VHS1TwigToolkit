@@ -27,7 +27,6 @@ class ExitbTm extends AbstractTokenParser
     public function parse(Token $token)
     {
         $expr = $this->parser->getExpressionParser()->parseExpression();
-
         list($variables, $only, $ignoreMissing, $default) = $this->parseArguments();
 
         return new ExitbTmNode($expr, $token->getLine(), $variables, $default, $only, $ignoreMissing, $this->getTag());

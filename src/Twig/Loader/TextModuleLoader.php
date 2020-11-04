@@ -11,6 +11,15 @@ class TextModuleLoader implements TwigLoaderInterface
     private $mapping = [];
 
     /**
+     * @param string $key
+     * @param string $value
+     */
+    public function addMapping(string $key, string $value)
+    {
+        $this->mapping[$key] = $value;
+    }
+
+    /**
      * @param array $mapping
      */
     public function __construct(array $mapping)

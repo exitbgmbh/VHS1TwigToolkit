@@ -54,12 +54,13 @@ class TwigService
 
         $tmParser = new ExitbTm();
         $twig = new TwigEnvironment($chainLoader, [ 'auto_reload' => true ]);
+        foreach ($mapping as $key => $value) {
+            $twig->addGlobal($key, $value);
+        }
 
         $twig->addTokenParser($tmParser);
-
         $exitbTmTwigFunction = new TwigFunction(
             'exitbTm',
-            'twig_exitbTm',
             [
                 'needs_environment' => true,
                 'needs_context' => true,

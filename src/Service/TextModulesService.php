@@ -74,7 +74,6 @@ class TextModulesService
             }
 
             $textModules = $transformedTextModules;
-
             $this->_cacheService->set($textModulesCacheKey, $textModules);
         }
 

@@ -40,6 +40,17 @@ class ExitbTm extends Node implements NodeOutputInterface
         $compiler->write("try {\n")
             ->indent();
 
+        $default = '';
+        if ($this->hasNode('default')) {
+            $default = str_replace("'","\'", $this->getNode('default')->getAttribute('value'));
+        }
+
+        $compiler->write('if (!array_key_exists("' . $this->getNode('expr')->getAttribute('value') . '", $this->env->getGlobals())) {')
+            ->indent()
+            ->write('$this->env->getLoader()->getLoaders()[1]->addMapping("' . $this->getNode('expr')->getAttribute('value') . '", "' . $default . '");')
+            ->outdent()
+            ->write('}');
+
         $compiler->write('echo sprintf(twig_include($this->env, $context, "' . $this->getNode('expr')->getAttribute('value') . '")');
         if ($this->hasNode('variables')) {
             $compiler->raw(', ...');
@@ -48,14 +59,7 @@ class ExitbTm extends Node implements NodeOutputInterface
 
         $compiler->write(");\n\n");
 
-        if ($this->getAttribute('ignore_missing')) {
-            $compiler->outdent()
-                ->write("} catch (\Twig\Error\LoaderError \$e) {\n")
-                ->indent()
-                ->write("// ignore missing template\n")
-                ->outdent()
-                ->raw("}\n\n");
-        } elseif ($this->hasNode('default')) {
+        if ($this->hasNode('default')) {
             $compiler->outdent()
                 ->write("} catch (\Twig\Error\LoaderError \$e) {\n")
                 ->indent()
@@ -69,38 +73,14 @@ class ExitbTm extends Node implements NodeOutputInterface
             $compiler->raw(');')
                 ->outdent()
                 ->write("}\n\n");
-        }
-    }
-
-    /**
-     * @param Compiler $compiler
-     * @return Compiler
-     */
-    protected function addGetTemplate(Compiler $compiler): Compiler
-    {
-        $compiler->write('$this->loadTemplate(')
-            ->subcompile($this->getNode('expr'))
-            ->raw(', ')
-            ->repr($this->getTemplateName())
-            ->raw(', ')
-            ->repr($this->getTemplateLine())
-            ->raw(')');
-    }
-
-    /**
-     * @param Compiler $compiler
-     * @return Compiler
-     */
-    protected function addTemplateArguments(Compiler $compiler): Compiler
-    {
-        if (!$this->hasNode('variables')) {
-            $compiler->raw(false === $this->getAttribute('only') ? '$context' : 'array()');
-        } elseif (false === $this->getAttribute('only')) {
-            $compiler->raw('array_merge($context, ')
-                ->subcompile($this->getNode('variables'))
-                ->raw(')');
         } else {
-            $compiler->subcompile($this->getNode('variables'));
+            $compiler->outdent()
+                ->write("} catch (\Twig\Error\LoaderError \$e) {\n")
+                ->indent()
+                ->write("// ignore missing template\n")
+                ->outdent()
+                ->raw("}\n\n");
         }
     }
+
 }
