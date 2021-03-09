@@ -63,6 +63,7 @@ class TemplateFactory
                 'iframeSrc' => $requestViewModel->getIFrameSrc(),
                 'template' => $requestViewModel->getTemplate(),
                 'identifiers' => $requestViewModel->getIdentifiers(),
+                'productId' => $requestViewModel->getProductId(),
                 'advertisingMediumCode' => $requestViewModel->getAdvertisingMediumCode(),
                 'forceReload' => $requestViewModel->forceReload(),
                 'year' => date('Y'),
@@ -85,6 +86,7 @@ class TemplateFactory
             $requestViewModel->getKind(),
             $requestViewModel->getType(),
             $requestViewModel->getIdentifiers(),
+            $requestViewModel->getProductId(),
             $jwt,
             $requestViewModel->forceReload()
         );

@@ -47,18 +47,25 @@ class ContextService
      * @param string $kind
      * @param string $type
      * @param string $identifiers
+     * @param string $productId
      * @param string $jwt
      * @param bool $forceReload
      * @return array
-     * @throws Exception|InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function getContext(string $kind, string $type, string $identifiers, string $jwt, bool $forceReload): array
-    {
-        $contextCacheKey = $this->_cacheService->getContextCacheKey($kind, $type, $identifiers);
+    public function getContext(
+        string $kind,
+        string $type,
+        string $identifiers,
+        string $productId,
+        string $jwt,
+        bool $forceReload
+    ): array {
+        $contextCacheKey = $this->_cacheService->getContextCacheKey($kind, $type, $identifiers, $productId);
         if (!$forceReload && $this->_cacheService->has($contextCacheKey)) {
             $context = $this->_cacheService->get($contextCacheKey)->get();
         } else {
-            $contextEndpointUrl = $this->_configService->getContextEndpointUrl($kind, $type, $identifiers);
+            $contextEndpointUrl = $this->_configService->getContextEndpointUrl($kind, $type, $identifiers, $productId);
             $context = $this->_httpService->getContext($contextEndpointUrl, $jwt);
             $context = $this->_jsonService->parseJson($context);
             $context = $context['response'];

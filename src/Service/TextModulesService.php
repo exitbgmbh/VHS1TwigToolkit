@@ -77,7 +77,7 @@ class TextModulesService
             $this->_cacheService->set($textModulesCacheKey, $textModules);
         }
 
-        $textModuleReplacements = $this->_configService->getTranslatedTextModules($advertisingMediumCode);
+        $textModuleReplacements = $this->_configService->getTranslatedTextModules($advertisingMediumCode, $language);
 
         return array_merge($textModules, $textModuleReplacements);
     }

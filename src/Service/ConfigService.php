@@ -86,14 +86,18 @@ class ConfigService
      * @param string $kind
      * @param string $type
      * @param string $identifiers
+     * @param string $productId
      * @return string
      * @throws Exception
      */
-    public function getContextEndpointUrl(string $kind, string $type, string $identifiers): string
+    public function getContextEndpointUrl(string $kind, string $type, string $identifiers, string $productId): string
     {
         $endpoint = '%s/v1/document/readTemplateContext/%s?type=%s';
         if ($kind === TypesService::TEMPLATE_TYPE_EMAIL_NAME) {
             $endpoint = '%s/v1/email/readContext/%s?type=%s';
+            if (!empty($productId)) {
+                $endpoint .= '&productId=' . $productId;
+            }
         }
 
         return sprintf(
@@ -176,16 +180,25 @@ class ConfigService
 
     /**
      * @param string $advertisingMediumCode
+     * @param string $language
      * @return array
      * @throws Exception
      */
-    public function getTranslatedTextModules(string $advertisingMediumCode): array
+    public function getTranslatedTextModules(string $advertisingMediumCode, string $language): array
     {
         $textModules = [];
 
         $config = $this->getConfig();
-        if ($this->_keyExists([ 'mapping', 'textModuleMapping', $advertisingMediumCode ], $config)) {
+        if (!empty($language)) {
+            if ($this->_keyExists([ 'mapping', 'textModuleMapping', $advertisingMediumCode . '-' . $language ], $config)) {
+                $textModules = $config['mapping']['textModuleMapping'][$advertisingMediumCode . '-' . $language];
+            }
+        } elseif ($this->_keyExists([ 'mapping', 'textModuleMapping', $advertisingMediumCode ], $config)) {
             $textModules = $config['mapping']['textModuleMapping'][$advertisingMediumCode];
+        }
+
+        if ($this->_keyExists([ 'mapping', 'textModuleMapping', 'defaults-' . $language ], $config)) {
+            $textModules = array_merge($config['mapping']['textModuleMapping']['defaults-' . $language], $textModules);
         }
 
         if ($this->_keyExists([ 'mapping', 'textModuleMapping', 'defaults' ], $config)) {
