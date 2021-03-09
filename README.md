@@ -44,6 +44,13 @@ Nun steht der Symlink-Pfad `/home/benutzer/workspace/template` im Container zur 
     - 'slip -> /home/benutzer/workspace/templateRepo/slip'
     - 'image -> /home/benutzer/workspace/templateRepo/image'
 
+Dazu wie folgt vorgehen:
+
+    $ cd src/Templates
+    $ ln -s /absolute/path/to/templates-repo/email/
+    $ ln -s /absolute/path/to/templates-repo/slip/
+    $ ln -s /absolute/path/to/templates-repo/image/
+
 Sollte ein Projekt von dieser Struktur abweichen, können die Pfade in folgender
 Datei angepasst werden: `src/Service/TwigService.php`
 
@@ -76,6 +83,71 @@ Hat das angesprochene System eine höhere Buildnummer als `1931`, werden sich zu
 in einem Dropdown auf der Seite angezeigt. Mit der zusätzlichen Sprachauswahl, können so die Templates mit verschiedenen Sprachen getestet werden.
 Denn bei einer angegebenen Sprache werden die Textbausteine, sofern vorganend, übermittelt.
 
+## Bedienen
+
+Um eine Vorschau der angepassten Templates zu sehen, müssen wir dem Tool mitteilen, was wir bearbeiten möchte und woher die Daten genommen werden sollen.  
+Zunächst wählen wir also eine `Art` aus. Hier werden `PDF` und `E-Mail` unterstützt. Je nach ausgewählter Art, werden die verfügbaren `Typen` geladen.  
+Im nächsten Schritt müssen wir den Namen des Templates angeben, welches für die Darstellung genommen werden soll. Dann müssen wir eine `Identifikation` angeben.  
+Diese ist abhängig von dem ausgewählten `Typen`, also für eine `Rechnung` brauchen wir beispielsweise eine `Rechnungsnummer`. Weiter unten ist eine Liste zur Hilfe.  
+
+Diese vier Felder `Art`, `Typ`, `Template` und `Identifikation` sind Pflichtfelder.
+
+Die Produkt ID muss bei einigen `Templates` (E-Mail) zusätzlich angegeben werden. Siehe dazu wieder weiter unten die Liste.
+
+Das Werbemittel ist auch optional und kann angegebeben werden. Z.B.: wenn wir "dynamische" Anzeigen im Template auf Basis des Werbemittels haben,
+oder bestimmte Werte der Textbausteine an ein Werbemittel gebunden sind.
+
+Mit der Sprache verhält es sich ähnlich wie mit den Werbemitteln. Die verfügbaren Sprachen werden automatisch geladen und beeinflusst die angezeigte Spreche - logisch.
+
+|Art|Typ|Template (kann abweichen)|Identifikation|Produkt ID (ja/nein)|
+|---|---|---|---|---|
+|PDF|Rechnung|default_invoice.html|Rechnungsnummer||
+|PDF|Rechnungs (Email-Anhang)|default_invoice_email.html|Rechnungsnummer||
+|PDF|Retourenschein|default_return_slip.html|Rechnungsnummer||
+|PDF|Lieferschein|default_delivery_slip.html|Rechnungsnummer||
+|PDF|Pickliste|default_pick_list.html|Picklistennummer||
+|PDF|Nachfüllauftrag|default_stock_relocation.html|Nachfüllauftragsnummer||
+|PDF|Umlagerungsauftrag|default_relocation.html|Umlagerungsnummer||
+|PDF|Mahnung|default_motion_slip.html|ID der Mahnung||
+|PDF|Lieferantenbegleitdokument|default_supply_note.html|Lieferantenbestellnummer||
+|PDF|Lieferantenbestellung|default_supplier_order_slip.html|Lieferantenbestellnummer||
+|PDF|Anschreiben Herstellerreparatur|default_repair_case_cover_letter.html|Reparaturfallnummer||
+|PDF|Reparatur-Lieferschein|default_repair_case_return_form.html|Reparaturfallnummer||
+|PDF|Auftragsbestätigung|default_order_confirmation.html|Bestellnummer||
+|PDF|Angebot|default_offer.html|Bestellnummer||
+|PDF|Produkt-Etikett|default_label_small/big.html|Identifikation (z.B. EAN, Artikelnummer)||
+|PDF|Lagerfach-Etikett|default_tray_label.html|Lagerfachcode||
+|PDF|Benutzerausweis|default_user_id_card.html|ID des Benutzers||
+|PDF|PickBox-Etikett|default_pick_box.html|Pickboxnummer/Identifikation||
+|PDF|POS - Abschluss|default_pos_report.html|ID des Reports||
+|PDF|Inventurbeleg|default_stock_inventory.html|Inventurnummer||
+|E-Mail|Lieferantenbestellung|default_supplier_order.html|Lieferantenbestellnummer||
+|E-Mail|Lieferantenbestellung Bestelländerung|default_supplier_order_changed.html|Lieferantenbestellnummer||
+|E-Mail|Lieferantenbestellung Mahnung|default_supplier_order_reminder.html|Lieferantenbestellnummer||
+|E-Mail|Lieferantenbestellung Stornierung|default_supplier_order_cancel.html|Lieferantenbestellnummer||
+|E-Mail|Lieferantenbestellung Abschluss|default_supplier_order_finished.html|Lieferantenbestellnummer||
+|E-Mail|Lieferverzugsemail|default_order_delivery_delay.html|ID der Bestellzeile||
+|E-Mail|Bestelleingang|default_order_received.html|Bestellnummer|x||
+|E-Mail|Mahnung|default_monition.html|ID der Mahnung||
+|E-Mail|Rechnungsversand|default_email_invoice.html|Bestellnummer||
+|E-Mail|Rechnungsversand (Buchhaltung)|default_accountancy_invoice_email.html|Bestellnummer|x|
+|E-Mail|Bestelländerung|default_order_changed.html|Bestellnummer|x|
+|E-Mail|Bestellstornierung|default_order_canceled.html|Bestellnummer|x|
+|E-Mail|Bestellung Logistikanmeldung|default_order_moved_to_logistic.html|Bestellnummer|x|
+|E-Mail|Versandbestätigung|default_order_shipped.html|Versandauftragsnummer||
+|E-Mail|Zahlungseingang|default_payment_cleared.html|Bestellnummer|x|
+|E-Mail|Retoureneingang|default_incoming_return.html|Retourennummer||
+|E-Mail|Zahlungseingang (Bankkonto)|default_payment_cash_cleared.html|Bestellnummer|x|
+|E-Mail|Vorkasse-Erinnerung|default_pre_payment_reminder.html|Bestellnummer|x|
+|E-Mail|Retourenverarbeitung|default_return_processed.html|Retourennummer||
+|E-Mail|Retoureninformationen|default_order_return_info.html|Retourennummer||
+|E-Mail|Produkt NLB|default_order_product_nlb.html|Bestellnummer|x|
+|E-Mail|Selbstabholerbenachrichtigung|default_order_ready_for_collection.html|Bestellnummer|x|
+|E-Mail|Kommissionierungshinweis|default_order_in_picking.html|Bestellnummer|x|
+|E-Mail|Streckengeschäft|default_drop_shipment_order.html|Bestellnummer|x|
+|E-Mail|Streckengeschäft Zuweisung Lieferant| |Lieferantenbestellnummer||
+|E-Mail|Streckengeschäft Kundenbenachrichtigung| |Versandauftragsnummer||
+
 ## Context überschreiben
 
 Es ist möglich in der Konfigurationsdatei `src/Config/config.json` sämtliche Werte des Kontextes zu überschreiben.
@@ -92,6 +164,8 @@ samt Übersetzung (Key/Value) in folgenden Knoten der `src/Config/config.json` e
 Möchte man Übersetzungen pro Werbemittel anlegen, kann ein weiterer Knoten, auf derselben Ebene, wie die `defaults` hinzugefügt werden.
 Also beispielsweise: `mapping -> textModuleMapping -> ABC`. Diese Werte pro Werbemittelcode können dann, sofern vorhanden in den Defaults,
 Werte überschreiben. D.h. man kann in den Defaults Standardwerte eintragen und diese dann individuell für jedes Werbemittel einzeln, oder alle (`defaults`) überschreiben.
+Weiter kann man auch die `defaults` für eine bestimmte Sprache überschreiben, dazu beispielsweise einen Knoten `mapping -> textModuleMapping -> defaults-en` hinzufügen. Also
+an das Werbemittel, oder eben den Defaults, ein `-LANGUAGE_CODE` anhängen.
 Leere Bausteine, also ohne Übersetzung, werden mit ihrem "Schlüssel" im PDF angezeigt. Ebenso Bausteine für die es keinen Eintrag
 in der Konfiguration gibt.  
 Ist dieses Verhalten nicht gewünscht, kann man den Code in `src/Twig/Loader/TextModuleLoader.php` anpassen.
@@ -122,3 +196,37 @@ Der Button `Cache leeren` gilt immer für alle Sachen die auf dem Dateisystem ge
 oder anderen ist somit nicht möglich. Es wird dann immer alles aktualisiert. (Es sei denn man löscht manuell z.B. nur den `jwt cache` aus dem Dateisystem).
 
 Standardmäßig wird der Cache in `/tmp/symfony-cache` geschrieben.
+
+## Fonts
+
+Wenn wir Custom-Fonts brauchen, können wir diese ganz einfach einbinden. Zunächst brauchen wir die Fonts selber. Z.B.: ablegen unter `src/Templates/fonts`.  
+Dann öffnen wir folgende Datei: `src/Service/PdfService.php`. Hier müssen wir kleine Anpassungen an der verwendeteten `mPDF` Instanz vornehmen:
+
+    private function _getInstance(): Mpdf
+    {
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $mPdf = new Mpdf([
+            ...
+            'fontDir' => array_merge($fontDirs, [
+                __DIR__ . '/../Templates/fonts', # auf Basis von src/Templates/fonts, kann aber natürlich irgendein Pfad sein
+            ]),
+            'fontdata' => $fontData + [
+                'font-name' => [ # css: font-family: font-name;
+                    'R' => 'Font-Name.ttf',
+                    'B' => 'Font-Name-Bold.ttf',
+                    'I' => 'Font-Name-Italic.ttf',
+                    'BI' => 'Font-Name-BoldItalic.ttf',
+                ],
+            ],
+        ]);
+
+        ...
+
+    }
+
+Für weiter Information über die Konfiguration von Fonts bei `mPDF`, bitte [hier klicken](https://mpdf.github.io/fonts-languages/fonts-in-mpdf-7-x.html).
