@@ -51,6 +51,7 @@ class ViewModelFactory
         $type = $request->get('type', '');
         $template = $request->get('template', '');
         $identifiers = $request->get('identifiers', '');
+        $productId = $request->get('productId', '');
         $language = $request->get('language', '');
         $languages = $this->_languageService->getLanguages($forceReload);
         $realType = $this->_typesService->getRealType($type);
@@ -65,6 +66,7 @@ class ViewModelFactory
                     $realType,
                     $template,
                     $identifiers,
+                    $productId,
                     $advertisingMediumCode,
                     $forceReload,
                     $language
@@ -77,6 +79,7 @@ class ViewModelFactory
             $errors,
             $forceReload,
             $identifiers,
+            $productId,
             $iFrameSrc,
             $kind,
             $kinds,
@@ -93,6 +96,7 @@ class ViewModelFactory
      * @param string $type
      * @param string $template
      * @param string $identifiers
+     * @param string $productId
      * @param string $advertisingMediumCode
      * @param bool $forceReload
      * @param string $language
@@ -103,6 +107,7 @@ class ViewModelFactory
         string $type,
         string $template,
         string $identifiers,
+        string $productId,
         string $advertisingMediumCode,
         bool $forceReload,
         string $language
@@ -126,6 +131,10 @@ class ViewModelFactory
 
         if (!empty($language)) {
             $query['language'] = $language;
+        }
+
+        if (!empty($productId)) {
+            $query['productId'] = $productId;
         }
 
         if (!empty($query)) {

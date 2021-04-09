@@ -42,7 +42,7 @@ class ExitbTm extends Node implements NodeOutputInterface
 
         $default = '';
         if ($this->hasNode('default')) {
-            $default = str_replace("'","\'", $this->getNode('default')->getAttribute('value'));
+            $default = str_replace('"', '\\"', str_replace("'","\'", $this->getNode('default')->getAttribute('value')));
         }
 
         $compiler->write('if (!array_key_exists("' . $this->getNode('expr')->getAttribute('value') . '", $this->env->getGlobals())) {')
@@ -63,7 +63,7 @@ class ExitbTm extends Node implements NodeOutputInterface
             $compiler->outdent()
                 ->write("} catch (\Twig\Error\LoaderError \$e) {\n")
                 ->indent()
-                ->write('echo sprintf(\'' . str_replace("'","\'", $this->getNode('default')->getAttribute('value')) . '\'');
+                ->write('echo sprintf(\'' . str_replace('"', '\\"', str_replace("'","\'", $this->getNode('default')->getAttribute('value'))) . '\'');
 
             if ($this->hasNode('variables')) {
                 $compiler->raw(', ...');

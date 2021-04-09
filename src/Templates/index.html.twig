@@ -66,7 +66,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="navbar-link" target="_blank" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">v0.1 &copy;{{ year }} exitB GmbH</a>
+                                <a class="navbar-link" target="_blank" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">v0.2 &copy;{{ year }} exitB GmbH</a>
                             </li>
 
                             <li class="nav-item mt-3">
@@ -112,6 +112,15 @@
                                         <label class="input-group-text" for="identifiers">Identifikation</label>
                                     </div>
                                     <input type="text" placeholder="EXB202012323" class="form-control" id="identifiers" name="identifiers" aria-label="identifiers" aria-describedby="ig-identifiers-label" required {% if identifiers is defined and identifiers is not null %} value="{{ identifiers }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
+                                </div>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="productId">Produkt ID</label>
+                                    </div>
+                                    <input type="text" placeholder="123456" class="form-control" id="productId" name="productId" aria-label="productId" aria-describedby="ig-identifiers-label" {% if productId is defined and productId is not null %} value="{{ productId }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
                                 </div>
                             </li>
 
@@ -221,6 +230,7 @@
                     kind: document.getElementById('kind').options[document.getElementById('kind').selectedIndex].value,
                     type: document.getElementById('type').options[document.getElementById('type').selectedIndex].value,
                     identifiers: document.getElementById('identifiers').value,
+                    productId: document.getElementById('productId').value,
                     advertisingMediumCode: document.getElementById('advertisingMediumCode').value,
                     language: document.getElementById('language').value
                 });
@@ -398,6 +408,7 @@
 
             document.getElementById('template').addEventListener('keyup', submitOnEnter);
             document.getElementById('identifiers').addEventListener('keyup', submitOnEnter);
+            document.getElementById('productId').addEventListener('keyup', submitOnEnter);
             document.getElementById('advertisingMediumCode').addEventListener('keyup', submitOnEnter);
 
             (function() {

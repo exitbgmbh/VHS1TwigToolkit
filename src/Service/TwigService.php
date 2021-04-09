@@ -14,21 +14,11 @@ use Twig\TwigFunction;
 
 class TwigService
 {
-    /** @var ConfigService */
-    private $_configService;
-
-    /**
-     * @param ConfigService $configService
-     */
-    public function __construct(ConfigService $configService)
-    {
-        $this->_configService = $configService;
-    }
-
     /**
      * @param string $templateName
      * @param array $context
      * @param array $mapping
+     * @param string $kind
      * @return string
      * @throws TwigLoaderError
      * @throws TwigRuntimeError
@@ -37,14 +27,22 @@ class TwigService
     public function renderTemplate(
         string $templateName,
         array $context,
-        array $mapping
+        array $mapping,
+        string $kind
     ): string {
-        $loader = new TwigFilesystemLoader([
+        $paths = [
             __DIR__ . '/../Templates',
-            __DIR__ . '/../Templates/email',
-            __DIR__ . '/../Templates/slip',
-        ]);
+        ];
 
+        if ($kind === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
+            $paths[] = __DIR__ . '/../Templates/slip';
+            $paths[] = __DIR__ . '/../Templates/email';
+        } else {
+            $paths[] = __DIR__ . '/../Templates/email';
+            $paths[] = __DIR__ . '/../Templates/slip';
+        }
+
+        $loader = new TwigFilesystemLoader($paths);
         $tmLoader = new TextModuleLoader($mapping);
 
         $chainLoader = new TwigChainLoader([
@@ -71,6 +69,7 @@ class TwigService
         $twig->addFunction($exitbTmTwigFunction);
 
         $templateWrapper = $twig->load($templateName);
+
         return $templateWrapper->render($context);
     }
 }

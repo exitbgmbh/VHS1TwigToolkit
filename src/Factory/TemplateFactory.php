@@ -63,11 +63,13 @@ class TemplateFactory
                 'iframeSrc' => $requestViewModel->getIFrameSrc(),
                 'template' => $requestViewModel->getTemplate(),
                 'identifiers' => $requestViewModel->getIdentifiers(),
+                'productId' => $requestViewModel->getProductId(),
                 'advertisingMediumCode' => $requestViewModel->getAdvertisingMediumCode(),
                 'forceReload' => $requestViewModel->forceReload(),
                 'year' => date('Y'),
             ],
-            []
+            [],
+            $requestViewModel->getKind()
         );
     }
 
@@ -85,6 +87,7 @@ class TemplateFactory
             $requestViewModel->getKind(),
             $requestViewModel->getType(),
             $requestViewModel->getIdentifiers(),
+            $requestViewModel->getProductId(),
             $jwt,
             $requestViewModel->forceReload()
         );
@@ -100,7 +103,8 @@ class TemplateFactory
         return new TemplateViewModel(
             $requestViewModel->getTemplate(),
             $context,
-            $textModulesMapping
+            $textModulesMapping,
+            $requestViewModel->getKind()
         );
     }
 }

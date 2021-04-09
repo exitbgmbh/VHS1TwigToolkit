@@ -35,7 +35,8 @@ class ApiController
         $contextCacheKey = $this->_cacheService->getContextCacheKey(
             $request->query->get('kind', ''),
             $this->_typeService->getRealType($request->query->get('type', '')),
-            $request->query->get('identifiers', '')
+            $request->query->get('identifiers', ''),
+            $request->query->get('productId', '')
         );
 
         return new JsonResponse([
@@ -53,7 +54,8 @@ class ApiController
         $contextCacheKey = $this->_cacheService->getContextCacheKey(
             $request->query->get('kind', ''),
             $this->_typeService->getRealType($request->query->get('type', '')),
-            $request->query->get('identifiers', '')
+            $request->query->get('identifiers', ''),
+            $request->query->get('productId', '')
         );
 
         $context = [];

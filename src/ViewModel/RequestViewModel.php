@@ -17,6 +17,9 @@ class RequestViewModel
     private $identifiers;
 
     /** @var string */
+    private $productId;
+
+    /** @var string */
     private $iFrameSrc;
 
     /** @var string */
@@ -45,6 +48,7 @@ class RequestViewModel
      * @param array $errors
      * @param bool $forceReload
      * @param string $identifiers
+     * @param string $productId
      * @param string $iFrameSrc
      * @param string $kind
      * @param array $kinds
@@ -59,6 +63,7 @@ class RequestViewModel
         array $errors,
         bool $forceReload,
         string $identifiers,
+        string $productId,
         string $iFrameSrc,
         string $kind,
         array $kinds,
@@ -72,6 +77,7 @@ class RequestViewModel
         $this->errors = $errors;
         $this->forceReload = $forceReload;
         $this->identifiers = $identifiers;
+        $this->productId = $productId;
         $this->iFrameSrc = $iFrameSrc;
         $this->kind = $kind;
         $this->kinds = $kinds;
@@ -112,6 +118,14 @@ class RequestViewModel
     public function getIdentifiers(): string
     {
         return $this->identifiers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductId(): string
+    {
+        return $this->productId;
     }
 
     /**

@@ -62,8 +62,7 @@ $containerBuilder->register('template_factory', TemplateFactory::class)
         new Reference('view_model_factory'),
     ]);
 
-$containerBuilder->register('twig_service', TwigService::class)
-    ->addArgument(new Reference('config_service'));
+$containerBuilder->register('twig_service', TwigService::class);
 
 $containerBuilder->register('security_service', SecurityService::class)
     ->setArguments([

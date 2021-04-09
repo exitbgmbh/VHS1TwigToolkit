@@ -93,11 +93,12 @@ class CacheService
      * @param string $kind
      * @param string $type
      * @param string $identifiers
+     * @param string $productId
      * @return string
      */
-    public function getContextCacheKey(string $kind, string $type, string $identifiers): string
+    public function getContextCacheKey(string $kind, string $type, string $identifiers, string $productId): string
     {
-        return sprintf('%s-%s-%s', $kind, $type, $identifiers);
+        return sprintf('%s-%s-%s-%s', $kind, $type, $identifiers, $productId);
     }
 
     /**
@@ -107,14 +108,6 @@ class CacheService
      */
     public function getTextModulesCacheKey(string $advertisingMediumCode, string $language): string
     {
-        if (empty($advertisingMediumCode)) {
-            $advertisingMediumCode = 'default';
-        }
-
-        if (empty($language)) {
-            $language = 'default';
-        }
-
         return sprintf('%s-%s-%s', self::TEXT_MODULES_CACHE_KEY, $advertisingMediumCode, $language);
     }
 
