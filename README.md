@@ -140,7 +140,7 @@ Mit der Sprache verhält es sich ähnlich wie mit den Werbemitteln. Die verfügb
 |E-Mail|Zahlungseingang (Bankkonto)|default_payment_cash_cleared.html|Bestellnummer|x|
 |E-Mail|Vorkasse-Erinnerung|default_pre_payment_reminder.html|Bestellnummer|x|
 |E-Mail|Retourenverarbeitung|default_return_processed.html|Retourennummer||
-|E-Mail|Retoureninformationen|default_order_return_info.html|Retourennummer||
+|E-Mail|Retoureninformationen|default_order_return_info.html|Bestellnummer||
 |E-Mail|Produkt NLB|default_order_product_nlb.html|Bestellnummer|x|
 |E-Mail|Selbstabholerbenachrichtigung|default_order_ready_for_collection.html|Bestellnummer|x|
 |E-Mail|Kommissionierungshinweis|default_order_in_picking.html|Bestellnummer|x|

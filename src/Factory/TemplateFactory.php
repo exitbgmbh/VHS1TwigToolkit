@@ -68,7 +68,8 @@ class TemplateFactory
                 'forceReload' => $requestViewModel->forceReload(),
                 'year' => date('Y'),
             ],
-            []
+            [],
+            $requestViewModel->getKind()
         );
     }
 
@@ -102,7 +103,8 @@ class TemplateFactory
         return new TemplateViewModel(
             $requestViewModel->getTemplate(),
             $context,
-            $textModulesMapping
+            $textModulesMapping,
+            $requestViewModel->getKind()
         );
     }
 }

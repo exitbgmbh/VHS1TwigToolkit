@@ -54,7 +54,8 @@ class AppController
         $response = $this->_twigService->renderTemplate(
             $viewModel->getTemplateName(),
             $viewModel->getContext(),
-            $viewModel->getMapping()
+            $viewModel->getMapping(),
+            $viewModel->getKind()
         );
 
         return new Response($response);
@@ -75,7 +76,8 @@ class AppController
         $response = $this->_twigService->renderTemplate(
             $viewModel->getTemplateName(),
             $viewModel->getContext(),
-            $viewModel->getMapping()
+            $viewModel->getMapping(),
+            $viewModel->getKind()
         );
 
         if ($request->attributes->get('kind') === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {

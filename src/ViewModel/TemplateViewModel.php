@@ -13,16 +13,21 @@ class TemplateViewModel
     /** @var array */
     private $mapping;
 
+    /** @var string */
+    private $kind;
+
     /**
      * @param string $templateName
      * @param array $context
      * @param array $mapping
+     * @param string $kind
      */
-    public function __construct(string $templateName, array $context, array $mapping)
+    public function __construct(string $templateName, array $context, array $mapping, string $kind)
     {
         $this->templateName = $templateName;
         $this->context = $context;
         $this->mapping = $mapping;
+        $this->kind = $kind;
     }
 
     /**
@@ -47,5 +52,13 @@ class TemplateViewModel
     public function getMapping(): array
     {
         return $this->mapping;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKind(): string
+    {
+        return $this->kind;
     }
 }
