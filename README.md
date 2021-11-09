@@ -1,12 +1,12 @@
-# BlisstributeTwigToolkit
+# VHS1TwigToolkit
 
 ## Info
 
-Kompatibel mit Blisstribute ab Version `2020.1929`.
+Kompatibel mit VHS1 ab Version `2020.1929`.
 
 ## Installation, Konfiguration & Verwendung
 
-Nach dem klonen des Repositories muss die Standard Konfiguration auf die entsprechende Blisstribute-Instanz konfiguriert werden.
+Nach dem klonen des Repositories muss die Standard Konfiguration auf die entsprechende VHS1-Instanz konfiguriert werden.
 Dazu einfach die Konfiguration-Vorlage kopieren und anpassen.
 
     $ cp src/Config/config.json.dist src/Config/config.json
