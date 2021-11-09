@@ -4,7 +4,7 @@
 
 Kompatibel mit Blisstribute ab Version `2020.1929`.
 
-## Installation, Konfiguration & Verwenund
+## Installation, Konfiguration & Verwendung
 
 Nach dem klonen des Repositories muss die Standard Konfiguration auf die entsprechende Blisstribute-Instanz konfiguriert werden.
 Dazu einfach die Konfiguration-Vorlage kopieren und anpassen.
