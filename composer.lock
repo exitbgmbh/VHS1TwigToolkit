@@ -4,8 +4,18 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c75e1d533c81a498f5f9c33c36b63914",
+    "content-hash": "9c2646fc0feffc86bd4e74cf3d59c630",
     "packages": [
+        {
+            "name": "ccarnivore/twig-qrcode-extension",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ccarnivore/twig-qrcode-extension.git",
+                "reference": "origin/master"
+            },
+            "type": "library"
+        },
         {
             "name": "mpdf/mpdf",
             "version": "v8.0.11",

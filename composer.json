@@ -1,4 +1,18 @@
 {
+    "repositories": {
+        "twig-qrcode": {
+            "type": "package",
+            "package": {
+                "name": "ccarnivore/twig-qrcode-extension",
+                "version": "1.0",
+                "source": {
+                    "url": "https://github.com/ccarnivore/twig-qrcode-extension.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }
+        }
+    },
     "require": {
         "ext-curl": "*",
         "ext-json": "*",
@@ -8,7 +22,8 @@
         "symfony/http-foundation": "^5.1",
         "symfony/routing": "^5.1",
         "symfony/dependency-injection": "^5.1",
-        "symfony/cache": "^5.1"
+        "symfony/cache": "^5.1",
+        "ccarnivore/twig-qrcode-extension": "1.0"
     },
     "autoload": {
         "psr-4": {

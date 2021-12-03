@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Twig\Loader\TextModuleLoader;
 use App\Twig\TokenParser\ExitbTm;
+use Priotas\Twig\Extension\QrCode;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError as TwigLoaderError;
 use Twig\Error\RuntimeError as TwigRuntimeError;
@@ -59,6 +60,7 @@ class TwigService
             $twig->addGlobal($key, $value);
         }
 
+        $twig->addExtension(new QrCode());
         $twig->addTokenParser($tmParser);
         $twig->addExtension(new \Twig\Extension\DebugExtension());
         $exitbTmTwigFunction = new TwigFunction(
