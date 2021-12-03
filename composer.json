@@ -1,18 +1,19 @@
 {
-    "repositories": {
-        "twig-qrcode": {
+    "minimum-stability": "dev",
+    "repositories": [
+        {
             "type": "package",
             "package": {
                 "name": "ccarnivore/twig-qrcode-extension",
-                "version": "1.0",
+                "version": "1.1",
                 "source": {
-                    "url": "https://github.com/ccarnivore/twig-qrcode-extension.git",
-                    "type": "git",
-                    "reference": "origin/master"
+                    "type" : "git",
+                    "url" : "https://github.com/ccarnivore/twig-qrcode-extension.git",
+                    "reference" : "master"
                 }
             }
         }
-    },
+    ],
     "require": {
         "ext-curl": "*",
         "ext-json": "*",
@@ -23,11 +24,12 @@
         "symfony/routing": "^5.1",
         "symfony/dependency-injection": "^5.1",
         "symfony/cache": "^5.1",
-        "ccarnivore/twig-qrcode-extension": "1.0"
+        "ccarnivore/twig-qrcode-extension": "1.1"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Priotas\\": "vendor/ccarnivore/twig-qrcode-extension/src/Priotas"
         }
     }
 }
