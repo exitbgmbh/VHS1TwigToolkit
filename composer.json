@@ -25,7 +25,8 @@
         "symfony/dependency-injection": "^5.1",
         "symfony/cache": "^5.1",
         "ccarnivore/twig-qrcode-extension": "1.1",
-        "endroid/qr-code": "^3.2"
+        "endroid/qr-code": "^3.2",
+        "picqer/php-barcode-generator": "dev-main"
     },
     "autoload": {
         "psr-4": {

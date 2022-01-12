@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Twig\Extension\Barcode;
 use App\Twig\Loader\TextModuleLoader;
 use App\Twig\TokenParser\ExitbTm;
 use Priotas\Twig\Extension\QrCode;
@@ -61,6 +62,7 @@ class TwigService
         }
 
         $twig->addExtension(new QrCode());
+        $twig->addExtension(new Barcode());
         $twig->addTokenParser($tmParser);
         $twig->addExtension(new \Twig\Extension\DebugExtension());
         $exitbTmTwigFunction = new TwigFunction(
