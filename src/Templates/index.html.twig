@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="/assets/third-party/bootstrap/bootstrap.min.css">
         <link rel="stylesheet" href="/assets/third-party/json-editor/jsoneditor.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+              rel="stylesheet">
         <title>BlisstributeTwigToolkit</title>
         <style>
             iframe {
@@ -149,10 +151,10 @@
                                 </li>
                             {% endif %}
 
-                            <li class="nav-item mt-3"  data-toggle="tooltip" title="Angabe der Grösse in MM x MM oder DIN-A Form">
+                            <li class="nav-item mt-3">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <label class="input-group-text" for="size">Grösse ℹ</label>
+                                        <label class="input-group-text" for="size">Grösse <span data-toggle="tooltip" title="Angabe der Grösse in Millimetern (10 x 10) oder DIN-A Form" style='margin-left: 5px' class="material-icons">info</span></label>
                                     </div>
                                     <input type="text" placeholder="A4" class="form-control" id="size" name="size" aria-label="size" aria-describedby="ig-size" {% if size is defined and size is not null %} value="{{ size }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
                                 </div>
