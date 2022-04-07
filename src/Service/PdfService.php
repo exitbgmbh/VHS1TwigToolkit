@@ -12,9 +12,9 @@ class PdfService
      * @return string
      * @throws MpdfException
      */
-    public function renderPdf(string $html): string
+    public function renderPdf(string $html, string $size = 'A4', string $format = 'P'): string
     {
-        $mPdf = $this->_getInstance();
+        $mPdf = $this->_getInstance($size, $format);
         $mPdf->WriteHTML($html);
 
         return $mPdf->Output(null, 'S');
@@ -24,11 +24,18 @@ class PdfService
      * @return Mpdf
      * @throws MpdfException
      */
-    private function _getInstance(): Mpdf
+    private function _getInstance(string $size = 'A4', string $format = 'P'): Mpdf
     {
+        if (preg_match('/x/', $size)) {
+            $size = preg_split('/x/', $size);
+            $pageSize = [$size[1], $size[0]];
+        } else {
+            $pageSize = $size;
+        }
+
         $mPdf = new Mpdf([
             'mode' => 'utf-8',
-            'format' => 'A4',
+            'format' => $pageSize,
             'default_font' => 'arial',
             'default_font_size' => 0,
             'margin_left' => 0,
@@ -37,7 +44,7 @@ class PdfService
             'margin_bottom' => 0,
             'margin_header' => 0,
             'margin_footer' => 0,
-            'orientation' => 'P',
+            'orientation' => $format,
             'tempDir' => '/tmp/mpdf', # avoid permission issues in vendor/mpdf/mpdf/tmp
         ]);
 

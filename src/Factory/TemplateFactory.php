@@ -59,6 +59,8 @@ class TemplateFactory
                 'selectedLanguage' => $requestViewModel->getLanguage(),
                 'languages' => $requestViewModel->getLanguages(),
                 'type' => $requestViewModel->getType(),
+                'size' => $requestViewModel->getSize(),
+                'format' => $requestViewModel->getFormat(),
                 'types' => json_encode($requestViewModel->getTypes()),
                 'iframeSrc' => $requestViewModel->getIFrameSrc(),
                 'template' => $requestViewModel->getTemplate(),
@@ -104,7 +106,9 @@ class TemplateFactory
             $requestViewModel->getTemplate(),
             $context,
             $textModulesMapping,
-            $requestViewModel->getKind()
+            $requestViewModel->getKind(),
+            $requestViewModel->getFormat(),
+            $requestViewModel->getSize()
         );
     }
 }

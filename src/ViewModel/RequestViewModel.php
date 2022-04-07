@@ -43,6 +43,12 @@ class RequestViewModel
     /** @var array */
     private $types;
 
+    /** @var string */
+    private $format;
+
+    /** @var string */
+    private $size;
+
     /**
      * @param string $advertisingMediumCode
      * @param array $errors
@@ -71,7 +77,9 @@ class RequestViewModel
         array $languages,
         string $template,
         string $type,
-        array $types
+        array $types,
+        string $format,
+        string $size
     ) {
         $this->advertisingMediumCode = $advertisingMediumCode;
         $this->errors = $errors;
@@ -86,6 +94,8 @@ class RequestViewModel
         $this->template = $template;
         $this->type = $type;
         $this->types = $types;
+        $this->size = $size;
+        $this->format = $format;
     }
 
     /**
@@ -190,5 +200,21 @@ class RequestViewModel
     public function getTypes(): array
     {
         return $this->types;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSize(): string
+    {
+        return $this->size;
     }
 }

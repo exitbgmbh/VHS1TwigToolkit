@@ -53,6 +53,8 @@ class ViewModelFactory
         $identifiers = $request->get('identifiers', '');
         $productId = $request->get('productId', '');
         $language = $request->get('language', '');
+        $format = $request->get('format', 'P');
+        $size = $request->get('size', 'A4');
         $languages = $this->_languageService->getLanguages($forceReload);
         $realType = $this->_typesService->getRealType($type);
 
@@ -69,7 +71,9 @@ class ViewModelFactory
                     $productId,
                     $advertisingMediumCode,
                     $forceReload,
-                    $language
+                    $language,
+                    $format,
+                    $size
                 );
             }
         }
@@ -87,7 +91,9 @@ class ViewModelFactory
             $languages,
             $template,
             $type,
-            $types
+            $types,
+            $format,
+            $size
         );
     }
 
@@ -110,7 +116,9 @@ class ViewModelFactory
         string $productId,
         string $advertisingMediumCode,
         bool $forceReload,
-        string $language
+        string $language,
+        string $format,
+        string $size
     ): string {
         $url = sprintf(
             '/%s/%s/%s/%s',
@@ -131,6 +139,14 @@ class ViewModelFactory
 
         if (!empty($language)) {
             $query['language'] = $language;
+        }
+
+        if (!empty($format)) {
+            $query['format'] = $format;
+        }
+
+        if (!empty($size)) {
+            $query['size'] = $size;
         }
 
         if (!empty($productId)) {

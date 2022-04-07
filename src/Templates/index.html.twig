@@ -149,6 +149,27 @@
                                 </li>
                             {% endif %}
 
+                            <li class="nav-item mt-3"  data-toggle="tooltip" title="Angabe der Grösse in MM x MM oder DIN-A Form">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="size">Grösse ℹ</label>
+                                    </div>
+                                    <input type="text" placeholder="A4" class="form-control" id="size" name="size" aria-label="size" aria-describedby="ig-size" {% if size is defined and size is not null %} value="{{ size }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
+                                </div>
+                            </li>
+
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="format">Format</label>
+                                    </div>
+                                    <select class="custom-select d-block w-10" id="format" name="format">
+                                        <option value="P" {% if format is defined and format is not empty and format == 'P' %} selected="selected" {% endif %}>Hochformat (Portrait)</option>
+                                        <option value="L" {% if format is defined and format is not empty and format == 'L' %} selected="selected" {% endif %}>Querformat (Landscape)</option>
+                                    </select>
+                                </div>
+                            </li>
+
                             <li class="nav-item mt-3">
                                 <button id="createButton" class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
                             </li>
@@ -232,7 +253,9 @@
                     identifiers: document.getElementById('identifiers').value,
                     productId: document.getElementById('productId').value,
                     advertisingMediumCode: document.getElementById('advertisingMediumCode').value,
-                    language: document.getElementById('language').value
+                    language: document.getElementById('language').value,
+                    size: document.getElementById('size').value,
+                    format: document.getElementById('format').value
                 });
             };
 
@@ -409,6 +432,8 @@
             document.getElementById('template').addEventListener('keyup', submitOnEnter);
             document.getElementById('identifiers').addEventListener('keyup', submitOnEnter);
             document.getElementById('productId').addEventListener('keyup', submitOnEnter);
+            document.getElementById('size').addEventListener('keyup', submitOnEnter);
+            document.getElementById('format').addEventListener('keyup', submitOnEnter);
             document.getElementById('advertisingMediumCode').addEventListener('keyup', submitOnEnter);
 
             (function() {

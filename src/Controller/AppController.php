@@ -77,11 +77,11 @@ class AppController
             $viewModel->getTemplateName(),
             $viewModel->getContext(),
             $viewModel->getMapping(),
-            $viewModel->getKind()
+            $viewModel->getKind(),
         );
 
         if ($request->attributes->get('kind') === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
-            $pdf = $this->_pdfService->renderPdf($response);
+            $pdf = $this->_pdfService->renderPdf($response, $viewModel->getSize(), $viewModel->getFormat());
 
             return new Response(
                 $pdf,
