@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="/assets/third-party/json-editor/jsoneditor.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet">
-        <title>BlisstributeTwigToolkit</title>
+        <title>VHS1TwigToolkit</title>
         <style>
             iframe {
                 height: 100%;
@@ -52,6 +52,16 @@
                 background-color: #17a2b8;
                 border-color: #17a2b8;
             }
+            .material-icon-small {
+                font-size: 12px
+            }
+            .footer {
+                color: #474b4e;
+                text-align: center;
+                font-size: 12px;
+                margin-top: 10px;
+                width: 100%;
+            }
         </style>
     </head>
     <body>
@@ -63,12 +73,8 @@
                         <input type="hidden" id="hidden-reload" name="forceReload" value="" />
                         <ul class="nav flex-column flex-nowrap overflow-hidden">
 
-                            <li class="nav-item">
-                                <a class="navbar-link" href="/">BlisstributeTwigToolkit</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="navbar-link" target="_blank" href="https://github.com/exitbgmbh/BlisstributeTwigToolkit">v0.3 &copy;{{ year }} exitB GmbH</a>
+                            <li class="nav-item" style="margin-bottom: 10px">
+                                <a class="navbar-link" href="/" style="text-decoration: none;">VHS1TwigToolkit v0.3</a>
                             </li>
 
                             <li class="nav-item mt-3">
@@ -188,8 +194,15 @@
                                 <button id="showTextModulesButton" class="btn btn-secondary btn-sm btn-block" type="button" onClick="showTextModules(getQueryParams())" disabled>Textbausteine anzeigen</button>
                             </li>
 
+                            <li class="nav-item mt-3">
+                                <button id="jumpToHelp" class="btn btn-secondary btn-sm btn-block" type="button" onClick="javascript:window.open('https://github.com/exitbgmbh/VHS1TwigToolkit#readme')">Hilfe anzeigen</button>
+                            </li>
+
                         </ul>
 
+                        <footer class="footer">
+                            <span class="material-icons material-icon-small">copyright</span>2008 - {{ year }} exitB GmbH
+                        </footer>
                     </form>
                 </div>
                 <div class="col min-vh-100 pl-0 pr-0">
