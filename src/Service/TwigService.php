@@ -46,13 +46,11 @@ class TwigService
 
         $loader = new TwigFilesystemLoader($paths);
         $tmLoader = new TextModuleLoader($mapping);
-
         $chainLoader = new TwigChainLoader([
             $loader,
             $tmLoader,
         ]);
 
-        $tmParser = new ExitbTm();
         $twig = new TwigEnvironment($chainLoader, [ 
             'auto_reload' => true,
             'debug' => true,
@@ -61,8 +59,20 @@ class TwigService
             $twig->addGlobal($key, $value);
         }
 
-        $twig->addExtension(new QrCode());
-        $twig->addExtension(new Barcode());
+        $this->_addExitBTextModuleSupport($twig);
+        $this->_addExtensions($twig);
+        $this->_addCustomFilters($twig);
+
+        $templateWrapper = $twig->load($templateName);
+        return $templateWrapper->render($context);
+    }
+
+    /**
+     * @param TwigEnvironment $twig
+     */
+    private function _addExitBTextModuleSupport(TwigEnvironment $twig) : void
+    {
+        $tmParser = new ExitbTm();
         $twig->addTokenParser($tmParser);
         $twig->addExtension(new \Twig\Extension\DebugExtension());
         $exitbTmTwigFunction = new TwigFunction(
@@ -75,9 +85,39 @@ class TwigService
         );
 
         $twig->addFunction($exitbTmTwigFunction);
+    }
 
-        $templateWrapper = $twig->load($templateName);
+    /**
+     * @param TwigEnvironment $twig
+     */
+    private function _addExtensions(TwigEnvironment $twig) : void
+    {
+        $twig->addExtension(new QrCode());
+        $twig->addExtension(new Barcode());
+    }
 
-        return $templateWrapper->render($context);
+    /**
+     * @param TwigEnvironment $twig
+     */
+    private function _addCustomFilters(TwigEnvironment $twig) : void
+    {
+        $twig->addFilter(new \Twig\TwigFilter('appendToArrayByKey', function($value, $append, $keyValue) {
+            if (!array_key_exists($keyValue, $value)) {
+                $value[$keyValue] = [];
+            }
+
+            $value[$keyValue][] = $append;
+
+            return $value;
+        }));
+        $twig->addFilter(new \Twig\TwigFilter('calcAddToArrayKey', function($value, $valueToAdd, $keyValue) {
+            if (!array_key_exists($keyValue, $value)) {
+                $value[$keyValue] = 0;
+            }
+
+            $value[$keyValue] += $valueToAdd;
+
+            return $value;
+        }));
     }
 }
