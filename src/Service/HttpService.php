@@ -119,6 +119,12 @@ class HttpService
      */
     private function _request(string $url, array $options)
     {
+        if ((int)strpos($url, '?') > 0) {
+            $url .= '&XDEBUG_SESSION_START=PHPSTORM';
+        } else {
+            $url .= '?XDEBUG_SESSION_START=PHPSTORM';
+        }
+
         $ch = curl_init($url);
         curl_setopt_array($ch, $options);
 
