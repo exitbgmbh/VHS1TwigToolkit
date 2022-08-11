@@ -99,54 +99,55 @@ oder bestimmte Werte der Textbausteine an ein Werbemittel gebunden sind.
 
 Mit der Sprache verhält es sich ähnlich wie mit den Werbemitteln. Die verfügbaren Sprachen werden automatisch geladen und beeinflusst die angezeigte Spreche - logisch.
 
-|Art|Typ|Template (kann abweichen)|Identifikation|Produkt ID (ja/nein)|
-|---|---|---|---|---|
-|PDF|Rechnung|default_invoice.html|Rechnungsnummer||
-|PDF|Rechnungs (Email-Anhang)|default_invoice_email.html|Rechnungsnummer||
-|PDF|Retourenschein|default_return_slip.html|Rechnungsnummer||
-|PDF|Lieferschein|default_delivery_slip.html|Rechnungsnummer||
-|PDF|Pickliste|default_pick_list.html|Picklistennummer||
-|PDF|Nachfüllauftrag|default_stock_relocation.html|Nachfüllauftragsnummer||
-|PDF|Umlagerungsauftrag|default_relocation.html|Umlagerungsnummer||
-|PDF|Mahnung|default_motion_slip.html|ID der Mahnung||
-|PDF|Lieferantenbegleitdokument|default_supply_note.html|Lieferantenbestellnummer||
-|PDF|Lieferantenbestellung|default_supplier_order_slip.html|Lieferantenbestellnummer||
-|PDF|Anschreiben Herstellerreparatur|default_repair_case_cover_letter.html|Reparaturfallnummer||
-|PDF|Reparatur-Lieferschein|default_repair_case_return_form.html|Reparaturfallnummer||
-|PDF|Auftragsbestätigung|default_order_confirmation.html|Bestellnummer||
-|PDF|Angebot|default_offer.html|Bestellnummer||
-|PDF|Produkt-Etikett|default_label_small/big.html|Identifikation (z.B. EAN, Artikelnummer)||
-|PDF|Lagerfach-Etikett|default_tray_label.html|Lagerfachcode||
-|PDF|Benutzerausweis|default_user_id_card.html|ID des Benutzers||
-|PDF|PickBox-Etikett|default_pick_box.html|Pickboxnummer/Identifikation||
-|PDF|POS - Abschluss|default_pos_report.html|ID des Reports||
-|PDF|Inventurbeleg|default_stock_inventory.html|Inventurnummer||
-|E-Mail|Lieferantenbestellung|default_supplier_order.html|Lieferantenbestellnummer||
-|E-Mail|Lieferantenbestellung Bestelländerung|default_supplier_order_changed.html|Lieferantenbestellnummer||
-|E-Mail|Lieferantenbestellung Mahnung|default_supplier_order_reminder.html|Lieferantenbestellnummer||
-|E-Mail|Lieferantenbestellung Stornierung|default_supplier_order_cancel.html|Lieferantenbestellnummer||
-|E-Mail|Lieferantenbestellung Abschluss|default_supplier_order_finished.html|Lieferantenbestellnummer||
-|E-Mail|Lieferverzugsemail|default_order_delivery_delay.html|ID der Bestellzeile||
-|E-Mail|Bestelleingang|default_order_received.html|Bestellnummer|x||
-|E-Mail|Mahnung|default_monition.html|ID der Mahnung||
-|E-Mail|Rechnungsversand|default_email_invoice.html|Bestellnummer||
-|E-Mail|Rechnungsversand (Buchhaltung)|default_accountancy_invoice_email.html|Bestellnummer|x|
-|E-Mail|Bestelländerung|default_order_changed.html|Bestellnummer|x|
-|E-Mail|Bestellstornierung|default_order_canceled.html|Bestellnummer|x|
-|E-Mail|Bestellung Logistikanmeldung|default_order_moved_to_logistic.html|Bestellnummer|x|
-|E-Mail|Versandbestätigung|default_order_shipped.html|Versandauftragsnummer||
-|E-Mail|Zahlungseingang|default_payment_cleared.html|Bestellnummer|x|
-|E-Mail|Retoureneingang|default_incoming_return.html|Retourennummer||
-|E-Mail|Zahlungseingang (Bankkonto)|default_payment_cash_cleared.html|Bestellnummer|x|
-|E-Mail|Vorkasse-Erinnerung|default_pre_payment_reminder.html|Bestellnummer|x|
-|E-Mail|Retourenverarbeitung|default_return_processed.html|Retourennummer||
-|E-Mail|Retoureninformationen|default_order_return_info.html|Bestellnummer||
-|E-Mail|Produkt NLB|default_order_product_nlb.html|Bestellnummer|x|
-|E-Mail|Selbstabholerbenachrichtigung|default_order_ready_for_collection.html|Bestellnummer|x|
-|E-Mail|Kommissionierungshinweis|default_order_in_picking.html|Bestellnummer|x|
-|E-Mail|Streckengeschäft|default_drop_shipment_order.html|Bestellnummer|x|
-|E-Mail|Streckengeschäft Zuweisung Lieferant| |Lieferantenbestellnummer||
-|E-Mail|Streckengeschäft Kundenbenachrichtigung| |Versandauftragsnummer||
+|Art| Typ                                     | Template (kann abweichen)               | Identifikation                           |Produkt ID (ja/nein)|
+|---|-----------------------------------------|-----------------------------------------|------------------------------------------|---|
+|PDF| Rechnung                                | default_invoice.html                    | Rechnungsnummer                          ||
+|PDF| Rechnungs (Email-Anhang)                | default_invoice_email.html              | Rechnungsnummer                          ||
+|PDF| Retourenschein                          | default_return_slip.html                | Rechnungsnummer                          ||
+|PDF| Lieferschein                            | default_delivery_slip.html              | Rechnungsnummer                          ||
+|PDF| Pickliste                               | default_pick_list.html                  | Picklistennummer                         ||
+|PDF| Nachfüllauftrag                         | default_stock_relocation.html           | Nachfüllauftragsnummer                   ||
+|PDF| Umlagerungsauftrag                      | default_relocation.html                 | Umlagerungsnummer                        ||
+|PDF| Mahnung                                 | default_motion_slip.html                | ID der Mahnung                           ||
+|PDF| Lieferantenbegleitdokument              | default_supply_note.html                | Lieferantenbestellnummer                 ||
+|PDF| Lieferantenbestellung                   | default_supplier_order_slip.html        | Lieferantenbestellnummer                 ||
+|PDF| Anschreiben Herstellerreparatur         | default_repair_case_cover_letter.html   | Reparaturfallnummer                      ||
+|PDF| Reparatur-Lieferschein                  | default_repair_case_return_form.html    | Reparaturfallnummer                      ||
+|PDF| Auftragsbestätigung                     | default_order_confirmation.html         | Bestellnummer                            ||
+|PDF| Angebot                                 | default_offer.html                      | Bestellnummer                            ||
+|PDF| Produkt-Etikett                         | default_label_small/big.html            | Identifikation (z.B. EAN, Artikelnummer) ||
+|PDF| Lagerfach-Etikett                       | default_tray_label.html                 | Lagerfachcode                            ||
+|PDF| Benutzerausweis                         | default_user_id_card.html               | ID des Benutzers                         ||
+|PDF| PickBox-Etikett                         | default_pick_box.html                   | Pickboxnummer/Identifikation             ||
+|PDF| POS - Abschluss                         | default_pos_report.html                 | ID des Reports                           ||
+|PDF| Inventurbeleg                           | default_stock_inventory.html            | Inventurnummer                           ||
+|E-Mail| Lieferantenbestellung                   | default_supplier_order.html             | Lieferantenbestellnummer                 ||
+|E-Mail| Lieferantenbestellung Bestelländerung   | default_supplier_order_changed.html     | Lieferantenbestellnummer                 ||
+|E-Mail| Lieferantenbestellung Mahnung           | default_supplier_order_reminder.html    | Lieferantenbestellnummer                 ||
+|E-Mail| Lieferantenbestellung Stornierung       | default_supplier_order_cancel.html      | Lieferantenbestellnummer                 ||
+|E-Mail| Lieferantenbestellung Abschluss         | default_supplier_order_finished.html    | Lieferantenbestellnummer                 ||
+|E-Mail| Lieferverzugsemail                      | default_order_delivery_delay.html       | ID der Bestellzeile                      ||
+|E-Mail| Bestelleingang                          | default_order_received.html             | Bestellnummer                            |x||
+|E-Mail| Mahnung                                 | default_monition.html                   | ID der Mahnung                           ||
+|E-Mail| Rechnungsversand                        | default_email_invoice.html              | Bestellnummer                            ||
+|E-Mail| Rechnungsversand (Buchhaltung)          | default_accountancy_invoice_email.html  | Bestellnummer                            |x|
+|E-Mail| Bestelländerung                         | default_order_changed.html              | Bestellnummer                            |x|
+|E-Mail| Bestellstornierung                      | default_order_canceled.html             | Bestellnummer                            |x|
+|E-Mail| Bestellung Logistikanmeldung            | default_order_moved_to_logistic.html    | Bestellnummer                            |x|
+|E-Mail| Versandbestätigung                      | default_order_shipped.html              | Versandauftragsnummer                    ||
+|E-Mail| Lastschriftavis                         | default_order_payment_advise.html       | EREF (End2End Reference)                 |x|
+|E-Mail| Zahlungseingang                         | default_payment_cleared.html            | Bestellnummer                            |x|
+|E-Mail| Retoureneingang                         | default_incoming_return.html            | Retourennummer                           ||
+|E-Mail| Zahlungseingang (Bankkonto)             | default_payment_cash_cleared.html       | Bestellnummer                            |x|
+|E-Mail| Vorkasse-Erinnerung                     | default_pre_payment_reminder.html       | Bestellnummer                            |x|
+|E-Mail| Retourenverarbeitung                    | default_return_processed.html           | Retourennummer                           ||
+|E-Mail| Retoureninformationen                   | default_order_return_info.html          | Bestellnummer                            ||
+|E-Mail| Produkt NLB                             | default_order_product_nlb.html          | Bestellnummer                            |x|
+|E-Mail| Selbstabholerbenachrichtigung           | default_order_ready_for_collection.html | Bestellnummer                            |x|
+|E-Mail| Kommissionierungshinweis                | default_order_in_picking.html           | Bestellnummer                            |x|
+|E-Mail| Streckengeschäft                        | default_drop_shipment_order.html        | Bestellnummer                            |x|
+|E-Mail| Streckengeschäft Zuweisung Lieferant    |                                         | Lieferantenbestellnummer                 ||
+|E-Mail| Streckengeschäft Kundenbenachrichtigung |                                         | Versandauftragsnummer                    ||
 
 ## Context überschreiben
 
