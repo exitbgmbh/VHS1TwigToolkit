@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:8.1-apache
 
 # update locale to en_US.UTF-8 - mandatory!
 RUN apt-get update \
