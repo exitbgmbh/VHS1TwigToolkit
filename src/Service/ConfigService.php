@@ -86,18 +86,19 @@ class ConfigService
      * @param string $kind
      * @param string $type
      * @param string $identifiers
-     * @param string $productId
+     * @param string $additionalIdentifier
      * @return string
      * @throws Exception
      */
-    public function getContextEndpointUrl(string $kind, string $type, string $identifiers, string $productId): string
+    public function getContextEndpointUrl(string $kind, string $type, string $identifiers, string $additionalIdentifier): string
     {
         $endpoint = '%s/v1/document/readTemplateContext/%s?type=%s';
         if ($kind === TypesService::TEMPLATE_TYPE_EMAIL_NAME) {
             $endpoint = '%s/v1/email/readContext/%s?type=%s';
-            if (!empty($productId)) {
-                $endpoint .= '&productId=' . $productId;
-            }
+        }
+
+        if (!empty($additionalIdentifier)) {
+            $endpoint .= '&additionalIdentifier=' . $additionalIdentifier;
         }
 
         return sprintf(

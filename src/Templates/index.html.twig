@@ -18,7 +18,7 @@
                 background-color: #323639 !important
             }
             .input-group>.input-group-prepend>.input-group-text {
-                min-width: 116px;
+                min-width: 160px;
             }
             .form-control::-webkit-input-placeholder { color: #c8c8c8; }  /* WebKit, Blink, Edge */
             .form-control:-moz-placeholder { color: #c8c8c8; }  /* Mozilla Firefox 4 to 18 */
@@ -68,7 +68,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                <div class="col-2 min-vh-100 bg-dark pt-3 menu">
+                <div class="col-3 min-vh-100 bg-dark pt-3 menu">
                     <form id="settingsForm" action="" method="post">
                         <input type="hidden" id="hidden-reload" name="forceReload" value="" />
                         <ul class="nav flex-column flex-nowrap overflow-hidden">
@@ -126,7 +126,7 @@
                             <li class="nav-item mt-3">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <label class="input-group-text" for="productId">Produkt ID</label>
+                                        <label class="input-group-text" for="productId">zus. Identifikation</label>
                                     </div>
                                     <input type="text" placeholder="123456" class="form-control" id="productId" name="productId" aria-label="productId" aria-describedby="ig-identifiers-label" {% if productId is defined and productId is not null %} value="{{ productId }}" {% endif %} onchange="loadCachingData(getQueryParams())" />
                                 </div>
