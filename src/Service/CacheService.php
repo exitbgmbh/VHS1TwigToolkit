@@ -93,12 +93,12 @@ class CacheService
      * @param string $kind
      * @param string $type
      * @param string $identifiers
-     * @param string $productId
+     * @param string $additionalIdentifier
      * @return string
      */
-    public function getContextCacheKey(string $kind, string $type, string $identifiers, string $productId): string
+    public function getContextCacheKey(string $kind, string $type, string $identifiers, string $additionalIdentifier): string
     {
-        return sprintf('%s-%s-%s-%s', $kind, $type, $identifiers, $productId);
+        return sprintf('%s-%s-%s-%s', $kind, $type, $identifiers, sha1($additionalIdentifier));
     }
 
     /**

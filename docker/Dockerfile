@@ -20,7 +20,8 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
 RUN echo 'max_execution_time=0' >> /usr/local/etc/php/php.ini \
-    && echo 'memory_limit=-1' >> /usr/local/etc/php/conf.d/docker-memory-limit.ini
+    && echo 'memory_limit=-1' >> /usr/local/etc/php/conf.d/docker-memory-limit.ini \
+    && echo 'pcre.backtrack_limit=100000000' >> /usr/local/etc/php/php.ini
 
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
