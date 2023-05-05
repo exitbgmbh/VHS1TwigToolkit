@@ -52,8 +52,6 @@ class PdfService
         $mPdf->showWatermarkImage = true;
         $mPdf->showWatermarkText = true;
         $mPdf->watermarkImgBehind = true;
-        $mPdf->useSubstitutions = false;
-        $mPdf->simpleTables = true;
 
         return $mPdf;
     }
