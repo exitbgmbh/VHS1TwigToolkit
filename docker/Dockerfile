@@ -1,4 +1,4 @@
-FROM php:8.1-apache
+FROM php:8.3-apache
 
 # update locale to en_US.UTF-8 - mandatory!
 RUN apt-get update \
@@ -19,9 +19,16 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+RUN pecl install xdebug-3.3.2 \
+    && docker-php-ext-enable xdebug
+
 RUN echo 'max_execution_time=0' >> /usr/local/etc/php/php.ini \
     && echo 'memory_limit=-1' >> /usr/local/etc/php/conf.d/docker-memory-limit.ini \
-    && echo 'pcre.backtrack_limit=100000000' >> /usr/local/etc/php/php.ini
+    && echo 'pcre.backtrack_limit=100000000' >> /usr/local/etc/php/php.ini \
+    && echo 'xdebug.mode=debug' >> /usr/local/etc/php/php.ini \
+    && echo 'xdebug.client_port=9000' >> /usr/local/etc/php/php.ini \
+    && echo 'xdebug.start_with_request=yes' >> /usr/local/etc/php/php.ini \
+    && echo 'xdebug.discover_client_host=false' >> /usr/local/etc/php/php.ini
 
 RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd

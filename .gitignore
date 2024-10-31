@@ -4,3 +4,4 @@ src/Templates/*
 !src/Templates/.gitkeep
 !src/Templates/index.html.twig
 docker-compose.yml
+src/Config/config.*.json
