@@ -54,6 +54,20 @@ Dazu wie folgt vorgehen:
 Sollte ein Projekt von dieser Struktur abweichen, können die Pfade in folgender
 Datei angepasst werden: `src/Service/TwigService.php`
 
+Alternativ kann mit Unterverzeichnissen gearbeitet werden. Die o.g. Anleitung kann wie beschrieben abgearbeitet werden, mit dem Unterschied, dass im Ordner `src/Templates` ein Hauptordner, bspw. `project-1` gemeountet wird.
+Der Ordner `project-1` muss als Unterordner (mindestens) die Struktur `email/` und `slip/` aufweisen. 
+
+Um Templates aus einem Unterordner zu laden, muss in der Oberfläche der Unterordner mit einer Pipe vorangestellt werden. 
+So kann bspw. folgendes abgebildet werden:
+
+    - `src/Templates/project-1/slip/default_invoice.html`
+    - `src/Templates/project-2/slip/default_invoice.html`
+
+Um den Template-Satz aus dem `project-2`-Ordner zu nutzen, wird in der Oberfläche als Dateiname folgendes angegeben:
+`project-2|default_invoice.html`
+
+Werden nur Haupt-Ordner unter `src/Templates` eingebunden, ist die Angabe dieses Ordner im Dateinamen zwingend notwendig.
+
 Im Anschluss den Container starten (der erste Start führt die Erstellung des Containers durch, dass kann einige Zeit dauern.)
 
     $ docker-compose up -d

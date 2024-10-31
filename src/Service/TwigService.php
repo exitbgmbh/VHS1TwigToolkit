@@ -32,29 +32,44 @@ class TwigService
         array $mapping,
         string $kind
     ): string {
-        $paths = [
-            __DIR__ . '/../Templates',
-        ];
+        $templatePath = __DIR__ . '/../Templates';
+        $loader = new TwigFilesystemLoader();
 
+        $this->_addTemplateSubDirectories($loader, $templatePath);
         if ($kind === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
-            $paths[] = __DIR__ . '/../Templates/slip';
-            $paths[] = __DIR__ . '/../Templates/email';
+            $this->_addTemplateSubDirectories($loader, $templatePath . '/slip');
         } else {
-            $paths[] = __DIR__ . '/../Templates/email';
-            $paths[] = __DIR__ . '/../Templates/slip';
+            $this->_addTemplateSubDirectories($loader, $templatePath . '/email');
         }
 
-        $loader = new TwigFilesystemLoader($paths);
+        // looking for templates for customer in sub-directory
+        if (str_contains($templateName, '|')) {
+            $templateNameParts = explode('|', $templateName);
+            $subDirName = array_shift($templateNameParts);
+            if (!file_exists($templatePath . '/' . $subDirName)) {
+                throw new \Exception('unable to find template path for ' . $subDirName);
+            }
+
+            if ($kind === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
+                $this->_addTemplateSubDirectories($loader, $templatePath . '/' . $subDirName . '/slip');
+            } else {
+                $this->_addTemplateSubDirectories($loader, $templatePath . '/' . $subDirName . '/email');
+            }
+
+            $templateName = implode('|', $templateNameParts);
+        }
+
         $tmLoader = new TextModuleLoader($mapping);
         $chainLoader = new TwigChainLoader([
             $loader,
             $tmLoader,
         ]);
 
-        $twig = new TwigEnvironment($chainLoader, [ 
+        $twig = new TwigEnvironment($chainLoader, [
             'auto_reload' => true,
             'debug' => true,
         ]);
+
         foreach ($mapping as $key => $value) {
             $twig->addGlobal($key, $value);
         }
@@ -65,6 +80,15 @@ class TwigService
 
         $templateWrapper = $twig->load($templateName);
         return $templateWrapper->render($context);
+    }
+
+    private function _addTemplateSubDirectories(TwigFilesystemLoader $loader, string $directory, string $namespace = TwigFilesystemLoader::MAIN_NAMESPACE): void
+    {
+        if (!file_exists($directory)) {
+            return;
+        }
+
+        $loader->addPath($directory, $namespace);
     }
 
     /**
