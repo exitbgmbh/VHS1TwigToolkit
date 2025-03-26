@@ -174,7 +174,7 @@ class ConfigService
     public function getLanguagesEndpointUrl(): string
     {
         return sprintf(
-            '%s/v1/masterData/searchLanguages',
+            '%s/generic/generic/search/Language',
             $this->getRestEndpoint()
         );
     }

@@ -72,7 +72,7 @@ class LanguageService
         $languagesEndpointUrl = $this->_configService->getLanguagesEndpointUrl();
         $languages = $this->_httpService->getLanguages($languagesEndpointUrl, $this->_securityService->getJwt($forceReload));
         $languages = $this->_jsonService->parseJson($languages);
-        $languages = $languages['response'];
+        $languages = $languages['response']['results'];
 
         $this->_cacheService->set($languagesCacheKey, $languages);
 
