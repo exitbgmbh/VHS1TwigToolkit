@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   btt_dev:
     build:
@@ -10,5 +9,6 @@ services:
       - './:/var/www/html'
       - '/tmp:/tmp'
       - './docker/vhost/btt.conf:/etc/apache2/sites-available/000-default.conf'
-    command: bash -c "composer install --ignore-platform-reqs && sed -i 's/Listen 80$$/Listen 8085/' /etc/apache2/ports.conf && /usr/sbin/apache2ctl -D FOREGROUND"
-    network_mode: 'host'
+    command: bash -c "composer install --ignore-platform-reqs && /usr/sbin/apache2ctl -D FOREGROUND"
+    ports:
+      - '80:80'
