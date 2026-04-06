@@ -67,8 +67,10 @@ class TemplateFactory
                 'identifiers' => $requestViewModel->getIdentifiers(),
                 'productId' => $requestViewModel->getProductId(),
                 'advertisingMediumCode' => $requestViewModel->getAdvertisingMediumCode(),
-                'forceReload' => $requestViewModel->forceReload(),
-                'year' => date('Y'),
+                'forceReload'           => $requestViewModel->forceReload(),
+                'year'                  => date('Y'),
+                'activeConfig'          => $requestViewModel->getConfig(),
+                'availableConfigs'      => $requestViewModel->getAvailableConfigs(),
             ],
             [],
             $requestViewModel->getKind()
