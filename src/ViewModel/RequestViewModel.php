@@ -55,6 +55,9 @@ class RequestViewModel
     /** @var array */
     private $availableConfigs;
 
+    /** @var string */
+    private $defaultConfigUrl;
+
     /**
      * @param string $advertisingMediumCode
      * @param array $errors
@@ -87,7 +90,8 @@ class RequestViewModel
         string $format,
         string $size,
         string $config = '',
-        array $availableConfigs = []
+        array $availableConfigs = [],
+        string $defaultConfigUrl = ''
     ) {
         $this->advertisingMediumCode = $advertisingMediumCode;
         $this->errors = $errors;
@@ -106,6 +110,7 @@ class RequestViewModel
         $this->format = $format;
         $this->config = $config;
         $this->availableConfigs = $availableConfigs;
+        $this->defaultConfigUrl = $defaultConfigUrl;
     }
 
     /**
@@ -242,5 +247,13 @@ class RequestViewModel
     public function getAvailableConfigs(): array
     {
         return $this->availableConfigs;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultConfigUrl(): string
+    {
+        return $this->defaultConfigUrl;
     }
 }

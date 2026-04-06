@@ -71,6 +71,7 @@ class TemplateFactory
                 'year'                  => date('Y'),
                 'activeConfig'          => $requestViewModel->getConfig(),
                 'availableConfigs'      => $requestViewModel->getAvailableConfigs(),
+                'defaultConfigUrl'      => $requestViewModel->getDefaultConfigUrl(),
             ],
             [],
             $requestViewModel->getKind()

@@ -83,9 +83,9 @@
                                             <label class="input-group-text" for="config">Instanz</label>
                                         </div>
                                         <select class="custom-select d-block" id="config" name="config" onchange="this.form.submit()">
-                                            <option value=""{% if activeConfig is not defined or activeConfig is empty %} selected="selected"{% endif %}>(Standard)</option>
-                                            {% for slug in availableConfigs %}
-                                                <option value="{{ slug }}"{% if activeConfig is defined and activeConfig is same as(slug) %} selected="selected"{% endif %}>{{ slug }}</option>
+                                            <option value=""{% if activeConfig is not defined or activeConfig is empty %} selected="selected"{% endif %}>(Standard{% if defaultConfigUrl is defined and defaultConfigUrl is not empty %} — {{ defaultConfigUrl }}{% endif %})</option>
+                                            {% for slug, label in availableConfigs %}
+                                                <option value="{{ slug }}"{% if activeConfig is defined and activeConfig is same as(slug) %} selected="selected"{% endif %}>{{ label }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>

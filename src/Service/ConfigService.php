@@ -34,10 +34,12 @@ class ConfigService
     }
 
     /**
-     * Returns sorted list of config slugs found in src/Config/config.*.json
-     * e.g. ['fcm', 'hsn', 'stm']
+     * Returns a sorted map of [slug => displayLabel] for all named configs.
+     * The label is extracted from the REST URL in the config file,
+     * e.g. "https://rest-stm.exitb.de" -> "stm".
+     * Falls back to the slug itself if the URL cannot be parsed.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function getAvailableConfigs(): array
     {
@@ -52,22 +54,67 @@ class ConfigService
             return $this->_availableConfigs;
         }
 
-        $slugs = [];
+        $excluded = ['local'];
+        $result = [];
         foreach ($files as $file) {
-            $basename = basename($file, '.json'); // e.g. "config.stm"
-            $slug = substr($basename, strlen('config.')); // e.g. "stm"
-            $slugs[] = $slug;
+            $basename = basename($file, '.json');
+            $slug = substr($basename, strlen('config.'));
+            if (in_array($slug, $excluded, true)) {
+                continue;
+            }
+            $result[$slug] = $this->_buildConfigLabel($file, $slug);
         }
 
-        $excluded = ['local'];
-        $slugs = array_filter($slugs, static function (string $s) use ($excluded): bool {
-            return !in_array($s, $excluded, true);
-        });
-        $slugs = array_values($slugs); // re-index after filter
-        sort($slugs);
-
-        $this->_availableConfigs = $slugs;
+        ksort($result);
+        $this->_availableConfigs = $result;
         return $this->_availableConfigs;
+    }
+
+    /**
+     * Returns the display label for config.json (the default config).
+     * Extracts the instance name from the REST URL, e.g. "stm".
+     * Returns empty string if config.json is missing or the URL is unrecognised.
+     *
+     * @return string
+     */
+    public function getDefaultConfigUrl(): string
+    {
+        $configPath = __DIR__ . '/../Config/config.json';
+        if (!file_exists($configPath)) {
+            return '';
+        }
+
+        return $this->_buildConfigLabel($configPath, '');
+    }
+
+    /**
+     * Reads a config file and returns a human-readable label derived from its REST URL.
+     * Pattern: protocol://rest-[instance].(exitb|blissdev).de -> returns [instance]
+     * Falls back to $fallback if the URL cannot be parsed.
+     *
+     * @param string $filePath
+     * @param string $fallback
+     * @return string
+     */
+    private function _buildConfigLabel(string $filePath, string $fallback): string
+    {
+        $raw = @file_get_contents($filePath);
+        if ($raw === false) {
+            return $fallback;
+        }
+
+        try {
+            $data = $this->_jsonService->parseJson($raw);
+        } catch (\Exception $e) {
+            return $fallback;
+        }
+
+        $url = $data['url'] ?? '';
+        if (preg_match('#rest-([^.]+)\.(exitb|blissdev)\.de#', $url, $matches)) {
+            return $matches[1];
+        }
+
+        return $fallback;
     }
 
     /**

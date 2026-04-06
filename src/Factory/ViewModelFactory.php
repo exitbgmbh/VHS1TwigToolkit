@@ -64,6 +64,7 @@ class ViewModelFactory
         $size = $request->get('size', 'A4');
         $config = $this->_configService->getConfigName();
         $availableConfigs = $this->_configService->getAvailableConfigs();
+        $defaultConfigUrl = $this->_configService->getDefaultConfigUrl();
         $languages = $this->_languageService->getLanguages($forceReload);
         $realType = $this->_typesService->getRealType($type);
 
@@ -105,7 +106,8 @@ class ViewModelFactory
             $format,
             $size,
             $config,
-            $availableConfigs
+            $availableConfigs,
+            $defaultConfigUrl
         );
     }
 
