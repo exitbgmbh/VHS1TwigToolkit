@@ -17,6 +17,41 @@ use Twig\TwigFunction;
 class TwigService
 {
     /**
+     * Returns sorted list of available template sets — subdirectories of src/Templates/
+     * that contain a slip/ or email/ subdirectory.
+     * Base directories (slip, email, image) are excluded.
+     *
+     * @return array
+     */
+    public function getAvailableTemplateSets(): array
+    {
+        $templatePath = __DIR__ . '/../Templates';
+        $entries = scandir($templatePath);
+        if ($entries === false) {
+            return [];
+        }
+
+        $baseDirs = ['slip', 'email', 'image', '.', '..'];
+        $sets = [];
+
+        foreach ($entries as $entry) {
+            if (in_array($entry, $baseDirs, true)) {
+                continue;
+            }
+            $fullPath = $templatePath . '/' . $entry;
+            if (!is_dir($fullPath)) {
+                continue;
+            }
+            if (is_dir($fullPath . '/slip') || is_dir($fullPath . '/email')) {
+                $sets[] = $entry;
+            }
+        }
+
+        sort($sets);
+        return $sets;
+    }
+
+    /**
      * @param string $templateName
      * @param array $context
      * @param array $mapping

@@ -50,6 +50,12 @@ class RequestViewModel
     private $size;
 
     /** @var string */
+    private $templateSet;
+
+    /** @var array */
+    private $templateSets;
+
+    /** @var string */
     private $config;
 
     /** @var array */
@@ -89,6 +95,8 @@ class RequestViewModel
         array $types,
         string $format,
         string $size,
+        string $templateSet = '',
+        array $templateSets = [],
         string $config = '',
         array $availableConfigs = [],
         string $defaultConfigUrl = ''
@@ -108,6 +116,8 @@ class RequestViewModel
         $this->types = $types;
         $this->size = $size;
         $this->format = $format;
+        $this->templateSet = $templateSet;
+        $this->templateSets = $templateSets;
         $this->config = $config;
         $this->availableConfigs = $availableConfigs;
         $this->defaultConfigUrl = $defaultConfigUrl;
@@ -231,6 +241,22 @@ class RequestViewModel
     public function getSize(): string
     {
         return $this->size;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplateSet(): string
+    {
+        return $this->templateSet;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTemplateSets(): array
+    {
+        return $this->templateSets;
     }
 
     /**

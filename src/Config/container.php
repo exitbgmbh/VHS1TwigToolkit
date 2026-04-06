@@ -62,6 +62,7 @@ $containerBuilder->register('view_model_factory', ViewModelFactory::class)
         new Reference('types_service'),
         new Reference('validator_service'),
         new Reference('config_service'),
+        new Reference('twig_service'),
     ]);
 
 $containerBuilder->register('template_factory', TemplateFactory::class)

@@ -4,6 +4,7 @@ namespace App\Factory;
 
 use App\Service\ConfigService;
 use App\Service\LanguageService;
+use App\Service\TwigService;
 use App\Service\TypesService;
 use App\Service\ValidatorService;
 use App\ViewModel\RequestViewModel;
@@ -24,22 +25,28 @@ class ViewModelFactory
     /** @var ConfigService */
     private $_configService;
 
+    /** @var TwigService */
+    private $_twigService;
+
     /**
      * @param LanguageService $languageService
      * @param TypesService $typesService
      * @param ValidatorService $validatorService
      * @param ConfigService $configService
+     * @param TwigService $twigService
      */
     public function __construct(
         LanguageService $languageService,
         TypesService $typesService,
         ValidatorService $validatorService,
-        ConfigService $configService
+        ConfigService $configService,
+        TwigService $twigService
     ) {
         $this->_languageService = $languageService;
         $this->_typesService = $typesService;
         $this->_validatorService = $validatorService;
         $this->_configService = $configService;
+        $this->_twigService = $twigService;
     }
 
     /**
@@ -62,11 +69,16 @@ class ViewModelFactory
         $language = $request->get('language', '');
         $format = $request->get('format', 'P');
         $size = $request->get('size', 'A4');
+        $templateSet = $request->get('templateSet', '');
+        $templateSets = $this->_twigService->getAvailableTemplateSets();
         $config = $this->_configService->getConfigName();
         $availableConfigs = $this->_configService->getAvailableConfigs();
         $defaultConfigUrl = $this->_configService->getDefaultConfigUrl();
         $languages = $this->_languageService->getLanguages($forceReload);
         $realType = $this->_typesService->getRealType($type);
+
+        // Combine template set prefix with template name (e.g. "fleurop|default_invoice.html")
+        $templateWithSet = !empty($templateSet) ? $templateSet . '|' . $template : $template;
 
         $iFrameSrc = '';
         $errors = [];
@@ -76,7 +88,7 @@ class ViewModelFactory
                 $iFrameSrc = $this->_generateIframeUrl(
                     $kind,
                     $realType,
-                    $template,
+                    $templateWithSet,
                     $identifiers,
                     $productId,
                     $advertisingMediumCode,
@@ -105,6 +117,8 @@ class ViewModelFactory
             $types,
             $format,
             $size,
+            $templateSet,
+            $templateSets,
             $config,
             $availableConfigs,
             $defaultConfigUrl

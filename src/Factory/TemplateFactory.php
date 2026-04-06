@@ -72,6 +72,8 @@ class TemplateFactory
                 'activeConfig'          => $requestViewModel->getConfig(),
                 'availableConfigs'      => $requestViewModel->getAvailableConfigs(),
                 'defaultConfigUrl'      => $requestViewModel->getDefaultConfigUrl(),
+                'templateSet'           => $requestViewModel->getTemplateSet(),
+                'templateSets'          => $requestViewModel->getTemplateSets(),
             ],
             [],
             $requestViewModel->getKind()

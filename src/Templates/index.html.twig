@@ -121,6 +121,22 @@
                                 </div>
                             </li>
 
+                            {% if templateSets is defined and templateSets is not empty %}
+                            <li class="nav-item mt-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="templateSet">Template-Set</label>
+                                    </div>
+                                    <select class="custom-select d-block" id="templateSet" name="templateSet">
+                                        <option value="" {% if templateSet is not defined or templateSet is empty %}selected="selected"{% endif %}>(Standard)</option>
+                                        {% for set in templateSets %}
+                                            <option value="{{ set }}" {% if templateSet is defined and templateSet is same as(set) %}selected="selected"{% endif %}>{{ set }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </li>
+                            {% endif %}
+
                             <li class="nav-item mt-3">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -288,7 +304,8 @@
                     language: document.getElementById('language') ? document.getElementById('language').value : '',
                     size: document.getElementById('size').value,
                     format: document.getElementById('format').value,
-                    config: configEl ? configEl.options[configEl.selectedIndex].value : ''
+                    config: configEl ? configEl.options[configEl.selectedIndex].value : '',
+                    templateSet: document.getElementById('templateSet') ? document.getElementById('templateSet').options[document.getElementById('templateSet').selectedIndex].value : ''
                 });
             };
 
