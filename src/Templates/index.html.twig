@@ -489,12 +489,13 @@
             (function () {
                 const splitter = document.getElementById('splitter');
                 const sidebar = document.getElementById('sidebar');
-                const iframe = document.querySelector('#content iframe');
                 let dragging = false;
 
                 splitter.addEventListener('mousedown', function (e) {
                     dragging = true;
                     document.body.style.userSelect = 'none';
+                    // Query iframe at drag time so dynamic injections are handled correctly
+                    const iframe = document.querySelector('#content iframe');
                     if (iframe) { iframe.style.pointerEvents = 'none'; }
                     splitter.style.background = '#17a2b8';
                 });
@@ -509,6 +510,7 @@
                     if (!dragging) { return; }
                     dragging = false;
                     document.body.style.userSelect = '';
+                    const iframe = document.querySelector('#content iframe');
                     if (iframe) { iframe.style.pointerEvents = ''; }
                     splitter.style.background = '#444';
                     const finalWidth = parseInt(sidebar.style.width, 10);
