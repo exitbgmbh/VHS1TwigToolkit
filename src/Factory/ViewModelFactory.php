@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Service\ConfigService;
 use App\Service\LanguageService;
 use App\Service\TypesService;
 use App\Service\ValidatorService;
@@ -20,19 +21,25 @@ class ViewModelFactory
     /** @var ValidatorService */
     private $_validatorService;
 
+    /** @var ConfigService */
+    private $_configService;
+
     /**
      * @param LanguageService $languageService
      * @param TypesService $typesService
      * @param ValidatorService $validatorService
+     * @param ConfigService $configService
      */
     public function __construct(
         LanguageService $languageService,
         TypesService $typesService,
-        ValidatorService $validatorService
+        ValidatorService $validatorService,
+        ConfigService $configService
     ) {
         $this->_languageService = $languageService;
         $this->_typesService = $typesService;
         $this->_validatorService = $validatorService;
+        $this->_configService = $configService;
     }
 
     /**
@@ -55,6 +62,8 @@ class ViewModelFactory
         $language = $request->get('language', '');
         $format = $request->get('format', 'P');
         $size = $request->get('size', 'A4');
+        $config = $this->_configService->getConfigName();
+        $availableConfigs = $this->_configService->getAvailableConfigs();
         $languages = $this->_languageService->getLanguages($forceReload);
         $realType = $this->_typesService->getRealType($type);
 
@@ -73,7 +82,8 @@ class ViewModelFactory
                     $forceReload,
                     $language,
                     $format,
-                    $size
+                    $size,
+                    $config
                 );
             }
         }
@@ -93,7 +103,9 @@ class ViewModelFactory
             $type,
             $types,
             $format,
-            $size
+            $size,
+            $config,
+            $availableConfigs
         );
     }
 
@@ -106,6 +118,9 @@ class ViewModelFactory
      * @param string $advertisingMediumCode
      * @param bool $forceReload
      * @param string $language
+     * @param string $format
+     * @param string $size
+     * @param string $config
      * @return string
      */
     private function _generateIframeUrl(
@@ -118,7 +133,8 @@ class ViewModelFactory
         bool $forceReload,
         string $language,
         string $format,
-        string $size
+        string $size,
+        string $config = ''
     ): string {
         $url = sprintf(
             '/%s/%s/%s/%s',
@@ -151,6 +167,10 @@ class ViewModelFactory
 
         if (!empty($productId)) {
             $query['productId'] = $productId;
+        }
+
+        if (!empty($config)) {
+            $query['config'] = $config;
         }
 
         if (!empty($query)) {
