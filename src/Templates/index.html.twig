@@ -36,7 +36,7 @@
                 color: #fff;
             }
             .menu {
-                min-width: 400px;
+                min-width: 280px;
             }
             .modal-content {
                 max-height: 95vh;
@@ -66,9 +66,8 @@
     </head>
     <body>
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-3 min-vh-100 bg-dark pt-3 menu">
+        <div style="display:flex;height:100vh;overflow:hidden">
+            <div id="sidebar" class="bg-dark pt-3 menu" style="width:400px;min-width:280px;max-width:800px;overflow-y:auto;flex-shrink:0">
                     <form id="settingsForm" action="" method="post">
                         <input type="hidden" id="hidden-reload" name="forceReload" value="" />
                         <ul class="nav flex-column flex-nowrap overflow-hidden">
@@ -76,6 +75,23 @@
                             <li class="nav-item" style="margin-bottom: 10px">
                                 <a class="navbar-link" href="/" style="text-decoration: none;">VHS1TwigToolkit v0.3</a>
                             </li>
+
+                            {% if availableConfigs is defined and availableConfigs is not empty %}
+                                <li class="nav-item mt-2">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="config">Instanz</label>
+                                        </div>
+                                        <select class="custom-select d-block" id="config" name="config" onchange="this.form.submit()">
+                                            <option value=""{% if activeConfig is not defined or activeConfig is empty %} selected="selected"{% endif %}>(Standard)</option>
+                                            {% for slug in availableConfigs %}
+                                                <option value="{{ slug }}"{% if activeConfig is defined and activeConfig is same as(slug) %} selected="selected"{% endif %}>{{ slug }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </li>
+                                <li><hr style="border-color:#555;margin:6px 0"></li>
+                            {% endif %}
 
                             <li class="nav-item mt-3">
                                 <div class="input-group">
@@ -204,18 +220,18 @@
                             <span class="material-icons material-icon-small">copyright</span>2008 - {{ year }} exitB GmbH
                         </footer>
                     </form>
-                </div>
-                <div class="col min-vh-100 pl-0 pr-0">
-                    {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and errors is empty %}
-                        <iframe src="{{ iframeSrc }}" onload="loadCachingData(getQueryParams())">
-                        </iframe>
-                    {% endif %}
-                    {% if errors is defined and errors is not empty %}
-                        <div class="container">
-                            {{ errors }}
-                        </div>
-                    {% endif %}
-                </div>
+            </div>
+            <div id="splitter" style="width:5px;background:#444;cursor:col-resize;flex-shrink:0"></div>
+            <div id="content" style="flex:1;overflow:hidden">
+                {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and errors is empty %}
+                    <iframe src="{{ iframeSrc }}" onload="loadCachingData(getQueryParams())">
+                    </iframe>
+                {% endif %}
+                {% if errors is defined and errors is not empty %}
+                    <div class="container">
+                        {{ errors }}
+                    </div>
+                {% endif %}
             </div>
         </div>
 
@@ -262,15 +278,17 @@
             };
 
             const getQueryParams = function () {
+                const configEl = document.getElementById('config');
                 return new URLSearchParams({
                     kind: document.getElementById('kind').options[document.getElementById('kind').selectedIndex].value,
                     type: document.getElementById('type').options[document.getElementById('type').selectedIndex].value,
                     identifiers: document.getElementById('identifiers').value,
                     productId: document.getElementById('productId').value,
                     advertisingMediumCode: document.getElementById('advertisingMediumCode').value,
-                    language: document.getElementById('language').value,
+                    language: document.getElementById('language') ? document.getElementById('language').value : '',
                     size: document.getElementById('size').value,
-                    format: document.getElementById('format').value
+                    format: document.getElementById('format').value,
+                    config: configEl ? configEl.options[configEl.selectedIndex].value : ''
                 });
             };
 
@@ -453,6 +471,56 @@
 
             (function() {
                 showTypes();
+            })();
+        </script>
+        <script>
+            // --- Sidebar width: localStorage restore ---
+            (function () {
+                const saved = localStorage.getItem('vhs1_sidebar_width');
+                if (saved) {
+                    const w = parseInt(saved, 10);
+                    if (w >= 280 && w <= 800) {
+                        document.getElementById('sidebar').style.width = w + 'px';
+                    }
+                }
+            })();
+
+            // --- Splitter drag ---
+            (function () {
+                const splitter = document.getElementById('splitter');
+                const sidebar = document.getElementById('sidebar');
+                const iframe = document.querySelector('#content iframe');
+                let dragging = false;
+
+                splitter.addEventListener('mousedown', function (e) {
+                    dragging = true;
+                    document.body.style.userSelect = 'none';
+                    if (iframe) { iframe.style.pointerEvents = 'none'; }
+                    splitter.style.background = '#17a2b8';
+                });
+
+                document.addEventListener('mousemove', function (e) {
+                    if (!dragging) { return; }
+                    const newWidth = Math.min(800, Math.max(280, e.clientX));
+                    sidebar.style.width = newWidth + 'px';
+                });
+
+                document.addEventListener('mouseup', function (e) {
+                    if (!dragging) { return; }
+                    dragging = false;
+                    document.body.style.userSelect = '';
+                    if (iframe) { iframe.style.pointerEvents = ''; }
+                    splitter.style.background = '#444';
+                    const finalWidth = parseInt(sidebar.style.width, 10);
+                    localStorage.setItem('vhs1_sidebar_width', finalWidth);
+                });
+
+                splitter.addEventListener('mouseover', function () {
+                    if (!dragging) { splitter.style.background = '#17a2b8'; }
+                });
+                splitter.addEventListener('mouseout', function () {
+                    if (!dragging) { splitter.style.background = '#444'; }
+                });
             })();
         </script>
     </body>
