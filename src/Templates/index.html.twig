@@ -1,3 +1,4 @@
+{% set splitter = 0 %}
 <!DOCTYPE html>
 <html lang="de">
     <head>
@@ -95,10 +96,11 @@
                         <ul class="nav flex-column flex-nowrap overflow-hidden px-3">
 
                             <li class="nav-item" style="margin-bottom: 14px; padding-top: 2px;">
-                                <a class="navbar-link" href="/" style="text-decoration: none;">VHS1TwigToolkit <span style="font-size:0.7em;font-weight:400;opacity:0.55;letter-spacing:0.03em;">v0.3</span></a>
+                                <a class="navbar-link" href="/" style="text-decoration: none;">VHS1TwigToolkit <span style="font-size:0.7em;font-weight:400;opacity:0.55;letter-spacing:0.03em;">v0.4</span></a>
                             </li>
 
                             {% if availableConfigs is defined and availableConfigs is not empty %}
+                                {% set splitter = 1 %}
                                 <li class="nav-item mt-2">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -112,10 +114,32 @@
                                         </select>
                                     </div>
                                 </li>
-                                <li><hr style="border-color:#555;margin:6px 0"></li>
                             {% endif %}
 
-                            <li class="nav-item mt-3">
+                            {% if templateSets is defined and templateSets is not empty %}
+                                {% set splitter = 1 %}
+                                <li class="nav-item mt-3">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="templateSet">Template-Set</label>
+                                        </div>
+                                        <select class="custom-select d-block" id="templateSet" name="templateSet">
+                                            <option value="" {% if templateSet is not defined or templateSet is empty %}selected="selected"{% endif %}>({{ kind is defined and kind == 'email' ? 'email' : 'slip' }})</option>
+                                            {% for set in templateSets %}
+                                                <option value="{{ set }}" {% if templateSet is defined and templateSet is same as(set) %}selected="selected"{% endif %}>{{ set }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            {% if splitter = 1 %}
+                            <li class="nav-item mt-2">
+                                <hr style="border-color:#555;margin:6px 0">
+                            </li>
+                            {% endif %}
+
+                            <li class="nav-item mt-2">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <label class="input-group-text" for="kind">Art</label>
@@ -142,22 +166,6 @@
                                     </select>
                                 </div>
                             </li>
-
-                            {% if templateSets is defined and templateSets is not empty %}
-                            <li class="nav-item mt-3">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <label class="input-group-text" for="templateSet">Template-Set</label>
-                                    </div>
-                                    <select class="custom-select d-block" id="templateSet" name="templateSet">
-                                        <option value="" {% if templateSet is not defined or templateSet is empty %}selected="selected"{% endif %}>({{ kind is defined and kind == 'email' ? 'email' : 'slip' }})</option>
-                                        {% for set in templateSets %}
-                                            <option value="{{ set }}" {% if templateSet is defined and templateSet is same as(set) %}selected="selected"{% endif %}>{{ set }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </li>
-                            {% endif %}
 
                             <li class="nav-item mt-3">
                                 <div class="input-group">
