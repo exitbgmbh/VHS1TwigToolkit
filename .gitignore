@@ -5,3 +5,4 @@ src/Templates/*
 !src/Templates/index.html.twig
 docker-compose.yml
 src/Config/config.*.json
+.superpowers/

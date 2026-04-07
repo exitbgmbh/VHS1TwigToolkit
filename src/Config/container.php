@@ -1,5 +1,12 @@
 <?php
 
+// Read and validate active config name from request
+$configName = '';
+$rawConfig = $_REQUEST['config'] ?? '';
+if (preg_match('/^[a-z0-9_-]+$/', $rawConfig)) {
+    $configName = $rawConfig;
+}
+
 use App\Controller\ApiController;
 use App\Controller\AppController;
 use App\Factory\TemplateFactory;
@@ -24,7 +31,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 $containerBuilder = new ContainerBuilder();
 
-$containerBuilder->register('cache_adapter', FilesystemAdapter::class);
+$containerBuilder->register('cache_adapter', FilesystemAdapter::class)
+    ->addArgument('vhs1_' . $configName);
 
 $containerBuilder->register('cache_service', CacheService::class)
     ->addArgument(new Reference('cache_adapter'));
@@ -36,7 +44,8 @@ $containerBuilder->register('pdf_service', PdfService::class);
 $containerBuilder->register('validator_service', ValidatorService::class);
 
 $containerBuilder->register('config_service', ConfigService::class)
-    ->addArgument(new Reference('json_service'));
+    ->addArgument(new Reference('json_service'))
+    ->addArgument($configName);
 
 $containerBuilder->register('context_service', ContextService::class)
     ->setArguments([
@@ -52,6 +61,8 @@ $containerBuilder->register('view_model_factory', ViewModelFactory::class)
         new Reference('language_service'),
         new Reference('types_service'),
         new Reference('validator_service'),
+        new Reference('config_service'),
+        new Reference('twig_service'),
     ]);
 
 $containerBuilder->register('template_factory', TemplateFactory::class)
