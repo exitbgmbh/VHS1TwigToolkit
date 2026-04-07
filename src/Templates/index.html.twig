@@ -29,8 +29,15 @@
                 color: #fff;
             }
             #settingsForm > ul > li:nth-child(1) > a {
-                line-height: 2;
-                font-size: xx-large;
+                line-height: 1.6;
+                font-size: 1.35rem;
+                font-weight: 600;
+                letter-spacing: 0.01em;
+                color: #e8edf2 !important;
+                opacity: 0.95;
+            }
+            #settingsForm > ul > li:nth-child(1) > a:hover {
+                opacity: 1;
             }
             #settingsForm > ul > li > a {
                 color: #fff;
@@ -56,11 +63,26 @@
                 font-size: 12px
             }
             .footer {
-                color: #474b4e;
+                color: #555a5e;
                 text-align: center;
                 font-size: 12px;
-                margin-top: 10px;
+                margin-top: 16px;
+                padding-bottom: 12px;
                 width: 100%;
+            }
+            /* Sidebar action buttons — inset from edges */
+            .sidebar-action-btn {
+                display: block;
+                width: 100%;
+            }
+            /* Splitter */
+            #splitter {
+                transition: background 0.15s ease;
+            }
+            /* Sidebar section divider */
+            .sidebar-section-divider {
+                border-color: #444;
+                margin: 4px 0 0;
             }
         </style>
     </head>
@@ -70,10 +92,10 @@
             <div id="sidebar" class="bg-dark pt-3 menu" style="width:400px;min-width:280px;max-width:800px;overflow-y:auto;flex-shrink:0">
                     <form id="settingsForm" action="" method="post">
                         <input type="hidden" id="hidden-reload" name="forceReload" value="" />
-                        <ul class="nav flex-column flex-nowrap overflow-hidden">
+                        <ul class="nav flex-column flex-nowrap overflow-hidden px-3">
 
-                            <li class="nav-item" style="margin-bottom: 10px">
-                                <a class="navbar-link" href="/" style="text-decoration: none;">VHS1TwigToolkit v0.3</a>
+                            <li class="nav-item" style="margin-bottom: 14px; padding-top: 2px;">
+                                <a class="navbar-link" href="/" style="text-decoration: none;">VHS1TwigToolkit <span style="font-size:0.7em;font-weight:400;opacity:0.55;letter-spacing:0.03em;">v0.3</span></a>
                             </li>
 
                             {% if availableConfigs is defined and availableConfigs is not empty %}
@@ -210,24 +232,28 @@
                                 </div>
                             </li>
 
-                            <li class="nav-item mt-3">
-                                <button id="createButton" class="btn btn-info btn-sm btn-block" type="button" onclick="submitForm(false)">Erzeugen</button>
+                            <li class="nav-item mt-4">
+                                <hr class="sidebar-section-divider">
                             </li>
 
-                            <li class="nav-item mt-3">
-                                <button class="btn btn-light btn-sm btn-block" type="button" onclick="submitForm(true)">Cache leeren</button>
+                            <li class="nav-item mt-2">
+                                <button id="createButton" class="btn btn-info btn-sm btn-block sidebar-action-btn" type="button" onclick="submitForm(false)">Erzeugen</button>
                             </li>
 
-                            <li class="nav-item mt-3">
-                                <button id="showContextButton" class="btn btn-secondary btn-sm btn-block" type="button" onClick="showContext(getQueryParams())" disabled>Kontext anzeigen</button>
+                            <li class="nav-item mt-2">
+                                <button class="btn btn-outline-light btn-sm btn-block sidebar-action-btn" type="button" onclick="submitForm(true)">Cache leeren</button>
                             </li>
 
-                            <li class="nav-item mt-3">
-                                <button id="showTextModulesButton" class="btn btn-secondary btn-sm btn-block" type="button" onClick="showTextModules(getQueryParams())" disabled>Textbausteine anzeigen</button>
+                            <li class="nav-item mt-2">
+                                <button id="showContextButton" class="btn btn-secondary btn-sm btn-block sidebar-action-btn" type="button" onClick="showContext(getQueryParams())" disabled>Kontext anzeigen</button>
                             </li>
 
-                            <li class="nav-item mt-3">
-                                <button id="jumpToHelp" class="btn btn-secondary btn-sm btn-block" type="button" onClick="javascript:window.open('https://github.com/exitbgmbh/VHS1TwigToolkit#readme')">Hilfe anzeigen</button>
+                            <li class="nav-item mt-2">
+                                <button id="showTextModulesButton" class="btn btn-secondary btn-sm btn-block sidebar-action-btn" type="button" onClick="showTextModules(getQueryParams())" disabled>Textbausteine anzeigen</button>
+                            </li>
+
+                            <li class="nav-item mt-2">
+                                <button id="jumpToHelp" class="btn btn-secondary btn-sm btn-block sidebar-action-btn" type="button" onClick="javascript:window.open('https://github.com/exitbgmbh/VHS1TwigToolkit#readme')">Hilfe anzeigen</button>
                             </li>
 
                         </ul>
@@ -237,7 +263,7 @@
                         </footer>
                     </form>
             </div>
-            <div id="splitter" style="width:5px;background:#444;cursor:col-resize;flex-shrink:0"></div>
+            <div id="splitter" style="width:4px;background:#3e4347;cursor:col-resize;flex-shrink:0"></div>
             <div id="content" style="flex:1;overflow:hidden">
                 {% if iframeSrc is defined and iframeSrc is not empty and errors is defined and errors is empty %}
                     <iframe src="{{ iframeSrc }}" onload="loadCachingData(getQueryParams())">
@@ -529,7 +555,7 @@
                     document.body.style.userSelect = '';
                     const iframe = document.querySelector('#content iframe');
                     if (iframe) { iframe.style.pointerEvents = ''; }
-                    splitter.style.background = '#444';
+                    splitter.style.background = '#3e4347';
                     const finalWidth = parseInt(sidebar.style.width, 10);
                     localStorage.setItem('vhs1_sidebar_width', finalWidth);
                 });
@@ -538,7 +564,7 @@
                     if (!dragging) { splitter.style.background = '#17a2b8'; }
                 });
                 splitter.addEventListener('mouseout', function () {
-                    if (!dragging) { splitter.style.background = '#444'; }
+                    if (!dragging) { splitter.style.background = '#3e4347'; }
                 });
             })();
         </script>
