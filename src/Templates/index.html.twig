@@ -128,7 +128,7 @@
                                         <label class="input-group-text" for="templateSet">Template-Set</label>
                                     </div>
                                     <select class="custom-select d-block" id="templateSet" name="templateSet">
-                                        <option value="" {% if templateSet is not defined or templateSet is empty %}selected="selected"{% endif %}>(Standard)</option>
+                                        <option value="" {% if templateSet is not defined or templateSet is empty %}selected="selected"{% endif %}>({{ kind is defined and kind == 'email' ? 'email' : 'slip' }})</option>
                                         {% for set in templateSets %}
                                             <option value="{{ set }}" {% if templateSet is defined and templateSet is same as(set) %}selected="selected"{% endif %}>{{ set }}</option>
                                         {% endfor %}

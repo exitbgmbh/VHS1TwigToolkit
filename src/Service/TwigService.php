@@ -77,6 +77,22 @@ class TwigService
             $this->_addTemplateSubDirectories($loader, $templatePath . '/email');
         }
 
+        // No set prefix: also search all template-set subdirectories as fallback
+        if (!str_contains($templateName, '|')) {
+            $entries = scandir($templatePath) ?: [];
+            $excluded = ['slip', 'email', 'image', '.', '..'];
+            foreach ($entries as $entry) {
+                if (in_array($entry, $excluded, true) || !is_dir($templatePath . '/' . $entry)) {
+                    continue;
+                }
+                if ($kind === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
+                    $this->_addTemplateSubDirectories($loader, $templatePath . '/' . $entry . '/slip');
+                } else {
+                    $this->_addTemplateSubDirectories($loader, $templatePath . '/' . $entry . '/email');
+                }
+            }
+        }
+
         // looking for templates for customer in sub-directory
         if (str_contains($templateName, '|')) {
             $templateNameParts = explode('|', $templateName);
