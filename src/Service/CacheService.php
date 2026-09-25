@@ -90,6 +90,16 @@ class CacheService
     }
 
     /**
+     * Clears all items of this adapter's namespace (only the active config).
+     *
+     * @return bool
+     */
+    public function clear(): bool
+    {
+        return $this->_cacheAdapter->clear();
+    }
+
+    /**
      * @param string $kind
      * @param string $type
      * @param string $identifiers
