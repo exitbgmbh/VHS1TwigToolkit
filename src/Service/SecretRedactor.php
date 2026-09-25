@@ -66,7 +66,11 @@ class SecretRedactor
         }
 
         try {
-            $this->_add($replacements, $this->_configService->getClient(), '[redacted:client]');
+            $client = $this->_configService->getClient();
+            // a client equal to the config slug is public anyway; redacting it would hide the slug itself
+            if ($client !== $this->_configService->getConfigName()) {
+                $this->_add($replacements, $client, '[redacted:client]');
+            }
         } catch (\Throwable $e) {
         }
 
