@@ -15,6 +15,7 @@ use App\Service\JsonService;
 use App\Service\LanguageService;
 use App\Service\MapperService;
 use App\Service\PdfService;
+use App\Service\RenderService;
 use App\Service\SecurityService;
 use App\Service\TextModulesService;
 use App\Service\TwigService;
@@ -41,6 +42,7 @@ class ContainerFactory
         'security_service',
         'twig_service',
         'pdf_service',
+        'render_service',
     ];
 
     /**
@@ -162,6 +164,15 @@ class ContainerFactory
                 new Reference('config_service'),
                 new Reference('http_service'),
                 new Reference('json_service'),
+            ]);
+
+        $containerBuilder->register('render_service', RenderService::class)
+            ->setArguments([
+                new Reference('security_service'),
+                new Reference('context_service'),
+                new Reference('text_modules_service'),
+                new Reference('twig_service'),
+                new Reference('pdf_service'),
             ]);
 
         $containerBuilder->register('app_controller', AppController::class)
