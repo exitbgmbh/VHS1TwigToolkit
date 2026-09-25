@@ -178,9 +178,9 @@ class ContainerFactory
         $containerBuilder->register('app_controller', AppController::class)
             ->setPublic(true)
             ->setArguments([
-                new Reference('pdf_service'),
                 new Reference('template_factory'),
                 new Reference('twig_service'),
+                new Reference('render_service'),
             ]);
 
         $containerBuilder->register('api_controller', ApiController::class)
