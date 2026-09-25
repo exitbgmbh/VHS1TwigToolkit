@@ -46,6 +46,8 @@ class PdfService
             'margin_footer' => 0,
             'orientation' => $format,
             'tempDir' => '/tmp/mpdf', # avoid permission issues in vendor/mpdf/mpdf/tmp
+            'autoScriptToLang' => true,
+            'autoLangToFont'   => true,
         ]);
 
         $mPdf->keep_table_proportions = true;
