@@ -16,6 +16,7 @@ use App\Service\LanguageService;
 use App\Service\MapperService;
 use App\Service\PdfService;
 use App\Service\RenderService;
+use App\Service\SecretRedactor;
 use App\Service\SecurityService;
 use App\Service\TextModulesService;
 use App\Service\TwigService;
@@ -43,6 +44,7 @@ class ContainerFactory
         'twig_service',
         'pdf_service',
         'render_service',
+        'secret_redactor',
     ];
 
     /**
@@ -163,6 +165,12 @@ class ContainerFactory
                 new Reference('json_service'),
             ]);
 
+        $containerBuilder->register('secret_redactor', SecretRedactor::class)
+            ->setArguments([
+                new Reference('config_service'),
+                new Reference('cache_service'),
+            ]);
+
         $containerBuilder->register('render_service', RenderService::class)
             ->setArguments([
                 new Reference('security_service'),
@@ -170,6 +178,7 @@ class ContainerFactory
                 new Reference('text_modules_service'),
                 new Reference('twig_service'),
                 new Reference('pdf_service'),
+                new Reference('secret_redactor'),
             ]);
 
         $containerBuilder->register('app_controller', AppController::class)
