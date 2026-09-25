@@ -113,9 +113,6 @@ class ContainerFactory
 
         $containerBuilder->register('template_factory', TemplateFactory::class)
             ->setArguments([
-                new Reference('context_service'),
-                new Reference('security_service'),
-                new Reference('text_modules_service'),
                 new Reference('view_model_factory'),
             ]);
 
