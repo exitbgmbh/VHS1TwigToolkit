@@ -4,8 +4,12 @@ namespace App\DependencyInjection;
 
 use App\Controller\ApiController;
 use App\Controller\AppController;
+use App\Controller\McpController;
 use App\Factory\TemplateFactory;
 use App\Factory\ViewModelFactory;
+use App\Mcp\McpServer;
+use App\Mcp\Session\McpSessionStore;
+use App\Mcp\Tool\ToolRegistry;
 use App\Service\CacheService;
 use App\Service\ConfigRegistry;
 use App\Service\ConfigService;
@@ -194,6 +198,24 @@ class ContainerFactory
             ->setArguments([
                 new Reference('cache_service'),
                 new Reference('types_service'),
+            ]);
+
+        $containerBuilder->register('mcp_session_store', McpSessionStore::class);
+
+        $containerBuilder->register('mcp_tool_registry', ToolRegistry::class)
+            ->setFactory([ToolRegistry::class, 'createDefault']);
+
+        $containerBuilder->register('mcp_server', McpServer::class)
+            ->setArguments([
+                new Reference('mcp_tool_registry'),
+                new Reference('config_registry'),
+            ]);
+
+        $containerBuilder->register('mcp_controller', McpController::class)
+            ->setPublic(true)
+            ->setArguments([
+                new Reference('mcp_server'),
+                new Reference('mcp_session_store'),
             ]);
 
         foreach (self::PUBLIC_SERVICES as $serviceId) {
