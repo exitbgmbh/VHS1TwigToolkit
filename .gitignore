@@ -6,4 +6,5 @@ src/Templates/*
 docker-compose.yml
 src/Config/config.*.json
 .superpowers/
-.ideasrc/Config/.mcp-backups/
+.idea
+src/Config/.mcp-backups/
