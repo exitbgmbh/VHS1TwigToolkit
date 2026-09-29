@@ -23,6 +23,15 @@ class ConfigRegistry
     }
 
     /**
+     * Directory of the config files, for server-side use only.
+     * Never put this path into tool results or error messages.
+     */
+    public function getConfigDir(): string
+    {
+        return $this->configDir;
+    }
+
+    /**
      * @return string[] slugs, 'default' first (if config.json exists), then alphabetically
      */
     public function listSlugs(): array
