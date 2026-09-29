@@ -9,6 +9,7 @@ use App\Mcp\Tool\Data\GetContextTool;
 use App\Mcp\Tool\Data\GetTextModulesTool;
 use App\Mcp\Tool\Data\ListDocumentTypesTool;
 use App\Mcp\Tool\Data\ListLanguagesTool;
+use App\Mcp\Tool\Render\RenderTemplateTool;
 use App\Mcp\Tool\Template\ListTemplatesTool;
 use App\Mcp\Tool\Template\ReadTemplateTool;
 use App\Mcp\Tool\Template\WriteTemplateTool;
@@ -34,6 +35,7 @@ class ToolRegistry
         $registry->register(new ListTemplatesTool());
         $registry->register(new ReadTemplateTool());
         $registry->register(new WriteTemplateTool());
+        $registry->register(new RenderTemplateTool());
 
         return $registry;
     }
