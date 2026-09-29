@@ -115,8 +115,9 @@ class RenderService
     /**
      * Non-throwing variant of render(). Every stage runs in its own try/catch, all messages and
      * warnings are passed through the SecretRedactor. PHP warnings during Twig and mPDF are collected.
+     * With $strictTemplates a missing template or include is a Twig error instead of a red placeholder.
      */
-    public function tryRender(RenderRequest $r, bool $withPdf = true): RenderResult
+    public function tryRender(RenderRequest $r, bool $withPdf = true, bool $strictTemplates = false): RenderResult
     {
         $warnings = [];
 
@@ -154,7 +155,7 @@ class RenderService
 
         $this->_startCollectingWarnings($warnings);
         try {
-            $html = $this->_renderTwig($r, $context, $textModules);
+            $html = $this->_renderTwig($r, $context, $textModules, $strictTemplates);
         } catch (\Throwable $e) {
             return RenderResult::failure($this->_createTwigError($e, $r), $warnings);
         } finally {
@@ -218,13 +219,18 @@ class RenderService
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    private function _renderTwig(RenderRequest $r, array $context, array $textModules): string
-    {
+    private function _renderTwig(
+        RenderRequest $r,
+        array $context,
+        array $textModules,
+        bool $strictTemplates = false
+    ): string {
         return $this->_twigService->renderTemplate(
             $r->getTemplate(),
             $context,
             $textModules,
-            $r->getKind()
+            $r->getKind(),
+            $strictTemplates
         );
     }
 

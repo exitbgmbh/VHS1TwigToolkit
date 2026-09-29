@@ -240,7 +240,8 @@ class RenderTemplateTool implements ToolInterface
         );
 
         $withPdf = $kind === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME && $output !== self::OUTPUT_HTML;
-        $result = $renderService->tryRender($request, $withPdf);
+        // strict: a missing template or include is an error instead of a red placeholder
+        $result = $renderService->tryRender($request, $withPdf, true);
 
         $meta = [
             'config' => $slug,
