@@ -33,6 +33,14 @@ class ToolResult
         return new self([$message], true);
     }
 
+    /**
+     * Structured error: serialised like ok(), but flagged with isError.
+     */
+    public static function errorData(array $data): self
+    {
+        return new self([self::_toText($data)], true);
+    }
+
     public function isError(): bool
     {
         return $this->isError;
