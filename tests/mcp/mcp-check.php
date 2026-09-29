@@ -7,7 +7,10 @@ declare(strict_types=1);
  *
  *   docker compose exec -T -u www-data btt_dev php tests/mcp/mcp-check.php [--config=bmo] [--all-configs]
  *       [--template=shopcartel|default_invoice.html] [--type=invoice] [--identifiers=202636143468]
- *       [--endpoint=http://localhost/mcp] [--scan=<file>]
+ *       [--endpoint=http://localhost/mcp] [--scan=<file> [--secrets-only]]
+ *
+ * --secrets-only (scan mode only) reports just secret values, JWT and Bearer tokens and ignores the leak
+ * literals (/home/, .mcp-backups, ...), which are normal in agent transcripts (working directory, CLAUDE.md).
  *
  * Output: one line per check "PASS|FAIL|SKIP <id> <description>", then "RESULT pass=<n> fail=<n> skip=<n>".
  * Exit code: 0 without FAIL, 1 with at least one FAIL, 2 on invocation errors.
@@ -106,6 +109,10 @@ final class McpCheck
         }
 
         $hits = self::scanText($text, $secrets ?? [], false);
+        if ($this->opt['secrets-only']) {
+            $secretLabels = array_merge(array_column($secrets ?? [], 0), ['jwt-pattern', 'bearer']);
+            $hits = array_values(array_intersect($hits, $secretLabels));
+        }
         if ($hits === []) {
             echo 'PASS scan ' . basename($file) . "\n";
 
@@ -1227,6 +1234,7 @@ final class McpCheck
 $options = [
     'config' => 'bmo',
     'all-configs' => false,
+    'secrets-only' => false,
     'template' => 'shopcartel|default_invoice.html',
     'type' => 'invoice',
     'identifiers' => '202636143468',
@@ -1239,13 +1247,17 @@ foreach (array_slice($argv, 1) as $argument) {
         $options['all-configs'] = true;
         continue;
     }
+    if ($argument === '--secrets-only') {
+        $options['secrets-only'] = true;
+        continue;
+    }
     if (preg_match('/^--(config|template|type|identifiers|endpoint|scan)=(.*)$/s', $argument, $match) && $match[2] !== '') {
         $options[$match[1]] = $match[2];
         continue;
     }
     fwrite(STDERR, "unknown or empty argument: " . $argument . "\n"
         . "usage: php tests/mcp/mcp-check.php [--config=bmo] [--all-configs] [--template=set|file.html] [--type=invoice]"
-        . " [--identifiers=...] [--endpoint=http://localhost/mcp] [--scan=<file>]\n");
+        .  " [--identifiers=...] [--endpoint=http://localhost/mcp] [--scan=<file> [--secrets-only]]\n");
     exit(2);
 }
 

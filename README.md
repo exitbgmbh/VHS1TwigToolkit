@@ -341,6 +341,9 @@ Zugangsdaten und JWT:
 - `--all-configs` prüft zusätzlich alle vorhandenen Configs.
 - `--template=`, `--type=`, `--identifiers=` und `--endpoint=` überschreiben die Standardwerte.
 - `--scan=<datei>` prüft eine beliebige Datei (z.B. Ausgabe oder Transkript eines Agenten) auf Zugangsdaten und JWT.
+  Zusätzlich gelten dabei `/home/`, `/var/www`, `.mcp-backups`, `Stack trace` usw. als Treffer. Für Transkripte von
+  Claude Code, die das Arbeitsverzeichnis und `CLAUDE.md` enthalten, meldet `--secrets-only` nur Zugangsdaten, JWT und
+  Bearer-Token.
 - Ausgabe: je Check `PASS|FAIL|SKIP <id> <text>`, am Ende `RESULT pass=<n> fail=<n> skip=<n>`.
 - Exit-Codes: `0` ohne FAIL, `1` bei mindestens einem FAIL, `2` bei Aufruffehlern.
 - Artefakte (alle HTTP-Antworten) liegen unter `/tmp/vhs1-mcp-check/<zeitstempel>/`.
