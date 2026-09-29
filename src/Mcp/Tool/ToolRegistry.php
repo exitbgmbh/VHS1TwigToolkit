@@ -9,6 +9,9 @@ use App\Mcp\Tool\Data\GetContextTool;
 use App\Mcp\Tool\Data\GetTextModulesTool;
 use App\Mcp\Tool\Data\ListDocumentTypesTool;
 use App\Mcp\Tool\Data\ListLanguagesTool;
+use App\Mcp\Tool\Template\ListTemplatesTool;
+use App\Mcp\Tool\Template\ReadTemplateTool;
+use App\Mcp\Tool\Template\WriteTemplateTool;
 
 /**
  * Holds the MCP tools by name.
@@ -28,6 +31,9 @@ class ToolRegistry
         $registry->register(new GetContextTool());
         $registry->register(new GetTextModulesTool());
         $registry->register(new ClearCacheTool());
+        $registry->register(new ListTemplatesTool());
+        $registry->register(new ReadTemplateTool());
+        $registry->register(new WriteTemplateTool());
 
         return $registry;
     }
