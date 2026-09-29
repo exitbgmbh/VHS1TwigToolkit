@@ -58,6 +58,9 @@ class ArgumentValidator
         if ($type === 'integer' && !is_int($value)) {
             return sprintf('argument "%s" must be an integer', $name);
         }
+        if ($type === 'object' && !(is_array($value) && ($value === [] || !array_is_list($value)))) {
+            return sprintf('argument "%s" must be an object', $name);
+        }
 
         if (isset($propertySchema['enum']) && is_array($propertySchema['enum'])
             && !in_array($value, $propertySchema['enum'], true)
