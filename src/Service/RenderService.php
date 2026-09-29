@@ -299,7 +299,7 @@ class RenderService
     }
 
     /**
-     * Returns the path relative to src/Templates/ (symlinked template sets included) or null.
+     * Returns the path relative to src/Templates/ (symlinked template sets on level 1 and 2 included) or null.
      * Never returns absolute paths.
      */
     private function _toTemplateRelativePath(?string $path): ?string
@@ -308,50 +308,12 @@ class RenderService
             return null;
         }
 
-        $templatesDir = realpath(__DIR__ . '/../Templates');
-        if ($templatesDir === false) {
+        try {
+            $relative = (new TemplateStore())->toRelativePath($path);
+        } catch (\Throwable) {
             return null;
         }
 
-        $relative = $this->_relativeTo($path, $templatesDir);
-        if ($relative !== null) {
-            return $relative;
-        }
-
-        $entries = scandir($templatesDir) ?: [];
-        foreach ($entries as $entry) {
-            if ($entry === '.' || $entry === '..') {
-                continue;
-            }
-
-            $entryPath = $templatesDir . '/' . $entry;
-            if (!is_link($entryPath)) {
-                continue;
-            }
-
-            $target = realpath($entryPath);
-            if ($target === false) {
-                continue;
-            }
-
-            $rest = $this->_relativeTo($path, $target);
-            if ($rest !== null) {
-                return $entry . '/' . $rest;
-            }
-        }
-
-        return null;
-    }
-
-    private function _relativeTo(string $path, string $dir): ?string
-    {
-        $prefix = rtrim($dir, '/') . '/';
-        if (strpos($path, $prefix) !== 0) {
-            return null;
-        }
-
-        $rest = substr($path, strlen($prefix));
-
-        return $rest !== '' ? $rest : null;
+        return $relative !== null && $relative !== '' ? $relative : null;
     }
 }
