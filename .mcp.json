@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "vhs1-toolkit": {
+      "type": "http",
+      "url": "${VHS1_TOOLKIT_MCP_URL:-http://toolkit.blissdev.de/mcp}"
+    }
+  }
+}
