@@ -173,7 +173,8 @@ class RenderTemplateTool implements ToolInterface
 
         if ($output === self::OUTPUT_HTML) {
             if (strlen($html) <= self::MAX_INLINE_HTML_BYTES) {
-                $data['html'] = $html;
+                // no absolute server paths in the response (e.g. image paths from mapping.defaults)
+                $data['html'] = $templateStore->sanitizePaths($html);
             } else {
                 $data['htmlFile'] = $fileStore->store($sessionId, $meta['template'], 'html', $html);
                 $data['hint'] = 'html too large, read htmlFile';
