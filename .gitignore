@@ -7,3 +7,5 @@ docker-compose.yml
 src/Config/config.*.json
 .superpowers/
 .idea
+src/Config/.mcp-backups/
+.claude/settings.local.json

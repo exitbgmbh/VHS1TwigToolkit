@@ -1,0 +1,20 @@
+{
+  "enabledMcpjsonServers": ["vhs1-toolkit"],
+  "permissions": {
+    "allow": [
+      "mcp__vhs1-toolkit",
+      "Read(./src/Templates/**)",
+      "Edit(./src/Templates/**)",
+      "Write(./src/Templates/**)"
+    ],
+    "deny": [
+      "Bash",
+      "Read(./src/Config/config*.json)",
+      "Edit(./src/Config/config*.json)",
+      "Write(./src/Config/config*.json)",
+      "Read(./src/Config/.mcp-backups/**)",
+      "Edit(./src/Config/.mcp-backups/**)",
+      "Write(./src/Config/.mcp-backups/**)"
+    ]
+  }
+}

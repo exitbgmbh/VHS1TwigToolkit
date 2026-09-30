@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Factory\TemplateFactory;
-use App\Service\PdfService;
+use App\Model\RenderRequest;
+use App\Service\RenderService;
 use App\Service\TwigService;
-use App\Service\TypesService;
 use Mpdf\MpdfException;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,28 +16,28 @@ use Twig\Error\SyntaxError;
 
 class AppController
 {
-    /** @var PdfService */
-    private $_pdfService;
-
     /** @var TemplateFactory */
     private $_templateFactory;
 
     /** @var TwigService */
     private $_twigService;
 
+    /** @var RenderService */
+    private $_renderService;
+
     /**
-     * @param PdfService $pdfService
-     * @param TemplateFactory $frontendFactory
+     * @param TemplateFactory $templateFactory
      * @param TwigService $twigService
+     * @param RenderService $renderService
      */
     public function __construct(
-        PdfService $pdfService,
-        TemplateFactory $frontendFactory,
-        TwigService $twigService
+        TemplateFactory $templateFactory,
+        TwigService $twigService,
+        RenderService $renderService
     ) {
-        $this->_pdfService = $pdfService;
-        $this->_templateFactory = $frontendFactory;
+        $this->_templateFactory = $templateFactory;
         $this->_twigService = $twigService;
+        $this->_renderService = $renderService;
     }
 
     /**
@@ -72,19 +72,12 @@ class AppController
      */
     public function generate(Request $request): Response
     {
-        $viewModel = $this->_templateFactory->createContent($request);
-        $response = $this->_twigService->renderTemplate(
-            $viewModel->getTemplateName(),
-            $viewModel->getContext(),
-            $viewModel->getMapping(),
-            $viewModel->getKind(),
-        );
+        $renderRequest = RenderRequest::fromHttpRequest($request);
+        $output = $this->_renderService->render($renderRequest);
 
-        if ($request->attributes->get('kind') === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
-            $pdf = $this->_pdfService->renderPdf($response, $viewModel->getSize(), $viewModel->getFormat());
-
+        if ($renderRequest->isPdf()) {
             return new Response(
-                $pdf,
+                $output->getPdf(),
                 Response::HTTP_OK,
                 [
                     'Content-Type' => 'application/pdf',
@@ -92,6 +85,6 @@ class AppController
             );
         }
 
-        return new Response($response);
+        return new Response($output->getHtml());
     }
 }

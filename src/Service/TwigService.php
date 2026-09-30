@@ -56,6 +56,7 @@ class TwigService
      * @param array $context
      * @param array $mapping
      * @param string $kind
+     * @param bool $strictTemplates unknown template files raise a LoaderError instead of a text module placeholder
      * @return string
      * @throws TwigLoaderError
      * @throws TwigRuntimeError
@@ -65,7 +66,8 @@ class TwigService
         string $templateName,
         array $context,
         array $mapping,
-        string $kind
+        string $kind,
+        bool $strictTemplates = false
     ): string {
         $templatePath = __DIR__ . '/../Templates';
         $loader = new TwigFilesystemLoader();
@@ -110,7 +112,7 @@ class TwigService
             $templateName = implode('|', $templateNameParts);
         }
 
-        $tmLoader = new TextModuleLoader($mapping);
+        $tmLoader = new TextModuleLoader($mapping, $strictTemplates);
         $chainLoader = new TwigChainLoader([
             $loader,
             $tmLoader,

@@ -74,4 +74,15 @@ $routes->add(
     )
 );
 
+$routes->add(
+    'mcp',
+    new Route(
+        '/mcp',
+        [
+            # container is defined and initialized in index.php, respectively container.php
+            '_controller' => [ $container->get('mcp_controller'), 'handle' ],
+        ]
+    )
+);
+
 return $routes;

@@ -213,6 +213,163 @@ oder anderen ist somit nicht möglich. Es wird dann immer alles aktualisiert. (E
 
 Standardmäßig wird der Cache in `/tmp/symfony-cache` geschrieben.
 
+## MCP-Endpunkt für KI-Agenten
+
+### Zweck
+
+Das Toolkit stellt unter `/mcp` einen MCP-Endpunkt (Model Context Protocol) bereit. Damit können KI-Agenten wie Claude Code
+Twig-Templates für PDFs und E-Mails selbst bearbeiten und prüfen, ohne die Configs unter `src/Config/*.json` zu sehen.
+Zugangsdaten (`url`, `client`, `apiKey`) und das JWT bleiben serverseitig, der Agent kennt eine Config nur über ihren Slug.
+
+### Betrieb
+
+Der Endpunkt läuft in der bestehenden App im selben Container, es gibt keinen eigenen Prozess:
+
+    docker-compose up -d
+
+Transport ist Streamable HTTP unter `http://toolkit.blissdev.de/mcp` (bzw. dem Host und Port aus der lokalen
+`docker-compose.yml`, z.B. `http://localhost:8087/mcp`). Die Session läuft über den Header `Mcp-Session-Id`.
+
+Prüfen, ob der Endpunkt antwortet (HTTP 200 mit `serverInfo`):
+
+    curl -s -X POST http://toolkit.blissdev.de/mcp \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl","version":"1"}}}'
+
+### Anbindung an Claude Code
+
+Im Repo liegt eine `.mcp.json`, die den Server `vhs1-toolkit` einträgt:
+
+    {"mcpServers": {"vhs1-toolkit": {"type": "http", "url": "${VHS1_TOOLKIT_MCP_URL:-http://toolkit.blissdev.de/mcp}"}}}
+
+Läuft das Toolkit unter einer anderen Adresse, setzt man vor dem Start die Umgebungsvariable, z.B.
+`export VHS1_TOOLKIT_MCP_URL=http://localhost:8087/mcp`.
+
+Die committete `.claude/settings.json` aktiviert den Server und sperrt `Read`, `Edit` und `Write` auf
+`src/Config/config*.json` und `src/Config/.mcp-backups/**`. Bash bleibt dort bewusst erlaubt, weil die Datei für alle
+Agenten in diesem Repo gilt.
+
+Für Agenten, die nur Templates bearbeiten sollen, gibt es `.claude/template-agent.settings.json`: dieselben Deny-Regeln,
+zusätzlich ist `Bash` gesperrt, erlaubt sind die Tools von `vhs1-toolkit` sowie `Read`, `Edit` und `Write` unter
+`src/Templates/**`. Start im Repo-Root:
+
+    claude --settings .claude/template-agent.settings.json
+
+In Claude Code zeigt `/mcp` danach den Server `vhs1-toolkit` als verbunden.
+
+Liegen die Templates in einem eigenen Repo außerhalb des Toolkits, legt man dort eine `.mcp.json` wie oben an und sperrt
+die Configs des Toolkits mit absoluten Pfaden (`//` am Anfang) in `.claude/settings.json` des Template-Repos:
+
+    {
+      "enabledMcpjsonServers": ["vhs1-toolkit"],
+      "permissions": {
+        "deny": [
+          "Bash",
+          "Read(//<pfad-zum-toolkit>/src/Config/config*.json)",
+          "Edit(//<pfad-zum-toolkit>/src/Config/config*.json)",
+          "Write(//<pfad-zum-toolkit>/src/Config/config*.json)",
+          "Read(//<pfad-zum-toolkit>/src/Config/.mcp-backups/**)",
+          "Edit(//<pfad-zum-toolkit>/src/Config/.mcp-backups/**)",
+          "Write(//<pfad-zum-toolkit>/src/Config/.mcp-backups/**)"
+        ]
+      }
+    }
+
+Hinweis zu den Pfadmustern: `/pfad` ist relativ zur Quelle der Settings (bei `.claude/settings.json` das Arbeitsverzeichnis,
+bei einer Datei aus `--settings` deren Verzeichnis), `./pfad` ist relativ zum aktuellen Verzeichnis, `//pfad` ist absolut.
+Deshalb nutzt `template-agent.settings.json` `./src/...` und setzt den Start im Repo-Root voraus.
+
+### Tools
+
+| Tool | Zweck |
+| --- | --- |
+| `list_configs` | Verfügbare Configs als Slugs auflisten, inkl. des in der Session gewählten Slugs |
+| `select_config` | Config für die MCP-Session per Slug wählen |
+| `list_document_types` | Dokumentarten (pdf, email) und Dokumenttypen der Config auflisten |
+| `list_languages` | Sprachen der Config auflisten (ISO-Code für `get_text_modules`) |
+| `get_context` | Kontextdaten eines Dokuments (Typ + Identifier) abrufen, bereits mit `mapping.defaults` gemerged |
+| `get_text_modules` | Textbausteine für Werbemittel und Sprache abrufen, bereits mit `mapping.textModuleMapping` gemerged |
+| `clear_cache` | Cache der gewählten Config leeren |
+| `get_mapping` | `mapping.defaults` und `mapping.textModuleMapping` der Config lesen, inkl. `sha256` |
+| `update_mapping` | Einen Mapping-Abschnitt per JSON Merge Patch ändern |
+| `list_templates` | PDF- und E-Mail-Templates aller Template-Sets unter `src/Templates` auflisten |
+| `read_template` | Datei unter `src/Templates` lesen |
+| `write_template` | Datei unter `src/Templates` schreiben (Pfade außerhalb werden abgelehnt) |
+| `render_template` | Template mit echten VHS1-Daten rendern, `output=status\|html\|pdf` |
+
+Die ausführlichen Beschreibungen liefert der Endpunkt selbst (`tools/list`), sie stehen in `getDescription()` unter
+`src/Mcp/Tool/*/`.
+
+### Config-Auswahl
+
+Configs werden nur über ihren Slug angesprochen: `config.<slug>.json` hat den Slug `<slug>`, der Slug `default` steht für
+`config.json`. Der Slug wird entweder pro Aufruf über das Argument `config` übergeben oder pro Session mit `select_config`
+festgelegt. `config.json` wird dabei nicht überschrieben, die UI ist von der Auswahl nicht betroffen.
+
+### Typischer Ablauf
+
+1. `select_config` mit dem gewünschten Slug.
+2. `list_templates`, um den Template-Namen zu finden (z.B. `shopcartel|default_invoice.html`).
+3. `render_template` mit `output=status`.
+4. Bei `isError` zeigen `error.file` (relativ zu `src/Templates`) und `error.line` auf die Fehlerstelle, `error.snippet`
+   zeigt die Zeilen drumherum. Die Datei mit `read_template`/`write_template` oder direkt im Dateisystem bearbeiten.
+5. Erneut rendern, bis kein Fehler mehr kommt. Mit `output=pdf` entsteht die PDF-Datei, mit `output=html` das HTML vor mPDF.
+
+### Mapping
+
+`get_mapping` liefert `mapping.defaults` und `mapping.textModuleMapping` der Config sowie einen `sha256`.
+`update_mapping` ändert einen Abschnitt per JSON Merge Patch (RFC 7396): Objekte werden rekursiv gemerged, `null` löscht
+einen Schlüssel. Mit `expectedSha256` aus `get_mapping` werden parallele Änderungen nicht überschrieben. Die Änderung wirkt
+sofort für `get_context`, `get_text_modules` und `render_template`, ein `clear_cache` ist nicht nötig. Zugangsdaten werden
+nie verändert. Vor jeder Änderung wird ein Backup unter `src/Config/.mcp-backups/` angelegt (max. 20 pro Slug, Rechte
+`0600`, gitignored).
+
+### Dateien unter /tmp
+
+- Sessions: `/tmp/vhs1-mcp-sessions`, sie verfallen nach 24 Stunden ohne Nutzung.
+- Render-Dateien (PDFs, HTML über 100 KB): `/tmp/vhs1-mcp-renders/<session>/`, sie werden nach 24 Stunden gelöscht.
+  Wegen des `/tmp`-Mounts sind sie auf dem Host unter demselben Pfad lesbar.
+
+### Prüfskript
+
+`tests/mcp/mcp-check.php` prüft alle Tools gegen den laufenden Endpunkt, inkl. Fehlerpfaden und Leak-Scan auf
+Zugangsdaten und JWT:
+
+    docker compose exec -T -u www-data btt_dev php tests/mcp/mcp-check.php --config=bmo
+
+- `--all-configs` prüft zusätzlich alle vorhandenen Configs.
+- `--template=`, `--type=`, `--identifiers=` und `--endpoint=` überschreiben die Standardwerte.
+- `--scan=<datei>` prüft eine beliebige Datei (z.B. Ausgabe oder Transkript eines Agenten) auf Zugangsdaten und JWT.
+  Zusätzlich gelten dabei `/home/`, `/var/www`, `.mcp-backups`, `Stack trace` usw. als Treffer. Für Transkripte von
+  Claude Code, die das Arbeitsverzeichnis und `CLAUDE.md` enthalten, meldet `--secrets-only` nur Zugangsdaten, JWT und
+  Bearer-Token.
+- Ausgabe: je Check `PASS|FAIL|SKIP <id> <text>`, am Ende `RESULT pass=<n> fail=<n> skip=<n>`.
+- Exit-Codes: `0` ohne FAIL, `1` bei mindestens einem FAIL, `2` bei Aufruffehlern.
+- Artefakte (alle HTTP-Antworten) liegen unter `/tmp/vhs1-mcp-check/<zeitstempel>/`.
+
+Empfehlung: Das Skript als Verify-Check eintragen, damit Änderungen am MCP-Code automatisch geprüft werden.
+
+### Sicherheit
+
+- Der Endpunkt hat keine Authentifizierung. Er ist nur für das lokale Docker-Setup gedacht.
+- Empfehlung: In der lokalen `docker-compose.yml` den Port an `127.0.0.1` binden, z.B. `'127.0.0.1:8087:80'`.
+- Anfragen mit `Origin`-Header werden nur von erlaubten Hosts angenommen (`localhost`, `127.0.0.1`,
+  `toolkit.blissdev.de`). Weitere Hosts lassen sich per Umgebungsvariable `MCP_ALLOWED_ORIGIN_HOSTS` (kommagetrennt) im
+  Container ergänzen.
+- Grenzen der Deny-Regeln: Sie gelten für die Tools `Read`, `Edit` und `Write` von Claude Code. Ohne Bash-Sperre kann ein
+  Agent Dateien trotzdem per Shell lesen. Für Template-Agenten deshalb `.claude/template-agent.settings.json` verwenden.
+
+### Bekannte Grenzen
+
+- VHS1-URLs, z.B. Bild-URLs, können in Render-Dateien unter `/tmp/vhs1-mcp-renders/` stehen.
+- `client` wird als Teilstring redigiert und kann dadurch auch in anderen Wörtern ersetzt werden. Ist `client` gleich dem
+  Slug, wird er nicht redigiert.
+- Token-artige Strings in Template- und Mapping-Inhalten werden nicht zuverlässig erkannt.
+- Absolute Container-Pfade in Mapping-Werten werden bewusst unverändert geliefert.
+- Kundendaten im Kontext werden nicht maskiert.
+- Es gibt keine PNG-Rasterung. PDFs liest der Agent direkt aus `/tmp/vhs1-mcp-renders/`.
+
 ## Fonts
 
 Wenn wir Custom-Fonts brauchen, können wir diese ganz einfach einbinden. Zunächst brauchen wir die Fonts selber. Z.B.: ablegen unter `src/Templates/fonts`.  

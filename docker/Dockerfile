@@ -35,3 +35,8 @@ RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/i
 
 RUN curl --silent --output /tmp/composer.setup https://getcomposer.org/installer \
     && php /tmp/composer.setup --install-dir=/usr/local/bin --filename=composer
+
+ARG WWW_DATA_UID=1000
+ARG WWW_DATA_GID=1000
+RUN groupmod -o -g ${WWW_DATA_GID} www-data \
+    && usermod -o -u ${WWW_DATA_UID} -g ${WWW_DATA_GID} www-data
