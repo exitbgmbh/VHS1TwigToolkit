@@ -22,7 +22,9 @@ class GetContextTool extends AbstractDataTool
         return 'Returns the context data of a document as the template sees it (already merged with '
             . 'mapping.defaults). Start with mode="keys" to see the structure, then narrow with "path" '
             . '(dot notation, list indexes as numbers, e.g. "order.items.0"). Large results are replaced by '
-            . 'a structure summary. Results are cached per kind, type and identifiers; use forceReload for fresh data.';
+            . 'a structure summary. Results are cached per kind, type and identifiers; use forceReload for fresh data. '
+            . 'Objects of the form {date, timezone_type, timezone} are DateTime objects in the template: use them '
+            . 'directly with the date filter (e.g. "invoice.date|date(\'d.m.Y\')"), not their "date" key.';
     }
 
     public function getInputSchema(): array

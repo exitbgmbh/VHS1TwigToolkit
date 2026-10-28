@@ -7,6 +7,7 @@ use App\Twig\Loader\TextModuleLoader;
 use App\Twig\TokenParser\ExitbTm;
 use Priotas\Twig\Extension\QrCode;
 use Twig\Environment as TwigEnvironment;
+use Twig\Error\Error as TwigError;
 use Twig\Error\LoaderError as TwigLoaderError;
 use Twig\Error\RuntimeError as TwigRuntimeError;
 use Twig\Error\SyntaxError as TwigSyntaxError;
@@ -17,7 +18,7 @@ use Twig\TwigFunction;
 class TwigService
 {
     /**
-     * Returns sorted list of available template sets — subdirectories of src/Templates/
+     * Returns sorted list of available template sets - subdirectories of src/Templates/
      * that contain a slip/ or email/ subdirectory.
      * Base directories (slip, email, image) are excluded.
      *
@@ -70,7 +71,8 @@ class TwigService
         bool $strictTemplates = false
     ): string {
         $templatePath = __DIR__ . '/../Templates';
-        $loader = new TwigFilesystemLoader();
+        // explicit root path: Twig 3.0.4 passes a null root path to realpath() (deprecated since PHP 8.1)
+        $loader = new TwigFilesystemLoader([], $templatePath);
 
         $this->_addTemplateSubDirectories($loader, $templatePath);
         if ($kind === TypesService::TEMPLATE_TYPE_DOCUMENT_NAME) {
@@ -131,8 +133,27 @@ class TwigService
         $this->_addExtensions($twig);
         $this->_addCustomFilters($twig);
 
-        $templateWrapper = $twig->load($templateName);
-        return $templateWrapper->render($context);
+        try {
+            $templateWrapper = $twig->load($templateName);
+            return $templateWrapper->render($context);
+        } catch (TwigError $e) {
+            $this->_completeErrorSourcePath($e, $loader);
+            throw $e;
+        }
+    }
+
+    /**
+     * Twig 3.0.4 reports a missing include with a source context without path (only the name of the
+     * including template), so the path is looked up via the filesystem loader.
+     */
+    private function _completeErrorSourcePath(TwigError $e, TwigFilesystemLoader $loader): void
+    {
+        $source = $e->getSourceContext();
+        if ($source === null || $source->getPath() !== '' || !$loader->exists($source->getName())) {
+            return;
+        }
+
+        $e->setSourceContext($loader->getSourceContext($source->getName()));
     }
 
     private function _addTemplateSubDirectories(TwigFilesystemLoader $loader, string $directory, string $namespace = TwigFilesystemLoader::MAIN_NAMESPACE): void

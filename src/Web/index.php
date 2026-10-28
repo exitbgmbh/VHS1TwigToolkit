@@ -1,5 +1,9 @@
 <?php
 error_reporting(E_ALL ^ E_DEPRECATED);
+// notices (e.g. mPDF 8.1 unserialize warnings on PHP 8.3) would corrupt the PDF output, they go to the Apache error log instead
+ini_set('display_errors', '0');
+// same default timezone as VHS1, the Twig date filter converts DateTime values into it
+date_default_timezone_set('Europe/Berlin');
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +25,7 @@ try {
     $response = call_user_func($request->attributes->get('_controller'), $request);
 } catch (ResourceNotFoundException $exception) {
     $response = new Response('Not Found', 404);
-} catch (Exception $exception) {
+} catch (Throwable $exception) {
     $response = new Response('An error occurred: ' . $exception->getMessage(), 500);
 }
 

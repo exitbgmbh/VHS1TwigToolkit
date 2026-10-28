@@ -227,11 +227,43 @@ class RenderService
     ): string {
         return $this->_twigService->renderTemplate(
             $r->getTemplate(),
-            $context,
+            $this->_restoreDateTimes($context),
             $textModules,
             $r->getKind(),
             $strictTemplates
         );
+    }
+
+    /**
+     * The REST API delivers DateTime values JSON encoded as {date, timezone_type, timezone}, while VHS1
+     * renders its templates with real DateTime objects (e.g. for the date filter), so they are restored here.
+     */
+    private function _restoreDateTimes(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->_toDateTime($value) ?? $this->_restoreDateTimes($value);
+            }
+        }
+
+        return $data;
+    }
+
+    private function _toDateTime(array $value): ?\DateTime
+    {
+        if (count($value) !== 3
+            || !is_string($value['date'] ?? null)
+            || !is_int($value['timezone_type'] ?? null)
+            || !is_string($value['timezone'] ?? null)
+        ) {
+            return null;
+        }
+
+        try {
+            return \DateTime::__set_state($value);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**
@@ -294,7 +326,12 @@ class RenderService
                     return true;
                 }
 
-                $warnings[] = $this->_secretRedactor->redact(
+                // mPDF 8.1 on PHP 8.3: harmless, one per inline object, the value is still unserialized
+                if (str_starts_with($errstr, 'unserialize(): Extra data') && str_contains($errfile, '/vendor/mpdf/')) {
+                    return true;
+                }
+
+                $warnings[]= $this->_secretRedactor->redact(
                     sprintf('%s (%s:%d)', $errstr, basename($errfile), $errline)
                 );
 
